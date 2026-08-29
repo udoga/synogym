@@ -1,5 +1,9 @@
-from gpt_client import GptClient
+from importlib.resources import files
+from synogym.gpt_model import GptModel
+from synogym.prompter import Prompter
 
-client = GptClient()
-answer = client.respond("Give me a synonym for happy")
-print(answer)
+model = GptModel()
+prompt = files("synogym").joinpath("resources", "prompt.txt").read_text()
+prompter = Prompter(model, prompt)
+result = prompter.respond("happy")
+print(result)

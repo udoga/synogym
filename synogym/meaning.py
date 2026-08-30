@@ -9,7 +9,10 @@ class Example:
 class Meaning:
     query: str
     definition: str
-    part_of_speech: str
+    pos: str
+
+@dataclass
+class DetailedMeaning(Meaning):
     level: str
     description: str
     synonyms: list[str]
@@ -17,5 +20,5 @@ class Meaning:
     related: list[str]
 
 @dataclass
-class FullMeaning(Meaning):
+class FullMeaning(DetailedMeaning):
     examples: list[Example]

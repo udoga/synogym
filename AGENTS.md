@@ -10,4 +10,4 @@ English synonym finding game to improve recall and paraphrasing skills.
 - Use short functions with maximum six lines.
 - Add types in function declarations except None return.
 - Add variable type if the initialized value doesn't make it obvious.
-- Use no empty line between imports and one between classes.
+- Use no empty line between imports, and one empty line before classes.

@@ -1,10 +1,10 @@
 from synogym.responder import Responder
 
-class Prompter(Responder):
+class Prompter:
     def __init__(self, model: Responder, prompt: str):
         self.model = model
         self.prompt = prompt
 
-    def respond(self, query: str) -> str:
-        prompt = self.prompt.replace("{query}", query)
+    def respond(self, values: dict[str, str]) -> str:
+        prompt = self.prompt.format(**values)
         return self.model.respond(prompt)

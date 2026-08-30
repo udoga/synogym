@@ -10,9 +10,9 @@ class FakeResponder:
         return "result"
 
 class PrompterTest(TestCase):
-    def test_prompter_inserts_query(self):
+    def test_prompter_formats_values(self):
         responder = FakeResponder()
-        prompter = Prompter(responder, "Query: {query}")
-        result = prompter.respond("happy")
-        self.assertEqual("Query: happy", responder.prompt)
+        prompter = Prompter(responder, "Query: {query}, POS: {pos}")
+        result = prompter.respond({"query": "happy", "pos": "adjective"})
+        self.assertEqual("Query: happy, POS: adjective", responder.prompt)
         self.assertEqual("result", result)

@@ -18,7 +18,4 @@ class DetailedMeaning(Meaning):
     synonyms: list[str]
     history: str
     related: list[str]
-
-@dataclass
-class FullMeaning(DetailedMeaning):
     examples: list[Example]

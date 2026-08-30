@@ -5,7 +5,8 @@ meanings:
 - definition: Very short and concise, ideally 3-6 words.
   pos: noun | verb | adjective | adverb | preposition | conjunction | interjection | determiner | article
 
-Only YAML, no markdown or additional text, no quotation marks.
-If the query is meaningless in English, or if there is a typo, return meanings: []
+Rules:
+- Only YAML, no markdown or additional text, no quotation marks.
+- If the query is meaningless in English, or if there is a typo, return meanings: []
 
 Query: {query}

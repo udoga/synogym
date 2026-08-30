@@ -1,16 +1,17 @@
+from dataclasses import asdict
 from importlib.resources import files
 from pprint import pprint
 from synogym.detail_parser import DetailParser
 from synogym.gpt_model import GptModel
 from synogym.meaning import Meaning, DetailedMeaning
 from synogym.meaning_parser import MeaningParser
-from synogym.prompter import Prompter
+from synogym.formatter import Formatter
 
 class Application:
     def __init__(self):
         self.model = GptModel(model="gpt-5", reasoning_effort="minimal")
-        self.meaning_prompter = Prompter(self.model, self.read_file("meaning.txt"))
-        self.detail_prompter = Prompter(self.model, self.read_file("detail.txt"))
+        self.meaning_formatter = Formatter(self.read_file("meaning.txt"))
+        self.detail_formatter = Formatter(self.read_file("detail.txt"))
         self.meaning_parser = MeaningParser()
         self.detail_parser = DetailParser()
 
@@ -36,10 +37,13 @@ class Application:
             print("Invalid command")
 
     def get_meanings(self, query: str) -> list[Meaning]:
-        return self.meaning_parser.parse(self.meaning_prompter.respond({"query": query}), query)
+        prompt = self.meaning_formatter.format({"query": query})
+        response = self.model.respond(prompt)
+        return self.meaning_parser.parse(response, query)
 
     def get_detail(self, m: Meaning) -> DetailedMeaning:
-        response = self.detail_prompter.respond({"query": m.query, "definition": m.definition, "pos": m.pos})
+        prompt = self.detail_formatter.format(asdict(m))
+        response = self.model.respond(prompt)
         return self.detail_parser.parse(response, m)
 
     def read_file(self, file_name: str) -> str:

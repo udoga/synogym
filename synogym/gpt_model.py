@@ -1,9 +1,8 @@
 import os
 from typing import Any
 from openai import OpenAI
-from synogym.responder import Responder
 
-class GptModel(Responder):
+class GptModel:
     def __init__(self, model: str = "gpt-5", api_key: str = "", reasoning_effort: str = ""):
         self.model = model
         self.reasoning_effort = reasoning_effort

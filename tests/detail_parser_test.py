@@ -1,10 +1,9 @@
 from unittest import TestCase
 from synogym.detail_parser import DetailParser
-from synogym.meaning import Meaning
+from synogym.meaning import Detail
 
 class DetailParserTest(TestCase):
     def setUp(self):
-        self.meaning = Meaning(query="happy", definition="pleased or joyful", pos="adjective")
         self.yaml_text = """
 detail:
   level: A1
@@ -22,10 +21,9 @@ detail:
 """
 
     def test_parse_detail(self):
-        detail = DetailParser().parse(self.yaml_text, self.meaning)
-        self.assertEqual("happy", detail.query)
-        self.assertEqual("pleased or joyful", detail.definition)
-        self.assertEqual("adjective", detail.pos)
+        detail = DetailParser().parse(self.yaml_text)
+        self.assertIsInstance(detail, Detail)
+        self.assertIsNone(detail.id)
         self.assertEqual("A1", detail.level)
         self.assertEqual("Feeling pleasure or satisfaction.", detail.description)
         self.assertEqual(["glad"], detail.synonyms)

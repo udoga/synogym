@@ -3,7 +3,7 @@ from importlib.resources import files
 from synogym.detail_parser import DetailParser
 from synogym.formatter import Formatter
 from synogym.gpt_model import GptModel
-from synogym.meaning import Meaning, DetailedMeaning
+from synogym.meaning import Meaning, MeaningWithDetail
 from synogym.meaning_parser import MeaningParser
 
 class Api:
@@ -19,10 +19,11 @@ class Api:
         response = self.model.respond(prompt)
         return self.meaning_parser.parse(response, query)
 
-    def get_detail(self, m: Meaning) -> DetailedMeaning:
+    def get_detail(self, m: Meaning) -> MeaningWithDetail:
         prompt = self.detail_formatter.format(asdict(m))
         response = self.model.respond(prompt)
-        return self.detail_parser.parse(response, m)
+        detail = self.detail_parser.parse(response)
+        return MeaningWithDetail(**asdict(m), detail=detail)
 
     def _read_file(self, file_name: str) -> str:
         return files("synogym").joinpath("resources", file_name).read_text()

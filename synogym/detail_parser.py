@@ -1,16 +1,14 @@
 from typing import Any
 import yaml
+from synogym.meaning import Detail
 from synogym.meaning import Example
-from synogym.meaning import DetailedMeaning
-from synogym.meaning import Meaning
 
 class DetailParser:
-    def parse(self, text: str, meaning: Meaning) -> DetailedMeaning:
+    def parse(self, text: str) -> Detail:
         data: Any = yaml.safe_load(text) or {}
         detail: dict[str, Any] = data.get("detail", {})
         examples = self.parse_examples(detail)
-        fields = self.parse_fields(detail)
-        return DetailedMeaning(**meaning.__dict__, examples=examples, **fields)
+        return Detail(examples=examples, **self.parse_fields(detail))
 
     def parse_fields(self, detail: dict[str, Any]) -> dict[str, Any]:
         keys = ["level", "description", "synonyms", "history", "related"]

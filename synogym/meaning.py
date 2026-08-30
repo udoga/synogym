@@ -1,21 +1,28 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 @dataclass
 class Example:
+    id: int | None = field(default=None, kw_only=True)
     sentence: str
     replacements: list[str]
 
 @dataclass
 class Meaning:
+    id: int | None = field(default=None, kw_only=True)
     query: str
     definition: str
     pos: str
 
 @dataclass
-class DetailedMeaning(Meaning):
+class Detail:
+    id: int | None = field(default=None, kw_only=True)
     level: str
     description: str
     synonyms: list[str]
     history: str
     related: list[str]
     examples: list[Example]
+
+@dataclass
+class MeaningWithDetail(Meaning):
+    detail: Detail

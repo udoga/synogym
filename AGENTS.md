@@ -11,3 +11,5 @@ English synonym finding game to improve recall and paraphrasing skills.
 - Add types in function declarations except None return.
 - Add variable type if the initialized value doesn't make it obvious.
 - Use no empty line between imports, and one empty line before classes.
+- Use less than 120 characters in each line.
+- Start private method names with underscore.

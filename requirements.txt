@@ -1,4 +1,0 @@
-openai
-pytest
-PyYAML
-Flask

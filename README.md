@@ -1,8 +1,7 @@
 ### Setup
 
 ```
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python main.py
+uv sync
+uv run pytest
+uv run python main.py
 ```

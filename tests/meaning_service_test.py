@@ -2,12 +2,12 @@ from unittest import TestCase
 from synogym.meaning import Detail, Meaning, MeaningWithDetail
 from synogym.meaning_service import MeaningService
 from synogym.mock_generator import MockGenerator
-from synogym.mock_repo import MockRepo
+from synogym.memory_repo import MemoryRepo
 
 class MeaningServiceTest(TestCase):
     def setUp(self):
         self.generator = MockGenerator()
-        self.repo = MockRepo()
+        self.repo = MemoryRepo()
         self.service = MeaningService(self.generator, self.repo)
 
     def test_no_meanings_when_repo_and_generator_has_no_result(self):

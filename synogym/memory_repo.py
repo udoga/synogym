@@ -2,7 +2,7 @@ from synogym.repo import Repo
 from synogym.meaning import Detail
 from synogym.meaning import Meaning
 
-class MockRepo(Repo):
+class MemoryRepo(Repo):
     def __init__(self):
         self.meanings: list[Meaning] = []
         self.details: list[Detail] = []

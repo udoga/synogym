@@ -1,7 +1,6 @@
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from synogym.generator import Generator
 from synogym.detail_parser import DetailParser
-from synogym.formatter import Formatter
 from synogym.gpt_model import GptModel
 from synogym.meaning import Detail, Meaning
 from synogym.meaning_parser import MeaningParser
@@ -44,19 +43,17 @@ Part of speech: {pos}
 
     def __init__(self):
         self.model = GptModel(model="gpt-5", reasoning_effort="minimal")
-        self.meaning_formatter = Formatter(self.MEANING_PROMPT)
-        self.detail_formatter = Formatter(self.DETAIL_PROMPT)
         self.meaning_parser = MeaningParser()
         self.detail_parser = DetailParser()
 
     def generate_meanings(self, query: str) -> list[Meaning]:
-        prompt = self.meaning_formatter.format({"query": query})
-        response = self.model.respond(prompt)
-        meanings = self.meaning_parser.parse(response)
-        for m in meanings: m.query = query
-        return meanings
+        prompt: str = self.MEANING_PROMPT.format(query=query)
+        response: str = self.model.respond(prompt)
+        meanings: list[Meaning] = self.meaning_parser.parse(response)
+        return [replace(meaning, query=query) for meaning in meanings]
 
     def generate_detail(self, meaning: Meaning) -> Detail:
-        prompt = self.detail_formatter.format(asdict(meaning))
-        response = self.model.respond(prompt)
-        return self.detail_parser.parse(response)
+        prompt: str = self.DETAIL_PROMPT.format(**asdict(meaning))
+        response: str = self.model.respond(prompt)
+        detail: Detail = self.detail_parser.parse(response)
+        return detail

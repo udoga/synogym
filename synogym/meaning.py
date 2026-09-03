@@ -20,7 +20,7 @@ class Detail:
     description: str
     synonyms: list[str]
     history: str
-    related: list[str]
+    formations: list[str]
     examples: list[Example]
 
 @dataclass

@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS detailed_meanings (
     description TEXT NOT NULL,
     synonyms TEXT NOT NULL DEFAULT '[]',
     history TEXT NOT NULL,
-    related TEXT NOT NULL DEFAULT '[]',
+    formations TEXT NOT NULL DEFAULT '[]',
     FOREIGN KEY (meaning_id) REFERENCES meanings(id) ON DELETE CASCADE
 );
 

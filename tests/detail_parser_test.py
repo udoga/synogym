@@ -11,7 +11,7 @@ detail:
   synonyms:
   - glad
   history: From Middle English hap.
-  related:
+  formations:
   - happiness
   examples:
   - sentence: She felt happy today.
@@ -28,6 +28,6 @@ detail:
         self.assertEqual("Feeling pleasure or satisfaction.", detail.description)
         self.assertEqual(["glad"], detail.synonyms)
         self.assertEqual("From Middle English hap.", detail.history)
-        self.assertEqual(["happiness"], detail.related)
+        self.assertEqual(["happiness"], detail.formations)
         self.assertEqual("She felt happy today.", detail.examples[0].sentence)
         self.assertEqual(["glad", "pleased"], detail.examples[0].replacements)

@@ -68,4 +68,4 @@ class MockRepoTest(TestCase):
 
     def create_detail(self, detail_id: int | None) -> Detail:
         return Detail(id=detail_id, level="A1", description="Feeling joy.", synonyms=[], history="",
-                      related=[], examples=[])
+                      formations=[], examples=[])

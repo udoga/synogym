@@ -11,7 +11,7 @@ class DetailParser:
         return Detail(examples=examples, **self.parse_fields(detail))
 
     def parse_fields(self, detail: dict[str, Any]) -> dict[str, Any]:
-        keys = ["level", "description", "synonyms", "history", "related"]
+        keys = ["level", "description", "synonyms", "history", "formations"]
         return {key: detail[key] for key in keys}
 
     def parse_examples(self, detail: dict[str, Any]) -> list[Example]:

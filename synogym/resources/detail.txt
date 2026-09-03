@@ -9,7 +9,7 @@ detail:
     - sentence: a clear and common usage example
       replacements: 2 best alternatives for the word in this context, each 1-2 words
   history: a brief paragraph of why it has this name or where it came from, Unknown if uncertain
-  related: words with the same root and similar meaning, up to 10, e.g. competitor, competence
+  formations: words with the same root and similar meaning, up to 10, e.g. competitor, competence
 
 Rules:
 - Only YAML, no markdown, no additional text, no quotation marks.

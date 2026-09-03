@@ -3,7 +3,7 @@ from synogym.generator import Generator
 from synogym.meaning import Detail, Meaning, MeaningWithDetail
 from synogym.repo import Repo
 
-class MeaningService:
+class CoreService:
     def __init__(self, generator: Generator, repo: Repo):
         self.generator = generator
         self.repo = repo

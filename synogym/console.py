@@ -1,8 +1,8 @@
 from pprint import pprint
-from synogym.meaning_service import MeaningService
+from synogym.core_service import CoreService
 
 class Console:
-    def __init__(self, service: MeaningService):
+    def __init__(self, service: CoreService):
         self.service = service
 
     def run(self):

@@ -1,24 +1,20 @@
 from typing import Any
-import yaml
+from synogym.yaml_parser import YamlParser
 from synogym.meaning import Detail
 from synogym.meaning import Example
 
-class DetailParser:
+class DetailParser(YamlParser):
     def parse(self, text: str) -> Detail:
-        data: Any = yaml.safe_load(text) or {}
-        detail: dict[str, Any] = data.get("detail", {})
-        examples = self.parse_examples(detail)
-        return Detail(examples=examples, **self.parse_fields(detail))
+        return self.parse_detail(self.parse_field(self.parse_yaml(text), "detail", dict))
 
-    def parse_fields(self, detail: dict[str, Any]) -> dict[str, Any]:
-        keys = ["level", "description", "synonyms", "history", "formations"]
-        return {key: detail[key] for key in keys}
+    def parse_detail(self, data: dict[str, Any]) -> Detail:
+        return Detail(level=self.parse_field(data, "level", str),
+                      description=self.parse_field(data, "description", str),
+                      synonyms=self.parse_field(data, "synonyms", list),
+                      history=self.parse_field(data, "history", str),
+                      formations=self.parse_field(data, "formations", list),
+                      examples=[self.parse_example(e) for e in self.parse_field(data, "examples", list)])
 
-    def parse_examples(self, detail: dict[str, Any]) -> list[Example]:
-        examples: list[dict[str, Any]] = detail.get("examples", [])
-        return [self.parse_example(example) for example in examples]
-
-    def parse_example(self, example: dict[str, Any]) -> Example:
-        sentence: str = example["sentence"]
-        replacements: list[str] = example["replacements"]
-        return Example(sentence=sentence, replacements=replacements)
+    def parse_example(self, data: dict[str, Any]) -> Example:
+        return Example(sentence=self.parse_field(data, "sentence", str),
+                       replacements=self.parse_field(data, "replacements", list))

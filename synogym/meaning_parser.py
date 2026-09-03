@@ -1,17 +1,13 @@
 from typing import Any
-import yaml
+from synogym.yaml_parser import YamlParser
 from synogym.meaning import Meaning
 
-class MeaningParser:
-    def parse(self, text: str, query: str) -> list[Meaning]:
-        data: Any = yaml.safe_load(text) or {}
-        meanings: list[Any] = data.get("meanings", []) if isinstance(data, dict) else []
-        return [meaning for item in meanings if (meaning := self.parse_meaning(item, query))]
+class MeaningParser(YamlParser):
+    def parse(self, text: str) -> list[Meaning]:
+        return [self.parse_meaning(item) for item in self.parse_field(self.parse_yaml(text), "meanings", list)]
 
-    def parse_meaning(self, data: Any, query: str) -> Meaning | None:
-        if not self.is_valid(data):
-            return None
-        return Meaning(query=query, definition=data["definition"], pos=data["pos"])
-
-    def is_valid(self, data: Any) -> bool:
-        return isinstance(data, dict) and isinstance(data.get("definition"), str) and isinstance(data.get("pos"), str)
+    def parse_meaning(self, data: Any) -> Meaning:
+        self.check_type(data, dict, "Invalid meaning")
+        return Meaning(query="",
+                       definition=self.parse_field(data, "definition", str),
+                       pos=self.parse_field(data, "pos", str))

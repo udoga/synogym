@@ -52,7 +52,9 @@ Part of speech: {pos}
     def generate_meanings(self, query: str) -> list[Meaning]:
         prompt = self.meaning_formatter.format({"query": query})
         response = self.model.respond(prompt)
-        return self.meaning_parser.parse(response, query)
+        meanings = self.meaning_parser.parse(response)
+        for m in meanings: m.query = query
+        return meanings
 
     def generate_detail(self, meaning: Meaning) -> Detail:
         prompt = self.detail_formatter.format(asdict(meaning))

@@ -22,6 +22,10 @@ class RestServer:
         detail = self.meaning_service.read_meaning_with_detail(meaning_id)
         return jsonify(asdict(detail))
 
+    def get_quotes(self, query: str) -> Response:
+        quotes = self.meaning_service.list_quotes(query)
+        return jsonify([asdict(quote) for quote in quotes])
+
     def _add_error_handlers(self):
         self.app.register_error_handler(ValueError, self._handle_value_error)
         self.app.register_error_handler(HTTPException, self._handle_http_error)
@@ -45,3 +49,4 @@ class RestServer:
     def _add_routes(self):
         self.app.add_url_rule("/meanings/<query>", view_func=self.get_meanings)
         self.app.add_url_rule("/details/<int:meaning_id>", view_func=self.get_detail)
+        self.app.add_url_rule("/quotes/<query>", view_func=self.get_quotes)

@@ -24,5 +24,11 @@ class Detail:
     examples: list[Example]
 
 @dataclass
+class Quote:
+    text: str
+    author: str
+    url: str
+
+@dataclass
 class MeaningWithDetail(Meaning):
     detail: Detail

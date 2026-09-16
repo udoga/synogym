@@ -1,5 +1,5 @@
 from unittest import TestCase
-from synogym.data_classes import Detail, Meaning, MeaningWithDetail
+from synogym.data_classes import Detail, Meaning, MeaningWithDetail, Quote
 from synogym.core_service import CoreService
 from synogym.memory_repo import MemoryRepo
 from synogym.mock_generator import MockGenerator
@@ -9,7 +9,8 @@ class MeaningServiceTest(TestCase):
         self.repo = MemoryRepo()
         self.meaning_generator = MockGenerator[str, list[Meaning]]([])
         self.detail_generator = MockGenerator[Meaning, Detail]()
-        self.service = CoreService(self.repo, self.meaning_generator, self.detail_generator)
+        self.quote_fetcher = MockGenerator[str, list[Quote]]([])
+        self.service = CoreService(self.repo, self.meaning_generator, self.detail_generator, self.quote_fetcher)
 
     def test_no_meanings_when_repo_and_generator_has_no_result(self):
         result = self.service.list_meanings("happy")
@@ -27,6 +28,11 @@ class MeaningServiceTest(TestCase):
         result = self.service.list_meanings("happy")
         self.assertEqual(meanings, result)
         self.assertEqual(meanings, self.repo.meanings)
+
+    def test_lists_quotes_from_generator(self):
+        quotes = [Quote(text="Be yourself", author="Oscar Wilde", url="https://example.com/quote")]
+        self.quote_fetcher.output = quotes
+        self.assertEqual(quotes, self.service.list_quotes("yourself"))
 
     def test_raises_error_when_repo_and_generator_has_no_detail(self):
         with self.assertRaises(ValueError):

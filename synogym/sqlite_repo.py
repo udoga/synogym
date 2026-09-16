@@ -34,31 +34,29 @@ class SqliteRepo(Repo):
 
     def create_meanings(self, meanings: list[Meaning]) -> list[Meaning]:
         for meaning in meanings:
-            meaning_values: tuple = (meaning.query, meaning.definition, meaning.pos)
-            cursor = self.connection.execute(self.INSERT_MEANING_SQL, meaning_values)
+            values: tuple = (meaning.query, meaning.definition, meaning.pos)
+            cursor = self.connection.execute(self.INSERT_MEANING_SQL, values)
             meaning.id = cursor.lastrowid
         self.connection.commit()
         return meanings
 
-    def read_meaning(self, meaning_id: int) -> Meaning:
+    def find_meaning(self, meaning_id: int) -> Meaning | None:
         cursor = self.connection.execute(self.READ_MEANING_SQL, (meaning_id,))
         row = cursor.fetchone()
-        if not row: raise ValueError("Meaning not found")
-        return self._get_meaning(row)
+        return self._get_meaning(row) if row else None
 
     def create_detail(self, d: Detail) -> Detail:
-        self.read_meaning(d.id)
-        detail_values = (d.id, d.level, d.description, json.dumps(d.synonyms), d.history, json.dumps(d.formations))
-        self.connection.execute(self.INSERT_DETAIL_SQL, detail_values)
+        values = (d.meaning_id, d.level, d.description, json.dumps(d.synonyms), d.history, json.dumps(d.formations))
+        self.connection.execute(self.INSERT_DETAIL_SQL, values)
         for example in d.examples:
-            self._create_example(d.id, example)
+            self._create_example(d.meaning_id, example)
         self.connection.commit()
         return d
 
-    def read_detail(self, detail_id: int) -> Detail:
+    def find_detail(self, detail_id: int) -> Detail | None:
         cursor = self.connection.execute(self.READ_DETAIL_SQL, (detail_id,))
         row = cursor.fetchone()
-        if not row: raise ValueError("Detail not found")
+        if not row: return None
         detail: Detail = self._get_detail(row)
         detail.examples = self._list_examples(row["meaning_id"])
         return detail
@@ -69,16 +67,16 @@ class SqliteRepo(Repo):
 
     def create_quotes(self, quotes: list[Quote]) -> list[Quote]:
         for quote in quotes:
-            quote_values: tuple = (quote.text, quote.author, quote.url)
-            cursor = self.connection.execute(self.INSERT_QUOTE_SQL, quote_values)
+            values: tuple = (quote.text, quote.author, quote.url)
+            cursor = self.connection.execute(self.INSERT_QUOTE_SQL, values)
             quote.id = cursor.lastrowid
         self.connection.commit()
         return quotes
 
     def _create_example(self, detail_id: int | None, example: Example) -> Example:
-        example_values: tuple = (detail_id, example.sentence, json.dumps(example.replacements))
-        cursor = self.connection.execute(self.INSERT_EXAMPLE_SQL, example_values)
-        example.id = cursor.lastrowid
+        values: tuple = (detail_id, example.sentence, json.dumps(example.replacements))
+        cursor = self.connection.execute(self.INSERT_EXAMPLE_SQL, values)
+        example.meaning_id = cursor.lastrowid
         return example
 
     def _list_examples(self, detail_id: int) -> list[Example]:
@@ -86,7 +84,7 @@ class SqliteRepo(Repo):
         return [self._get_example(row) for row in cursor.fetchall()]
 
     def _get_detail(self, row: Row) -> Detail:
-        return Detail(id=row["meaning_id"], level=row["level"], description=row["description"],
+        return Detail(meaning_id=row["meaning_id"], level=row["level"], description=row["description"],
                       synonyms=json.loads(row["synonyms"]), history=row["history"],
                       formations=json.loads(row["formations"]), examples=[])
 
@@ -94,7 +92,7 @@ class SqliteRepo(Repo):
         return Meaning(id=row["id"], query=row["query"], definition=row["definition"], pos=row["pos"])
 
     def _get_example(self, row: Row) -> Example:
-        return Example(id=row["id"], sentence=row["sentence"], replacements=json.loads(row["replacements"]))
+        return Example(meaning_id=row["id"], sentence=row["sentence"], replacements=json.loads(row["replacements"]))
 
     def _get_quote(self, row: Row) -> Quote:
         return Quote(id=row["id"], text=row["text"], author=row["author"], url=row["url"])

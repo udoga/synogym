@@ -1,12 +1,6 @@
 from dataclasses import dataclass, field
 
 @dataclass
-class Example:
-    id: int | None = field(default=None, kw_only=True)
-    sentence: str
-    replacements: list[str]
-
-@dataclass
 class Meaning:
     id: int | None = field(default=None, kw_only=True)
     query: str
@@ -14,8 +8,14 @@ class Meaning:
     pos: str
 
 @dataclass
+class Example:
+    meaning_id: int | None = field(default=None, kw_only=True)
+    sentence: str
+    replacements: list[str]
+
+@dataclass
 class Detail:
-    id: int | None = field(default=None, kw_only=True)
+    meaning_id: int | None = field(default=None, kw_only=True)
     level: str
     description: str
     synonyms: list[str]

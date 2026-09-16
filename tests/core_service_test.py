@@ -4,7 +4,7 @@ from synogym.core_service import CoreService
 from synogym.memory_repo import MemoryRepo
 from synogym.mock_generator import MockGenerator
 
-class MeaningServiceTest(TestCase):
+class CoreServiceTest(TestCase):
     def setUp(self):
         self.repo = MemoryRepo()
         self.meaning_generator = MockGenerator[str, list[Meaning]]([])
@@ -69,17 +69,10 @@ class MeaningServiceTest(TestCase):
         self.assertEqual(expected, self.service.read_meaning_with_detail(meaning.id))
         self.assertEqual([detail], self.repo.details)
 
-    def test_sets_meaning_id_on_generated_detail(self):
-        meaning = self.repo.create_meanings([Meaning(query="happy", definition="joyful", pos="adjective")])[0]
-        detail = self.create_detail(None)
-        self.detail_generator.output = detail
-        self.service.read_meaning_with_detail(meaning.id)
-        self.assertEqual(meaning.id, detail.id)
-
     def create_quotes(self, content: str, count: int) -> list[Quote]:
         return [Quote(text=f"{content} {number}", author="Oscar Wilde", url=f"https://example.com/{number}")
                 for number in range(count)]
 
     def create_detail(self, detail_id: int | None) -> Detail:
-        return Detail(id=detail_id, level="A1", description="Feeling joy.", synonyms=[], history="",
+        return Detail(meaning_id=detail_id, level="A1", description="Feeling joy.", synonyms=[], history="",
                       formations=[], examples=[])

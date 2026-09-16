@@ -16,24 +16,25 @@ class MemoryRepo(Repo):
             self.meanings.append(meaning)
         return meanings
 
-    def read_meaning(self, meaning_id: int) -> Meaning:
+    def find_meaning(self, meaning_id: int) -> Meaning | None:
         for meaning in self.meanings:
             if meaning.id == meaning_id:
                 return meaning
-        raise ValueError("Meaning not found")
+        return None
 
     def create_detail(self, detail: Detail) -> Detail:
-        self.read_meaning(detail.id)
-        if any(d.id == detail.id for d in self.details):
+        if not self.find_meaning(detail.meaning_id):
+            raise ValueError("Meaning not found")
+        if any(d.meaning_id == detail.meaning_id for d in self.details):
             raise ValueError("Detail already exists")
         self.details.append(detail)
         return detail
 
-    def read_detail(self, detail_id: int) -> Detail:
+    def find_detail(self, detail_id: int) -> Detail | None:
         for detail in self.details:
-            if detail.id == detail_id:
+            if detail.meaning_id == detail_id:
                 return detail
-        raise ValueError("Detail not found")
+        return None
 
     def list_quotes_by_query(self, query: str) -> list[Quote]:
         return [quote for quote in self.quotes if query.lower() in quote.text.lower()]

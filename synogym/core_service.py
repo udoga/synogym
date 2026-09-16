@@ -16,24 +16,14 @@ class CoreService:
 
     def list_meanings_by_query(self, query: str) -> list[Meaning]:
         meanings = self.repo.list_meanings_by_query(query)
-        return meanings if meanings else self.repo.create_meanings(self.meaning_generator.generate(query))
+        return meanings or self.repo.create_meanings(self.meaning_generator.generate(query))
 
     def read_meaning_with_detail(self, meaning_id: int) -> MeaningWithDetail:
-        meaning = self.repo.read_meaning(meaning_id)
-        detail = self._read_or_create_detail(meaning)
+        meaning = self.repo.find_meaning(meaning_id)
+        if not meaning: raise ValueError("Meaning not found")
+        detail = self.repo.find_detail(meaning_id) or self.repo.create_detail(self.detail_generator.generate(meaning))
         return MeaningWithDetail(**asdict(meaning), detail=detail)
 
     def list_quotes_by_query(self, query: str) -> list[Quote]:
         quotes = self.repo.list_quotes_by_query(query)
         return quotes if len(quotes) >= 10 else self.repo.create_quotes(self.quote_generator.generate(query))
-
-    def _read_or_create_detail(self, meaning: Meaning) -> Detail:
-        try:
-            return self.repo.read_detail(meaning.id)
-        except ValueError:
-            return self._create_detail(meaning)
-
-    def _create_detail(self, meaning: Meaning) -> Detail:
-        detail = self.detail_generator.generate(meaning)
-        detail.id = meaning.id
-        return self.repo.create_detail(detail)

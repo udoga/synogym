@@ -11,7 +11,7 @@ class Repo(ABC):
         pass
 
     @abstractmethod
-    def read_meaning(self, meaning_id: int) -> Meaning:
+    def find_meaning(self, meaning_id: int) -> Meaning | None:
         pass
 
     @abstractmethod
@@ -19,7 +19,7 @@ class Repo(ABC):
         pass
 
     @abstractmethod
-    def read_detail(self, detail_id: int) -> Detail:
+    def find_detail(self, detail_id: int) -> Detail | None:
         pass
 
     @abstractmethod

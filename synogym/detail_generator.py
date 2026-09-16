@@ -33,4 +33,5 @@ Part of speech: {pos}
         prompt: str = self.PROMPT.format(**asdict(meaning))
         response: str = self.model.generate(prompt)
         detail: Detail = self.parser.parse(response)
+        detail.meaning_id = meaning.id
         return detail

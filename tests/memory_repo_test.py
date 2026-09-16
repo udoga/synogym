@@ -51,25 +51,25 @@ class MemoryRepoTest(TestCase):
     def test_reads_meaning(self):
         repo = MemoryRepo()
         meaning = repo.create_meanings([Meaning(query="happy", definition="joyful", pos="adjective")])[0]
-        self.assertEqual(meaning, repo.read_meaning(meaning.id))
+        self.assertEqual(meaning, repo.find_meaning(meaning.id))
 
-    def test_read_meaning_rejects_missing_meaning(self):
+    def test_find_meaning_returns_none_if_missing(self):
         repo = MemoryRepo()
-        with self.assertRaises(ValueError):
-            repo.read_meaning(1)
+        meaning = repo.find_meaning(1)
+        self.assertIsNone(meaning)
 
-    def test_read_detail_returns_matching_detail(self):
+    def test_find_detail_returns_matching_detail(self):
         repo = MemoryRepo()
         meaning = repo.create_meanings([Meaning(query="happy", definition="joyful", pos="adjective")])[0]
         detail = self.create_detail(meaning.id)
         repo.create_detail(detail)
-        self.assertEqual(detail, repo.read_detail(meaning.id))
+        self.assertEqual(detail, repo.find_detail(meaning.id))
 
-    def test_read_detail_rejects_missing_detail(self):
+    def test_find_detail_returns_none_if_missing(self):
         repo = MemoryRepo()
-        with self.assertRaises(ValueError):
-            repo.read_detail(1)
+        detail = repo.find_detail(1)
+        self.assertIsNone(detail)
 
     def create_detail(self, detail_id: int | None) -> Detail:
-        return Detail(id=detail_id, level="A1", description="Feeling joy.", synonyms=[], history="",
+        return Detail(meaning_id=detail_id, level="A1", description="Feeling joy.", synonyms=[], history="",
                       formations=[], examples=[])

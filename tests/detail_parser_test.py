@@ -35,7 +35,7 @@ detail:
     - pleased
 """)
         self.assertIsInstance(detail, Detail)
-        self.assertIsNone(detail.id)
+        self.assertIsNone(detail.meaning_id)
         self.assertEqual("A1", detail.level)
         self.assertEqual("Feeling pleasure or satisfaction.", detail.description)
         self.assertEqual(["glad"], detail.synonyms)

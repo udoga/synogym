@@ -12,14 +12,15 @@ class SqliteRepoTest(TestCase):
         meaning = repo.create_meanings([Meaning(query="happy", definition="joyful", pos="adjective")])[0]
         repo.create_meanings([Meaning(query="sad", definition="unhappy", pos="adjective")])
         self.assertEqual([meaning], repo.list_meanings_by_query("happy"))
-        self.assertEqual(meaning, repo.read_meaning(meaning.id))
+        self.assertEqual(meaning, repo.find_meaning(meaning.id))
 
     def test_detail_operations(self):
         repo = SqliteRepo(":memory:", self.schema_sql_path)
         meaning = repo.create_meanings([Meaning(query="happy", definition="joyful", pos="adjective")])[0]
         detail = self.create_detail(meaning.id)
         self.assertEqual(detail, repo.create_detail(detail))
-        self.assertEqual(detail, repo.read_detail(detail.id))
+        self.assertEqual(detail, repo.find_detail(detail.meaning_id))
+        self.assertIsNone(repo.find_detail(123))
 
     def test_quote_operations(self):
         repo = SqliteRepo(":memory:", self.schema_sql_path)
@@ -29,5 +30,5 @@ class SqliteRepoTest(TestCase):
 
     def create_detail(self, detail_id: int | None) -> Detail:
         example = Example(sentence="She is happy.", replacements=["glad", "cheerful"])
-        return Detail(id=detail_id, level="A1", description="Feeling joy.", synonyms=["glad"],
+        return Detail(meaning_id=detail_id, level="A1", description="Feeling joy.", synonyms=["glad"],
                       history="Old English.", formations=["happiness"], examples=[example])

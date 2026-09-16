@@ -5,7 +5,6 @@ from synogym.meaning_generator import MeaningGenerator
 from synogym.gpt_model import GptModel
 from synogym.quote_fetcher import QuoteFetcher
 from synogym.rest_server import RestServer
-from synogym.console import Console
 from synogym.sqlite_repo import SqliteRepo
 
 if __name__ == "__main__":
@@ -16,5 +15,4 @@ if __name__ == "__main__":
     quote_fetcher = QuoteFetcher()
     core_service = CoreService(repo, meaning_generator, detail_generator, quote_fetcher)
     rest_server = RestServer(core_service)
-    console = Console(core_service)
     rest_server.run(port=8080)

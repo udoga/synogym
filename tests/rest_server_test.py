@@ -3,13 +3,13 @@ from synogym.data_classes import Meaning, MeaningWithDetail, Quote
 from synogym.rest_server import RestServer
 
 class MockCoreService:
-    def list_meanings(self, query: str) -> list[Meaning]:
+    def list_meanings_by_query(self, query: str) -> list[Meaning]:
         raise ValueError("Meaning not found")
 
     def read_meaning_with_detail(self, meaning_id: int) -> MeaningWithDetail:
         raise ValueError("Meaning not found")
 
-    def list_quotes(self, query: str) -> list[Quote]:
+    def list_quotes_by_query(self, query: str) -> list[Quote]:
         return [Quote(text="Be yourself", author="Oscar Wilde", url="https://example.com/quote")]
 
 class RestServerTest(TestCase):

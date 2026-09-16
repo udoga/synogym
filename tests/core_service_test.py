@@ -13,37 +13,36 @@ class MeaningServiceTest(TestCase):
         self.service = CoreService(self.repo, self.meaning_generator, self.detail_generator, self.quote_fetcher)
 
     def test_no_meanings_when_repo_and_generator_has_no_result(self):
-        result = self.service.list_meanings("happy")
+        result = self.service.list_meanings_by_query("happy")
         self.assertEqual([], result)
 
     def test_lists_meanings_when_repo_has_it(self):
-        meaning = self.repo.create_meaning(Meaning(query="happy", definition="joyful", pos="adjective"))
-        result = self.service.list_meanings("happy")
+        meaning = self.repo.create_meanings([Meaning(query="happy", definition="joyful", pos="adjective")])[0]
+        result = self.service.list_meanings_by_query("happy")
         self.assertEqual([meaning], result)
 
     def test_generates_and_saves_meanings_when_repo_has_no_matches(self):
         meanings = [Meaning(query="happy", definition="joyful", pos="adjective"),
                     Meaning(query="happy", definition="pleased", pos="adjective")]
         self.meaning_generator.output = meanings
-        result = self.service.list_meanings("happy")
+        result = self.service.list_meanings_by_query("happy")
         self.assertEqual(meanings, result)
         self.assertEqual(meanings, self.repo.meanings)
 
     def test_returns_quotes_from_repo_when_repo_has_ten(self):
         quotes = self.create_quotes("Be yourself", 10)
-        for quote in quotes:
-            self.repo.create_quote(quote)
-        self.assertEqual(quotes, self.service.list_quotes("yourself"))
+        self.repo.create_quotes(quotes)
+        self.assertEqual(quotes, self.service.list_quotes_by_query("yourself"))
 
     def test_lists_generated_quotes_when_repo_has_one(self):
-        self.repo.create_quote(self.create_quotes("Be yourself", 1)[0])
+        self.repo.create_quotes(self.create_quotes("Be yourself", 1))
         self.quote_fetcher.output = self.create_quotes("Generated yourself", 10)
-        self.assertEqual(self.quote_fetcher.output, self.service.list_quotes("yourself"))
+        self.assertEqual(self.quote_fetcher.output, self.service.list_quotes_by_query("yourself"))
 
     def test_lists_quotes_from_generator(self):
         quotes = [Quote(text="Be yourself", author="Oscar Wilde", url="https://example.com/quote")]
         self.quote_fetcher.output = quotes
-        self.assertEqual(quotes, self.service.list_quotes("yourself"))
+        self.assertEqual(quotes, self.service.list_quotes_by_query("yourself"))
         self.assertEqual(quotes, self.repo.list_quotes_by_query("yourself"))
 
     def test_raises_error_when_repo_and_generator_has_no_detail(self):
@@ -56,14 +55,14 @@ class MeaningServiceTest(TestCase):
             self.service.read_meaning_with_detail(1)
 
     def test_reads_meaning_with_detail_when_it_exists_in_repo(self):
-        meaning = self.repo.create_meaning(Meaning(query="happy", definition="joyful", pos="adjective"))
+        meaning = self.repo.create_meanings([Meaning(query="happy", definition="joyful", pos="adjective")])[0]
         detail = self.create_detail(meaning.id)
         self.repo.create_detail(detail)
         expected = MeaningWithDetail(id=meaning.id, query="happy", definition="joyful", pos="adjective", detail=detail)
         self.assertEqual(expected, self.service.read_meaning_with_detail(meaning.id))
 
     def test_saves_detail_from_generator_when_repo_only_has_meaning(self):
-        meaning = self.repo.create_meaning(Meaning(query="happy", definition="joyful", pos="adjective"))
+        meaning = self.repo.create_meanings([Meaning(query="happy", definition="joyful", pos="adjective")])[0]
         detail = self.create_detail(meaning.id)
         self.detail_generator.output = detail
         expected = MeaningWithDetail(id=meaning.id, query="happy", definition="joyful", pos="adjective", detail=detail)
@@ -71,7 +70,7 @@ class MeaningServiceTest(TestCase):
         self.assertEqual([detail], self.repo.details)
 
     def test_sets_meaning_id_on_generated_detail(self):
-        meaning = self.repo.create_meaning(Meaning(query="happy", definition="joyful", pos="adjective"))
+        meaning = self.repo.create_meanings([Meaning(query="happy", definition="joyful", pos="adjective")])[0]
         detail = self.create_detail(None)
         self.detail_generator.output = detail
         self.service.read_meaning_with_detail(meaning.id)

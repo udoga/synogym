@@ -14,22 +14,18 @@ class CoreService:
         self.detail_generator = detail_generator
         self.quote_generator = quote_generator
 
-    def list_meanings(self, query: str) -> list[Meaning]:
+    def list_meanings_by_query(self, query: str) -> list[Meaning]:
         meanings = self.repo.list_meanings_by_query(query)
-        if meanings:
-            return meanings
-        return [self.repo.create_meaning(meaning) for meaning in self.meaning_generator.generate(query)]
+        return meanings if meanings else self.repo.create_meanings(self.meaning_generator.generate(query))
 
     def read_meaning_with_detail(self, meaning_id: int) -> MeaningWithDetail:
         meaning = self.repo.read_meaning(meaning_id)
         detail = self._read_or_create_detail(meaning)
         return MeaningWithDetail(**asdict(meaning), detail=detail)
 
-    def list_quotes(self, query: str) -> list[Quote]:
+    def list_quotes_by_query(self, query: str) -> list[Quote]:
         quotes = self.repo.list_quotes_by_query(query)
-        if len(quotes) >= 10:
-            return quotes
-        return [self.repo.create_quote(quote) for quote in self.quote_generator.generate(query)]
+        return quotes if len(quotes) >= 10 else self.repo.create_quotes(self.quote_generator.generate(query))
 
     def _read_or_create_detail(self, meaning: Meaning) -> Detail:
         try:

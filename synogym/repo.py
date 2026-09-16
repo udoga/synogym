@@ -7,11 +7,11 @@ class Repo(ABC):
         pass
 
     @abstractmethod
-    def create_meaning(self, meaning: Meaning) -> Meaning:
+    def create_meanings(self, meanings: list[Meaning]) -> list[Meaning]:
         pass
 
     @abstractmethod
-    def read_meaning(self, meaning_id: int | None) -> Meaning:
+    def read_meaning(self, meaning_id: int) -> Meaning:
         pass
 
     @abstractmethod
@@ -19,7 +19,7 @@ class Repo(ABC):
         pass
 
     @abstractmethod
-    def read_detail(self, detail_id: int | None) -> Detail:
+    def read_detail(self, detail_id: int) -> Detail:
         pass
 
     @abstractmethod
@@ -27,5 +27,5 @@ class Repo(ABC):
         pass
 
     @abstractmethod
-    def create_quote(self, quote: Quote) -> Quote:
+    def create_quotes(self, quotes: list[Quote]) -> list[Quote]:
         pass

@@ -9,22 +9,22 @@ class SqliteRepoTest(TestCase):
 
     def test_meaning_operations(self):
         repo = SqliteRepo(":memory:", self.schema_sql_path)
-        meaning = repo.create_meaning(Meaning(query="happy", definition="joyful", pos="adjective"))
-        repo.create_meaning(Meaning(query="sad", definition="unhappy", pos="adjective"))
+        meaning = repo.create_meanings([Meaning(query="happy", definition="joyful", pos="adjective")])[0]
+        repo.create_meanings([Meaning(query="sad", definition="unhappy", pos="adjective")])
         self.assertEqual([meaning], repo.list_meanings_by_query("happy"))
         self.assertEqual(meaning, repo.read_meaning(meaning.id))
 
     def test_detail_operations(self):
         repo = SqliteRepo(":memory:", self.schema_sql_path)
-        meaning = repo.create_meaning(Meaning(query="happy", definition="joyful", pos="adjective"))
+        meaning = repo.create_meanings([Meaning(query="happy", definition="joyful", pos="adjective")])[0]
         detail = self.create_detail(meaning.id)
         self.assertEqual(detail, repo.create_detail(detail))
         self.assertEqual(detail, repo.read_detail(detail.id))
 
     def test_quote_operations(self):
         repo = SqliteRepo(":memory:", self.schema_sql_path)
-        quote = repo.create_quote(Quote(text="Be happy.", author="Unknown", url="https://example.com"))
-        repo.create_quote(Quote(text="Be sad.", author="Unknown", url="https://example.com/sad"))
+        quote = repo.create_quotes([Quote(text="Be happy.", author="Unknown", url="https://example.com")])[0]
+        repo.create_quotes([Quote(text="Be sad.", author="Unknown", url="https://example.com/sad")])
         self.assertEqual([quote], repo.list_quotes_by_query("happy"))
 
     def create_detail(self, detail_id: int | None) -> Detail:

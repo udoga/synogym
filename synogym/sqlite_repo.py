@@ -32,14 +32,15 @@ class SqliteRepo(Repo):
         cursor = self.connection.execute(self.LIST_MEANINGS_SQL, (query,))
         return [self._get_meaning(row) for row in cursor.fetchall()]
 
-    def create_meaning(self, meaning: Meaning) -> Meaning:
-        meaning_values: tuple = (meaning.query, meaning.definition, meaning.pos)
-        cursor = self.connection.execute(self.INSERT_MEANING_SQL, meaning_values)
+    def create_meanings(self, meanings: list[Meaning]) -> list[Meaning]:
+        for meaning in meanings:
+            meaning_values: tuple = (meaning.query, meaning.definition, meaning.pos)
+            cursor = self.connection.execute(self.INSERT_MEANING_SQL, meaning_values)
+            meaning.id = cursor.lastrowid
         self.connection.commit()
-        meaning.id = cursor.lastrowid
-        return meaning
+        return meanings
 
-    def read_meaning(self, meaning_id: int | None) -> Meaning:
+    def read_meaning(self, meaning_id: int) -> Meaning:
         cursor = self.connection.execute(self.READ_MEANING_SQL, (meaning_id,))
         row = cursor.fetchone()
         if not row: raise ValueError("Meaning not found")
@@ -54,7 +55,7 @@ class SqliteRepo(Repo):
         self.connection.commit()
         return d
 
-    def read_detail(self, detail_id: int | None) -> Detail:
+    def read_detail(self, detail_id: int) -> Detail:
         cursor = self.connection.execute(self.READ_DETAIL_SQL, (detail_id,))
         row = cursor.fetchone()
         if not row: raise ValueError("Detail not found")
@@ -66,12 +67,13 @@ class SqliteRepo(Repo):
         cursor = self.connection.execute(self.LIST_QUOTES_SQL, (f"%{query.lower()}%",))
         return [self._get_quote(row) for row in cursor.fetchall()]
 
-    def create_quote(self, quote: Quote) -> Quote:
-        quote_values: tuple = (quote.text, quote.author, quote.url)
-        cursor = self.connection.execute(self.INSERT_QUOTE_SQL, quote_values)
+    def create_quotes(self, quotes: list[Quote]) -> list[Quote]:
+        for quote in quotes:
+            quote_values: tuple = (quote.text, quote.author, quote.url)
+            cursor = self.connection.execute(self.INSERT_QUOTE_SQL, quote_values)
+            quote.id = cursor.lastrowid
         self.connection.commit()
-        quote.id = cursor.lastrowid
-        return quote
+        return quotes
 
     def _create_example(self, detail_id: int | None, example: Example) -> Example:
         example_values: tuple = (detail_id, example.sentence, json.dumps(example.replacements))

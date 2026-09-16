@@ -4,8 +4,8 @@ from werkzeug.exceptions import HTTPException
 from synogym.core_service import CoreService
 
 class RestServer:
-    def __init__(self, meaning_service: CoreService):
-        self.meaning_service = meaning_service
+    def __init__(self, core_service: CoreService):
+        self.core_service = core_service
         self.app = Flask(__name__)
         self.app.json.sort_keys = False
         self._add_error_handlers()
@@ -15,15 +15,15 @@ class RestServer:
         self.app.run(port=port)
 
     def get_meanings(self, query: str) -> Response:
-        meanings = self.meaning_service.list_meanings(query)
+        meanings = self.core_service.list_meanings_by_query(query)
         return jsonify([asdict(meaning) for meaning in meanings])
 
     def get_detail(self, meaning_id: int) -> Response:
-        detail = self.meaning_service.read_meaning_with_detail(meaning_id)
+        detail = self.core_service.read_meaning_with_detail(meaning_id)
         return jsonify(asdict(detail))
 
     def get_quotes(self, query: str) -> Response:
-        quotes = self.meaning_service.list_quotes(query)
+        quotes = self.core_service.list_quotes_by_query(query)
         return jsonify([asdict(quote) for quote in quotes])
 
     def _add_error_handlers(self):

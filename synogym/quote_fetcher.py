@@ -15,7 +15,7 @@ class QuoteFetcher(Generator[str, list[Quote]]):
     }
 
     def generate(self, query: str) -> list[Quote]:
-        return self.fetch(query)[:10]
+        return self.fetch(query)
 
     def fetch(self, query: str) -> list[Quote]:
         html = self._fetch_html(self._make_url(query))

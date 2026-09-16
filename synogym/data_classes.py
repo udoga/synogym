@@ -25,6 +25,7 @@ class Detail:
 
 @dataclass
 class Quote:
+    id: int | None = field(default=None, kw_only=True)
     text: str
     author: str
     url: str

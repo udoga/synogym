@@ -48,5 +48,5 @@ class RestServer:
 
     def _add_routes(self):
         self.app.add_url_rule("/meanings/<query>", view_func=self.get_meanings)
-        self.app.add_url_rule("/details/<int:meaning_id>", view_func=self.get_detail)
+        self.app.add_url_rule("/meanings/<int:meaning_id>", view_func=self.get_detail)
         self.app.add_url_rule("/quotes/<query>", view_func=self.get_quotes)

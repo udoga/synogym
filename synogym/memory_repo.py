@@ -1,10 +1,11 @@
 from synogym.repo import Repo
-from synogym.data_classes import Detail, Meaning
+from synogym.data_classes import Detail, Meaning, Quote
 
 class MemoryRepo(Repo):
     def __init__(self):
         self.meanings: list[Meaning] = []
         self.details: list[Detail] = []
+        self.quotes: list[Quote] = []
 
     def list_meanings_by_query(self, query: str) -> list[Meaning]:
         return [meaning for meaning in self.meanings if meaning.query == query]
@@ -32,3 +33,11 @@ class MemoryRepo(Repo):
             if detail.id == detail_id:
                 return detail
         raise ValueError("Detail not found")
+
+    def list_quotes_by_query(self, query: str) -> list[Quote]:
+        return [quote for quote in self.quotes if query.lower() in quote.text.lower()]
+
+    def create_quote(self, quote: Quote) -> Quote:
+        quote.id = len(self.quotes) + 1
+        self.quotes.append(quote)
+        return quote

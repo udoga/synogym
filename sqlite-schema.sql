@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS meanings (
     UNIQUE (query, definition, pos)
 );
 
-CREATE TABLE IF NOT EXISTS detailed_meanings (
+CREATE TABLE IF NOT EXISTS meaning_details (
     meaning_id INTEGER PRIMARY KEY,
     level TEXT NOT NULL,
     description TEXT NOT NULL,
@@ -24,6 +24,14 @@ CREATE TABLE IF NOT EXISTS examples (
     sentence TEXT NOT NULL,
     replacements TEXT NOT NULL DEFAULT '[]',
     FOREIGN KEY (meaning_id) REFERENCES meanings(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS quotes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    text TEXT NOT NULL,
+    author TEXT NOT NULL,
+    url TEXT NOT NULL,
+    UNIQUE (text, author, url)
 );
 
 CREATE INDEX IF NOT EXISTS idx_meanings_query ON meanings(query);

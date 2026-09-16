@@ -1,8 +1,8 @@
 from unittest import TestCase
-from synogym.data_classes import Detail, Meaning
+from synogym.data_classes import Detail, Meaning, Quote
 from synogym.memory_repo import MemoryRepo
 
-class MockRepoTest(TestCase):
+class MemoryRepoTest(TestCase):
     def test_creates_meaning(self):
         repo = MemoryRepo()
         meaning = Meaning(query="happy", definition="joyful", pos="adjective")
@@ -22,6 +22,12 @@ class MockRepoTest(TestCase):
         happy = repo.create_meaning(Meaning(query="happy", definition="joyful", pos="adjective"))
         repo.create_meaning(Meaning(query="sad", definition="unhappy", pos="adjective"))
         self.assertEqual([happy], repo.list_meanings_by_query("happy"))
+
+    def test_lists_quotes_by_query(self):
+        repo = MemoryRepo()
+        quote = repo.create_quote(Quote(text="Be happy.", author="Unknown", url="https://example.com"))
+        repo.create_quote(Quote(text="Be sad.", author="Unknown", url="https://example.com/sad"))
+        self.assertEqual([quote], repo.list_quotes_by_query("happy"))
 
     def test_creates_detail_when_meaning_exists(self):
         repo = MemoryRepo()

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from synogym.data_classes import Detail, Meaning
+from synogym.data_classes import Detail, Meaning, Quote
 
 class Repo(ABC):
     @abstractmethod
@@ -20,4 +20,12 @@ class Repo(ABC):
 
     @abstractmethod
     def read_detail(self, detail_id: int | None) -> Detail:
+        pass
+
+    @abstractmethod
+    def list_quotes_by_query(self, query: str) -> list[Quote]:
+        pass
+
+    @abstractmethod
+    def create_quote(self, quote: Quote) -> Quote:
         pass

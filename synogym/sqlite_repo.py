@@ -2,18 +2,20 @@ import json
 import sqlite3
 from sqlite3 import Row
 from pathlib import Path
-from synogym.data_classes import Detail, Example, Meaning
+from synogym.data_classes import Detail, Example, Meaning, Quote
 from synogym.repo import Repo
 
 class SqliteRepo(Repo):
     LIST_MEANINGS_SQL = "SELECT * FROM meanings WHERE query = ? ORDER BY id"
     READ_MEANING_SQL = "SELECT * FROM meanings WHERE id = ?"
-    READ_DETAIL_SQL = "SELECT * FROM detailed_meanings WHERE meaning_id = ?"
+    READ_DETAIL_SQL = "SELECT * FROM meaning_details WHERE meaning_id = ?"
     LIST_EXAMPLES_SQL = "SELECT * FROM examples WHERE meaning_id = ? ORDER BY id"
+    LIST_QUOTES_SQL = "SELECT * FROM quotes WHERE LOWER(text) LIKE ? ORDER BY id"
     INSERT_MEANING_SQL = "INSERT INTO meanings (query, definition, pos) VALUES (?, ?, ?)"
-    INSERT_DETAIL_SQL = "INSERT INTO detailed_meanings (meaning_id, level, description, synonyms, history, formations) " \
+    INSERT_DETAIL_SQL = "INSERT INTO meaning_details (meaning_id, level, description, synonyms, history, formations) " \
                         "VALUES (?, ?, ?, ?, ?, ?)"
     INSERT_EXAMPLE_SQL = "INSERT INTO examples (meaning_id, sentence, replacements) VALUES (?, ?, ?)"
+    INSERT_QUOTE_SQL = "INSERT INTO quotes (text, author, url) VALUES (?, ?, ?)"
 
     def __init__(self, database_path: str, schema_sql_path: str):
         self.connection = sqlite3.connect(database_path, check_same_thread=False)
@@ -60,6 +62,17 @@ class SqliteRepo(Repo):
         detail.examples = self._list_examples(row["meaning_id"])
         return detail
 
+    def list_quotes_by_query(self, query: str) -> list[Quote]:
+        cursor = self.connection.execute(self.LIST_QUOTES_SQL, (f"%{query.lower()}%",))
+        return [self._get_quote(row) for row in cursor.fetchall()]
+
+    def create_quote(self, quote: Quote) -> Quote:
+        quote_values: tuple = (quote.text, quote.author, quote.url)
+        cursor = self.connection.execute(self.INSERT_QUOTE_SQL, quote_values)
+        self.connection.commit()
+        quote.id = cursor.lastrowid
+        return quote
+
     def _create_example(self, detail_id: int | None, example: Example) -> Example:
         example_values: tuple = (detail_id, example.sentence, json.dumps(example.replacements))
         cursor = self.connection.execute(self.INSERT_EXAMPLE_SQL, example_values)
@@ -80,3 +93,6 @@ class SqliteRepo(Repo):
 
     def _get_example(self, row: Row) -> Example:
         return Example(id=row["id"], sentence=row["sentence"], replacements=json.loads(row["replacements"]))
+
+    def _get_quote(self, row: Row) -> Quote:
+        return Quote(id=row["id"], text=row["text"], author=row["author"], url=row["url"])

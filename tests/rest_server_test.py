@@ -25,6 +25,6 @@ class RestServerTest(TestCase):
 
     def test_returns_quotes(self):
         response = self.client.get("/quotes/happy")
-        expected = [{"text": "Be yourself", "author": "Oscar Wilde", "url": "https://example.com/quote"}]
+        expected = [{"id": None, "text": "Be yourself", "author": "Oscar Wilde", "url": "https://example.com/quote"}]
         self.assertEqual(200, response.status_code)
         self.assertEqual(expected, response.get_json())

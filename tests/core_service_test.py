@@ -29,10 +29,22 @@ class MeaningServiceTest(TestCase):
         self.assertEqual(meanings, result)
         self.assertEqual(meanings, self.repo.meanings)
 
+    def test_returns_quotes_from_repo_when_repo_has_ten(self):
+        quotes = self.create_quotes("Be yourself", 10)
+        for quote in quotes:
+            self.repo.create_quote(quote)
+        self.assertEqual(quotes, self.service.list_quotes("yourself"))
+
+    def test_lists_generated_quotes_when_repo_has_one(self):
+        self.repo.create_quote(self.create_quotes("Be yourself", 1)[0])
+        self.quote_fetcher.output = self.create_quotes("Generated yourself", 10)
+        self.assertEqual(self.quote_fetcher.output, self.service.list_quotes("yourself"))
+
     def test_lists_quotes_from_generator(self):
         quotes = [Quote(text="Be yourself", author="Oscar Wilde", url="https://example.com/quote")]
         self.quote_fetcher.output = quotes
         self.assertEqual(quotes, self.service.list_quotes("yourself"))
+        self.assertEqual(quotes, self.repo.list_quotes_by_query("yourself"))
 
     def test_raises_error_when_repo_and_generator_has_no_detail(self):
         with self.assertRaises(ValueError):
@@ -64,6 +76,10 @@ class MeaningServiceTest(TestCase):
         self.detail_generator.output = detail
         self.service.read_meaning_with_detail(meaning.id)
         self.assertEqual(meaning.id, detail.id)
+
+    def create_quotes(self, content: str, count: int) -> list[Quote]:
+        return [Quote(text=f"{content} {number}", author="Oscar Wilde", url=f"https://example.com/{number}")
+                for number in range(count)]
 
     def create_detail(self, detail_id: int | None) -> Detail:
         return Detail(id=detail_id, level="A1", description="Feeling joy.", synonyms=[], history="",

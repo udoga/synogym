@@ -26,7 +26,10 @@ class CoreService:
         return MeaningWithDetail(**asdict(meaning), detail=detail)
 
     def list_quotes(self, query: str) -> list[Quote]:
-        return self.quote_generator.generate(query)
+        quotes = self.repo.list_quotes_by_query(query)
+        if len(quotes) >= 10:
+            return quotes
+        return [self.repo.create_quote(quote) for quote in self.quote_generator.generate(query)]
 
     def _read_or_create_detail(self, meaning: Meaning) -> Detail:
         try:

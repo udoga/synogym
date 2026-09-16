@@ -1,14 +1,15 @@
 from unittest import TestCase
-from synogym.meaning import Detail, Meaning, MeaningWithDetail
+from synogym.data_classes import Detail, Meaning, MeaningWithDetail
 from synogym.core_service import CoreService
-from synogym.mock_generator import MockGenerator
 from synogym.memory_repo import MemoryRepo
+from synogym.mock_generator import MockGenerator
 
 class MeaningServiceTest(TestCase):
     def setUp(self):
-        self.generator = MockGenerator()
         self.repo = MemoryRepo()
-        self.service = CoreService(self.generator, self.repo)
+        self.meaning_generator = MockGenerator[str, list[Meaning]]([])
+        self.detail_generator = MockGenerator[Meaning, Detail]()
+        self.service = CoreService(self.repo, self.meaning_generator, self.detail_generator)
 
     def test_no_meanings_when_repo_and_generator_has_no_result(self):
         result = self.service.list_meanings("happy")
@@ -22,7 +23,7 @@ class MeaningServiceTest(TestCase):
     def test_generates_and_saves_meanings_when_repo_has_no_matches(self):
         meanings = [Meaning(query="happy", definition="joyful", pos="adjective"),
                     Meaning(query="happy", definition="pleased", pos="adjective")]
-        self.generator.meanings = meanings
+        self.meaning_generator.output = meanings
         result = self.service.list_meanings("happy")
         self.assertEqual(meanings, result)
         self.assertEqual(meanings, self.repo.meanings)
@@ -43,10 +44,10 @@ class MeaningServiceTest(TestCase):
         expected = MeaningWithDetail(id=meaning.id, query="happy", definition="joyful", pos="adjective", detail=detail)
         self.assertEqual(expected, self.service.read_meaning_with_detail(meaning.id))
 
-    def test_generates_detail_when_repo_only_has_meaning(self):
+    def test_saves_detail_from_generator_when_repo_only_has_meaning(self):
         meaning = self.repo.create_meaning(Meaning(query="happy", definition="joyful", pos="adjective"))
         detail = self.create_detail(meaning.id)
-        self.generator.details = [detail]
+        self.detail_generator.output = detail
         expected = MeaningWithDetail(id=meaning.id, query="happy", definition="joyful", pos="adjective", detail=detail)
         self.assertEqual(expected, self.service.read_meaning_with_detail(meaning.id))
         self.assertEqual([detail], self.repo.details)
@@ -54,7 +55,7 @@ class MeaningServiceTest(TestCase):
     def test_sets_meaning_id_on_generated_detail(self):
         meaning = self.repo.create_meaning(Meaning(query="happy", definition="joyful", pos="adjective"))
         detail = self.create_detail(None)
-        self.generator.generate_detail = lambda _: detail
+        self.detail_generator.output = detail
         self.service.read_meaning_with_detail(meaning.id)
         self.assertEqual(meaning.id, detail.id)
 

@@ -1,16 +1,12 @@
+from typing import TypeVar
 from synogym.generator import Generator
-from synogym.meaning import Detail, Meaning
 
-class MockGenerator(Generator):
-    def __init__(self):
-        self.meanings: list[Meaning] = []
-        self.details: list[Detail] = []
+Input = TypeVar("Input")
+Output = TypeVar("Output")
 
-    def generate_meanings(self, query: str) -> list[Meaning]:
-        return [meaning for meaning in self.meanings if meaning.query == query]
+class MockGenerator(Generator[Input, Output]):
+    def __init__(self, output: Output | None = None):
+        self.output = output
 
-    def generate_detail(self, meaning: Meaning) -> Detail:
-        for detail in self.details:
-            if detail.id == meaning.id:
-                return detail
-        raise ValueError("Detail not found")
+    def generate(self, value: Input) -> Output:
+        return self.output

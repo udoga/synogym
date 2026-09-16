@@ -1,11 +1,10 @@
 from abc import ABC, abstractmethod
-from synogym.meaning import Detail, Meaning
+from typing import Generic, TypeVar
 
-class Generator(ABC):
-    @abstractmethod
-    def generate_meanings(self, query: str) -> list[Meaning]:
-        pass
+Input = TypeVar("Input")
+Output = TypeVar("Output")
 
+class Generator(ABC, Generic[Input, Output]):
     @abstractmethod
-    def generate_detail(self, meaning: Meaning) -> Detail:
+    def generate(self, value: Input) -> Output:
         pass

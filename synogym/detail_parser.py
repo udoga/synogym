@@ -1,7 +1,6 @@
 from typing import Any
 from synogym.yaml_parser import YamlParser
-from synogym.meaning import Detail
-from synogym.meaning import Example
+from synogym.data_classes import Detail, Example
 
 class DetailParser(YamlParser):
     def parse(self, text: str) -> Detail:

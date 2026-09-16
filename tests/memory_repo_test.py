@@ -1,6 +1,5 @@
 from unittest import TestCase
-from synogym.meaning import Detail
-from synogym.meaning import Meaning
+from synogym.data_classes import Detail, Meaning
 from synogym.memory_repo import MemoryRepo
 
 class MockRepoTest(TestCase):

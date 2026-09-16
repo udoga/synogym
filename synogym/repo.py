@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from synogym.meaning import Detail, Meaning
+from synogym.data_classes import Detail, Meaning
 
 class Repo(ABC):
     @abstractmethod

@@ -1,6 +1,6 @@
 from typing import Any
 from synogym.yaml_parser import YamlParser
-from synogym.meaning import Meaning
+from synogym.data_classes import Meaning
 
 class MeaningParser(YamlParser):
     def parse(self, text: str) -> list[Meaning]:

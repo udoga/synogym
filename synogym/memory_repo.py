@@ -1,6 +1,5 @@
 from synogym.repo import Repo
-from synogym.meaning import Detail
-from synogym.meaning import Meaning
+from synogym.data_classes import Detail, Meaning
 
 class MemoryRepo(Repo):
     def __init__(self):

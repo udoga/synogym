@@ -1,5 +1,5 @@
 from unittest import TestCase
-from synogym.meaning import Meaning, MeaningWithDetail
+from synogym.data_classes import Meaning, MeaningWithDetail
 from synogym.rest_server import RestServer
 
 class MockCoreService:

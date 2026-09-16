@@ -1,6 +1,6 @@
 from pathlib import Path
 from unittest import TestCase
-from synogym.meaning import Detail, Example, Meaning
+from synogym.data_classes import Detail, Example, Meaning
 from synogym.sqlite_repo import SqliteRepo
 
 class SqliteRepoTest(TestCase):

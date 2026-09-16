@@ -1,6 +1,6 @@
 from unittest import TestCase
 from synogym.detail_parser import DetailParser
-from synogym.meaning import Detail
+from synogym.data_classes import Detail
 
 class DetailParserTest(TestCase):
     def setUp(self):

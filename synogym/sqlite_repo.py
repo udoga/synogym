@@ -2,7 +2,7 @@ import json
 import sqlite3
 from sqlite3 import Row
 from pathlib import Path
-from synogym.meaning import Detail, Example, Meaning
+from synogym.data_classes import Detail, Example, Meaning
 from synogym.repo import Repo
 
 class SqliteRepo(Repo):

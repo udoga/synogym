@@ -1,0 +1,7 @@
+from abc import ABC, abstractmethod
+from synogym.data_classes import User
+
+class UserRepo(ABC):
+    @abstractmethod
+    def create(self, user: User) -> User:
+        pass

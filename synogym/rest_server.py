@@ -12,8 +12,8 @@ class RestServer:
     def run(self):
         self.app.run(port=self.port)
 
-    def add_route(self, rule: str, view_func: Callable[..., Response]):
-        self.app.add_url_rule(rule, view_func=view_func)
+    def add_route(self, rule: str, view_func: Callable[..., Response], methods: list[str] | None = None):
+        self.app.add_url_rule(rule, view_func=view_func, methods=methods)
 
     def add_error_handlers(self):
         self.app.register_error_handler(ValueError, self.handle_value_error)

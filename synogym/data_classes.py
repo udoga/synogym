@@ -1,6 +1,13 @@
 from dataclasses import dataclass, field
 
 @dataclass
+class User:
+    id: int | None = field(default=None, kw_only=True)
+    email: str
+    first_name: str
+    last_name: str
+
+@dataclass
 class Meaning:
     id: int | None = field(default=None, kw_only=True)
     query: str

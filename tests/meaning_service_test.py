@@ -1,16 +1,15 @@
 from unittest import TestCase
-from synogym.data_classes import Detail, Meaning, MeaningWithDetail, Quote
-from synogym.core_service import CoreService
+from synogym.data_classes import Detail, Meaning, MeaningWithDetail
+from synogym.meaning_service import MeaningService
 from synogym.memory_repo import MemoryRepo
 from synogym.mock_generator import MockGenerator
 
-class CoreServiceTest(TestCase):
+class MeaningServiceTest(TestCase):
     def setUp(self):
         self.repo = MemoryRepo()
         self.meaning_generator = MockGenerator[str, list[Meaning]]([])
         self.detail_generator = MockGenerator[Meaning, Detail]()
-        self.quote_fetcher = MockGenerator[str, list[Quote]]([])
-        self.service = CoreService(self.repo, self.meaning_generator, self.detail_generator, self.quote_fetcher)
+        self.service = MeaningService(self.repo, self.meaning_generator, self.detail_generator)
 
     def test_no_meanings_when_repo_and_generator_has_no_result(self):
         result = self.service.list_meanings_by_query("happy")
@@ -28,22 +27,6 @@ class CoreServiceTest(TestCase):
         result = self.service.list_meanings_by_query("happy")
         self.assertEqual(meanings, result)
         self.assertEqual(meanings, self.repo.meanings)
-
-    def test_returns_quotes_from_repo_when_repo_has_ten(self):
-        quotes = self.create_quotes("Be yourself", 10)
-        self.repo.create_quotes(quotes)
-        self.assertEqual(quotes, self.service.list_quotes_by_query("yourself"))
-
-    def test_lists_generated_quotes_when_repo_has_one(self):
-        self.repo.create_quotes(self.create_quotes("Be yourself", 1))
-        self.quote_fetcher.output = self.create_quotes("Generated yourself", 10)
-        self.assertEqual(self.quote_fetcher.output, self.service.list_quotes_by_query("yourself"))
-
-    def test_lists_quotes_from_generator(self):
-        quotes = [Quote(text="Be yourself", author="Oscar Wilde", url="https://example.com/quote")]
-        self.quote_fetcher.output = quotes
-        self.assertEqual(quotes, self.service.list_quotes_by_query("yourself"))
-        self.assertEqual(quotes, self.repo.list_quotes_by_query("yourself"))
 
     def test_raises_error_when_repo_and_generator_has_no_detail(self):
         with self.assertRaises(ValueError):
@@ -68,10 +51,6 @@ class CoreServiceTest(TestCase):
         expected = MeaningWithDetail(id=meaning.id, query="happy", definition="joyful", pos="adjective", detail=detail)
         self.assertEqual(expected, self.service.read_meaning_with_detail(meaning.id))
         self.assertEqual([detail], self.repo.details)
-
-    def create_quotes(self, content: str, count: int) -> list[Quote]:
-        return [Quote(text=f"{content} {number}", author="Oscar Wilde", url=f"https://example.com/{number}")
-                for number in range(count)]
 
     def create_detail(self, detail_id: int | None) -> Detail:
         return Detail(meaning_id=detail_id, level="A1", description="Feeling joy.", synonyms=[], history="",

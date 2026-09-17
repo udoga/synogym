@@ -1,11 +1,12 @@
 from pathlib import Path
-from synogym.core_service import CoreService
 from synogym.detail_generator import DetailGenerator
+from synogym.gpt_model import GptModel
 from synogym.meaning_controller import MeaningController
 from synogym.meaning_generator import MeaningGenerator
-from synogym.gpt_model import GptModel
+from synogym.meaning_service import MeaningService
 from synogym.quote_controller import QuoteController
 from synogym.quote_fetcher import QuoteFetcher
+from synogym.quote_service import QuoteService
 from synogym.rest_server import RestServer
 from synogym.sqlite_repo import SqliteRepo
 
@@ -15,8 +16,9 @@ if __name__ == "__main__":
     meaning_generator = MeaningGenerator(model)
     detail_generator = DetailGenerator(model)
     quote_fetcher = QuoteFetcher()
-    core_service = CoreService(repo, meaning_generator, detail_generator, quote_fetcher)
+    meaning_service = MeaningService(repo, meaning_generator, detail_generator)
+    quote_service = QuoteService(repo, quote_fetcher)
     rest_server = RestServer(port=8080)
-    meaning_controller = MeaningController(rest_server, core_service)
-    quote_controller = QuoteController(rest_server, core_service)
+    meaning_controller = MeaningController(rest_server, meaning_service)
+    quote_controller = QuoteController(rest_server, quote_service)
     rest_server.run()

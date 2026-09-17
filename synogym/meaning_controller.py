@@ -1,10 +1,10 @@
 from dataclasses import asdict
 from flask import Response, jsonify
-from synogym.core_service import CoreService
+from synogym.meaning_service import MeaningService
 from synogym.rest_server import RestServer
 
 class MeaningController:
-    def __init__(self, s: RestServer, service: CoreService):
+    def __init__(self, s: RestServer, service: MeaningService):
         self.service = service
         s.add_route("/meanings/<query>", self.list_meanings_by_query)
         s.add_route("/meanings/<int:meaning_id>", self.read_meaning_with_detail)

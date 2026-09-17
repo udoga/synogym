@@ -1,6 +1,6 @@
 from dataclasses import asdict
-from synogym.generator import Generator
-from synogym.detail_parser import DetailParser
+from synogym.generator.generator import Generator
+from synogym.parser.detail_parser import DetailParser
 from synogym.data_classes import Detail, Meaning
 
 class DetailGenerator(Generator[Meaning, Detail]):

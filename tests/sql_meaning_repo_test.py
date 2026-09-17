@@ -1,8 +1,8 @@
 from pathlib import Path
 from unittest import TestCase
-from sqlite_connector import SqliteConnector
+from synogym.sqlite_connector import SqliteConnector
 from synogym.data_classes import Detail, Example, Meaning
-from synogym.sql_meaning_repo import SqlMeaningRepo
+from synogym.repo.sql_meaning_repo import SqlMeaningRepo
 
 class SqlMeaningRepoTest(TestCase):
     def setUp(self):

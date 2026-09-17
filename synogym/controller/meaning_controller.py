@@ -1,6 +1,6 @@
 from dataclasses import asdict
 from flask import Response, jsonify
-from synogym.meaning_service import MeaningService
+from synogym.service.meaning_service import MeaningService
 from synogym.rest_server import RestServer
 
 class MeaningController:

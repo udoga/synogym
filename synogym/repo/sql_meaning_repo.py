@@ -2,7 +2,7 @@ import json
 import sqlite3
 from sqlite3 import Row
 from synogym.data_classes import Detail, Example, Meaning
-from synogym.meaning_repo import MeaningRepo
+from synogym.repo.meaning_repo import MeaningRepo
 
 class SqlMeaningRepo(MeaningRepo):
     LIST_MEANINGS_SQL = "SELECT * FROM meanings WHERE query = ? ORDER BY id"

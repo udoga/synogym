@@ -1,6 +1,6 @@
 from synogym.data_classes import Quote
-from synogym.generator import Generator
-from synogym.quote_repo import QuoteRepo
+from synogym.generator.generator import Generator
+from synogym.repo.quote_repo import QuoteRepo
 
 class QuoteService:
     def __init__(self, repo: QuoteRepo, quote_generator: Generator[str, list[Quote]]):

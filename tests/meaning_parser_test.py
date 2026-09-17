@@ -1,5 +1,5 @@
 from unittest import TestCase
-from synogym.meaning_parser import MeaningParser
+from synogym.parser.meaning_parser import MeaningParser
 
 class MeaningParserTest(TestCase):
     def setUp(self):

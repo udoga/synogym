@@ -1,7 +1,7 @@
 import sqlite3
 from sqlite3 import Row
 from synogym.data_classes import Quote
-from synogym.quote_repo import QuoteRepo
+from synogym.repo.quote_repo import QuoteRepo
 
 class SqlQuoteRepo(QuoteRepo):
     LIST_QUOTES_SQL = "SELECT * FROM quotes WHERE LOWER(text) LIKE ? ORDER BY id"

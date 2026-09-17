@@ -1,5 +1,5 @@
 from unittest import TestCase
-from synogym.detail_parser import DetailParser
+from synogym.parser.detail_parser import DetailParser
 from synogym.data_classes import Detail
 
 class DetailParserTest(TestCase):

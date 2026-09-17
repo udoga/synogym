@@ -3,7 +3,7 @@ from urllib.parse import urljoin
 from urllib.request import Request, urlopen
 import re
 from synogym.data_classes import Quote
-from synogym.generator import Generator
+from synogym.generator.generator import Generator
 
 class QuoteFetcher(Generator[str, list[Quote]]):
     HEADERS = {

@@ -1,5 +1,5 @@
 from typing import Any
-from synogym.yaml_parser import YamlParser
+from synogym.parser.yaml_parser import YamlParser
 from synogym.data_classes import Detail, Example
 
 class DetailParser(YamlParser):

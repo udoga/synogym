@@ -1,4 +1,4 @@
-from synogym.quote_repo import QuoteRepo
+from synogym.repo.quote_repo import QuoteRepo
 from synogym.data_classes import Quote
 
 class ListQuoteRepo(QuoteRepo):

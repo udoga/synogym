@@ -1,6 +1,6 @@
 from dataclasses import asdict
 from flask import Response, jsonify
-from synogym.quote_service import QuoteService
+from synogym.service.quote_service import QuoteService
 from synogym.rest_server import RestServer
 
 class QuoteController:

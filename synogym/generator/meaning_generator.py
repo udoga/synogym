@@ -1,7 +1,7 @@
 from dataclasses import replace
-from synogym.generator import Generator
+from synogym.generator.generator import Generator
 from synogym.data_classes import Meaning
-from synogym.meaning_parser import MeaningParser
+from synogym.parser.meaning_parser import MeaningParser
 
 class MeaningGenerator(Generator[str, list[Meaning]]):
     PROMPT = """You are a dictionary API for English learners.

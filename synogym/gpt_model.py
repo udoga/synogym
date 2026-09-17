@@ -1,7 +1,7 @@
 import os
 from typing import Any
 from openai import OpenAI
-from synogym.generator import Generator
+from synogym.generator.generator import Generator
 
 class GptModel(Generator[str, str]):
     def __init__(self, model: str = "gpt-5", api_key: str = "", reasoning_effort: str = ""):

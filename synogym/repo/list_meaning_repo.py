@@ -1,4 +1,4 @@
-from synogym.meaning_repo import MeaningRepo
+from synogym.repo.meaning_repo import MeaningRepo
 from synogym.data_classes import Detail, Meaning
 
 class ListMeaningRepo(MeaningRepo):
@@ -16,21 +16,11 @@ class ListMeaningRepo(MeaningRepo):
         return meanings
 
     def find(self, meaning_id: int) -> Meaning | None:
-        for meaning in self.meanings:
-            if meaning.id == meaning_id:
-                return meaning
-        return None
+        return next((meaning for meaning in self.meanings if meaning.id == meaning_id), None)
 
     def create_detail(self, detail: Detail) -> Detail:
-        if not self.find(detail.meaning_id):
-            raise ValueError("Meaning not found")
-        if any(d.meaning_id == detail.meaning_id for d in self.details):
-            raise ValueError("Detail already exists")
         self.details.append(detail)
         return detail
 
-    def find_detail(self, detail_id: int) -> Detail | None:
-        for detail in self.details:
-            if detail.meaning_id == detail_id:
-                return detail
-        return None
+    def find_detail(self, meaning_id: int) -> Detail | None:
+        return next((detail for detail in self.details if detail.meaning_id == meaning_id), None)

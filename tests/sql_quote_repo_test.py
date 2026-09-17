@@ -1,7 +1,7 @@
 from pathlib import Path
 from unittest import TestCase
-from sql_quote_repo import SqlQuoteRepo
-from sqlite_connector import SqliteConnector
+from synogym.repo.sql_quote_repo import SqlQuoteRepo
+from synogym.sqlite_connector import SqliteConnector
 from synogym.data_classes import Quote
 
 class SqlMeaningRepoTest(TestCase):

@@ -1,5 +1,5 @@
 from typing import TypeVar
-from synogym.generator import Generator
+from synogym.generator.generator import Generator
 
 Input = TypeVar("Input")
 Output = TypeVar("Output")

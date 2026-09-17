@@ -1,38 +1,27 @@
 import json
 import sqlite3
 from sqlite3 import Row
-from pathlib import Path
-from synogym.data_classes import Detail, Example, Meaning, Quote
-from synogym.repo import Repo
+from synogym.data_classes import Detail, Example, Meaning
+from synogym.meaning_repo import MeaningRepo
 
-class SqliteRepo(Repo):
+class SqlMeaningRepo(MeaningRepo):
     LIST_MEANINGS_SQL = "SELECT * FROM meanings WHERE query = ? ORDER BY id"
     READ_MEANING_SQL = "SELECT * FROM meanings WHERE id = ?"
     READ_DETAIL_SQL = "SELECT * FROM meaning_details WHERE meaning_id = ?"
     LIST_EXAMPLES_SQL = "SELECT * FROM examples WHERE meaning_id = ? ORDER BY id"
-    LIST_QUOTES_SQL = "SELECT * FROM quotes WHERE LOWER(text) LIKE ? ORDER BY id"
     INSERT_MEANING_SQL = "INSERT INTO meanings (query, definition, pos) VALUES (?, ?, ?)"
     INSERT_DETAIL_SQL = "INSERT INTO meaning_details (meaning_id, level, description, synonyms, history, formations) " \
                         "VALUES (?, ?, ?, ?, ?, ?)"
     INSERT_EXAMPLE_SQL = "INSERT INTO examples (meaning_id, sentence, replacements) VALUES (?, ?, ?)"
-    INSERT_QUOTE_SQL = "INSERT INTO quotes (text, author, url) VALUES (?, ?, ?)"
 
-    def __init__(self, database_path: str, schema_sql_path: str):
-        self.connection = sqlite3.connect(database_path, check_same_thread=False)
-        self.connection.row_factory = Row
-        self.connection.execute("PRAGMA foreign_keys = ON")
-        self.connection.executescript(Path(schema_sql_path).read_text())
-        self.connection.commit()
+    def __init__(self, connection: sqlite3.Connection):
+        self.connection = connection
 
-    def __del__(self):
-        if hasattr(self, "connection"):
-            self.connection.close()
-
-    def list_meanings_by_query(self, query: str) -> list[Meaning]:
+    def list_by_query(self, query: str) -> list[Meaning]:
         cursor = self.connection.execute(self.LIST_MEANINGS_SQL, (query,))
         return [self._get_meaning(row) for row in cursor.fetchall()]
 
-    def create_meanings(self, meanings: list[Meaning]) -> list[Meaning]:
+    def create_all(self, meanings: list[Meaning]) -> list[Meaning]:
         for meaning in meanings:
             values: tuple = (meaning.query, meaning.definition, meaning.pos)
             cursor = self.connection.execute(self.INSERT_MEANING_SQL, values)
@@ -40,7 +29,7 @@ class SqliteRepo(Repo):
         self.connection.commit()
         return meanings
 
-    def find_meaning(self, meaning_id: int) -> Meaning | None:
+    def find(self, meaning_id: int) -> Meaning | None:
         cursor = self.connection.execute(self.READ_MEANING_SQL, (meaning_id,))
         row = cursor.fetchone()
         return self._get_meaning(row) if row else None
@@ -60,18 +49,6 @@ class SqliteRepo(Repo):
         detail: Detail = self._get_detail(row)
         detail.examples = self._list_examples(row["meaning_id"])
         return detail
-
-    def list_quotes_by_query(self, query: str) -> list[Quote]:
-        cursor = self.connection.execute(self.LIST_QUOTES_SQL, (f"%{query.lower()}%",))
-        return [self._get_quote(row) for row in cursor.fetchall()]
-
-    def create_quotes(self, quotes: list[Quote]) -> list[Quote]:
-        for quote in quotes:
-            values: tuple = (quote.text, quote.author, quote.url)
-            cursor = self.connection.execute(self.INSERT_QUOTE_SQL, values)
-            quote.id = cursor.lastrowid
-        self.connection.commit()
-        return quotes
 
     def _create_example(self, detail_id: int | None, example: Example) -> Example:
         values: tuple = (detail_id, example.sentence, json.dumps(example.replacements))
@@ -93,6 +70,3 @@ class SqliteRepo(Repo):
 
     def _get_example(self, row: Row) -> Example:
         return Example(meaning_id=row["id"], sentence=row["sentence"], replacements=json.loads(row["replacements"]))
-
-    def _get_quote(self, row: Row) -> Quote:
-        return Quote(id=row["id"], text=row["text"], author=row["author"], url=row["url"])

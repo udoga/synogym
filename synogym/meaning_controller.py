@@ -10,7 +10,7 @@ class MeaningController:
         s.add_route("/meanings/<int:meaning_id>", self.read_meaning_with_detail)
 
     def list_meanings_by_query(self, query: str) -> Response:
-        meanings = self.service.list_meanings_by_query(query)
+        meanings = self.service.list_by_query(query)
         return jsonify([asdict(meaning) for meaning in meanings])
 
     def read_meaning_with_detail(self, meaning_id: int) -> Response:

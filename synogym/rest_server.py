@@ -5,15 +5,22 @@ from werkzeug.exceptions import HTTPException
 class RestServer:
     def __init__(self, port: int = 5000):
         self.port = port
-        self.app = Flask(__name__)
+        self.app = Flask(__name__, static_folder="web")
         self.app.json.sort_keys = False
+        self.add_home_route()
         self.add_error_handlers()
 
     def run(self):
-        self.app.run(port=self.port)
+        self.app.run(host="0.0.0.0", port=self.port)
 
     def add_route(self, rule: str, view_func: Callable[..., Response], methods: list[str] | None = None):
         self.app.add_url_rule(rule, view_func=view_func, methods=methods)
+
+    def add_home_route(self):
+        self.app.add_url_rule("/", view_func=self.render_home)
+
+    def render_home(self) -> Response:
+        return self.app.send_static_file("index.html")
 
     def add_error_handlers(self):
         self.app.register_error_handler(ValueError, self.handle_value_error)

@@ -10,13 +10,15 @@
   <main class="page">
     <section class="search-panel" aria-labelledby="title">
       <h1 id="title">Synogym</h1>
-      <p class="subtitle">Search a word to see its meanings.</p>
       <form id="search-form" class="search-form">
         <label class="sr-only" for="query-input">Word</label>
-        <input id="query-input" name="query" type="search" placeholder="Enter a word" autocomplete="off" required>
+        <input id="query-input" name="query" type="search" placeholder="Search for a word" autocomplete="off" required>
         <button id="search-button" type="submit">Search</button>
       </form>
-      <p id="status" class="status" role="status" aria-live="polite"></p>
+      <div class="status-row">
+        <button id="back-button" class="top-back-button" type="button" hidden>← Back</button>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </div>
     </section>
     <section id="results" class="results" aria-label="Meanings"></section>
   </main>

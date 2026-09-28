@@ -5,23 +5,100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Synogym</title>
   <link rel="stylesheet" href="/web/style.css">
+  <style>[x-cloak] { display: none !important; }</style>
+  <script defer src="/web/app.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body>
-  <main class="page">
+  <main class="page" x-data="synogym()" x-cloak>
     <section class="search-panel" aria-labelledby="title">
       <h1 id="title">Synogym</h1>
-      <form id="search-form" class="search-form">
+      <form id="search-form" class="search-form" @submit.prevent="searchMeanings">
         <label class="sr-only" for="query-input">Word</label>
-        <input id="query-input" name="query" type="search" placeholder="Search for a word" autocomplete="off" required>
-        <button id="search-button" type="submit">Search</button>
+        <input id="query-input" name="query" type="search" placeholder="Search for a word" autocomplete="off"
+               required x-model="query" :disabled="isLoading">
+        <button id="search-button" type="submit" :disabled="isLoading">Search</button>
       </form>
       <div class="status-row">
-        <button id="back-button" class="top-back-button" type="button" hidden>← Back</button>
-        <p id="status" class="status" role="status" aria-live="polite"></p>
+        <button id="back-button" class="top-back-button" type="button" x-show="view === 'detail'"
+                @click="showMeaningList">← Back</button>
+        <p id="status" class="status" role="status" aria-live="polite" :class="{ error: isError }"
+           x-text="status"></p>
       </div>
     </section>
-    <section id="results" class="results" aria-label="Meanings"></section>
+    <section id="results" class="results" aria-label="Meanings">
+      <template x-for="meaning in meanings" :key="meaning.id || `${meaning.query}-${meaning.pos}`">
+        <button class="meaning-card" type="button" x-show="view === 'list'" @click="fetchMeaningDetail(meaning.id)">
+          <h2><span x-text="meaning.query"></span><span class="pos" x-text="meaning.pos"></span></h2>
+          <p x-text="meaning.definition"></p>
+        </button>
+      </template>
+      <template x-if="view === 'detail' && selectedMeaning">
+        <article class="detail-panel">
+          <section class="detail-card detail-header">
+            <h2>
+              <span x-text="selectedMeaning.query"></span>
+              <span class="pos" x-text="selectedMeaning.pos"></span>
+              <span x-show="detail().level" class="level-tag" :class="getLevelClass(detail().level)"
+                    x-text="detail().level"></span>
+            </h2>
+            <p x-text="selectedMeaning.definition"></p>
+          </section>
+          <section class="detail-card" x-show="hasWords(detail().examples)">
+            <h3>Examples</h3>
+            <template x-for="example in detail().examples" :key="example.sentence">
+              <p>
+                <template x-for="(part, index) in highlightParts(example.sentence, selectedMeaning.query)" :key="index">
+                  <span><span x-show="!part.highlight" x-text="part.text"></span><mark x-show="part.highlight"
+                              x-text="part.text"></mark></span>
+                </template>
+                <br><small x-text="joinWords(example.replacements)"></small>
+              </p>
+            </template>
+          </section>
+          <section class="detail-card" x-show="hasWords(detail().synonyms)">
+            <h3>Synonyms</h3>
+            <p>
+              <template x-for="word in detail().synonyms" :key="word">
+                <button class="word-button" type="button" @click="searchWord(word)" x-text="word"></button>
+              </template>
+            </p>
+          </section>
+          <section class="detail-card" x-show="hasWords(detail().formations)">
+            <h3>Formations</h3>
+            <p>
+              <template x-for="word in detail().formations" :key="word">
+                <button class="word-button" type="button" @click="searchWord(word)" x-text="word"></button>
+              </template>
+            </p>
+          </section>
+          <section class="detail-card" x-show="detail().description">
+            <h3>Description</h3><p x-text="detail().description"></p>
+          </section>
+          <section class="detail-card" x-show="detail().history">
+            <h3>History</h3><p x-text="detail().history"></p>
+          </section>
+          <section class="quote-loader" x-show="!quotesLoaded">
+            <button type="button" :disabled="isLoading" @click="fetchQuotes(selectedMeaning.query)">Load Quotes</button>
+          </section>
+          <template x-for="quote in quotes" :key="quote.id || `${quote.author}-${quote.text}`">
+            <section class="detail-card quote-card">
+              <h3>
+                <span x-text="quote.author"></span>
+                <a class="quote-source" x-show="quote.url" :href="quote.url" target="_blank" rel="noopener noreferrer"
+                   aria-label="Open on BrainyQuote">🔗</a>
+              </h3>
+              <p>
+                <template x-for="(part, index) in highlightParts(quote.text, selectedMeaning.query)" :key="index">
+                  <span><span x-show="!part.highlight" x-text="part.text"></span><mark x-show="part.highlight"
+                              x-text="part.text"></mark></span>
+                </template>
+              </p>
+            </section>
+          </template>
+        </article>
+      </template>
+    </section>
   </main>
-  <script src="/web/app.js"></script>
 </body>
 </html>

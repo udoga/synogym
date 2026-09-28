@@ -1,263 +1,189 @@
-const form = document.querySelector("#search-form");
-const input = document.querySelector("#query-input");
-const button = document.querySelector("#search-button");
-const statusText = document.querySelector("#status");
-const backButton = document.querySelector("#back-button");
-const results = document.querySelector("#results");
-let currentMeanings = [];
+document.addEventListener("alpine:init", () => Alpine.data("synogym", () => new Synogym()));
 
-form.addEventListener("submit", searchMeanings);
-backButton.addEventListener("click", showMeaningList);
-results.addEventListener("click", handleResultsClick);
-
-async function searchMeanings(event) {
-  event.preventDefault();
-  const query = input.value.trim();
-  if (!query) return;
-  await fetchMeanings(query);
-}
-
-async function fetchMeanings(query) {
-  backButton.hidden = true;
-  setLoading(true);
-  await requestMeanings(query);
-  setLoading(false);
-}
-
-async function requestMeanings(query) {
-  try {
-    await renderSearchResponse(await fetch(`/meanings/${encodeURIComponent(query)}`));
-  } catch {
-    showError("Could not reach the server.");
+class Synogym {
+  constructor() {
+    this.query = "";
+    this.status = "";
+    this.isError = false;
+    this.isLoading = false;
+    this.view = "list";
+    this.meanings = [];
+    this.selectedMeaning = null;
+    this.quotes = [];
+    this.quotesLoaded = false;
   }
-}
 
-async function renderSearchResponse(response) {
-  const body = await response.json();
-  if (!response.ok) return showError(body.error?.message || "Search failed.");
-  renderMeanings(body);
-}
-
-function renderMeanings(meanings) {
-  currentMeanings = meanings;
-  backButton.hidden = true;
-  results.replaceChildren(...meanings.map(createMeaningCard));
-  showStatus(meanings.length ? "Meanings" : "No meanings found.");
-}
-
-function createMeaningCard(meaning) {
-  const card = document.createElement("button");
-  card.className = "meaning-card";
-  card.type = "button";
-  card.dataset.meaningId = meaning.id ?? "";
-  card.innerHTML = createMeaningHtml(meaning);
-  return card;
-}
-
-function createMeaningHtml(meaning) {
-  const query = escapeHtml(meaning.query);
-  const pos = escapeHtml(meaning.pos);
-  const definition = escapeHtml(meaning.definition);
-  return `<h2>${query}<span class="pos">${pos}</span></h2><p>${definition}</p>`;
-}
-
-async function handleResultsClick(event) {
-  const quotesButton = event.target.closest("[data-load-quotes]");
-  if (quotesButton) return fetchQuotes(quotesButton.dataset.loadQuotes, quotesButton);
-  const wordButton = event.target.closest("[data-search-word]");
-  if (wordButton) return searchWord(wordButton.dataset.searchWord);
-  await openMeaningDetail(event);
-}
-
-async function searchWord(word) {
-  input.value = word;
-  await fetchMeanings(word);
-}
-
-async function openMeaningDetail(event) {
-  const card = event.target.closest("[data-meaning-id]");
-  if (!card?.dataset.meaningId) return;
-  await fetchMeaningDetail(card.dataset.meaningId);
-}
-
-async function fetchMeaningDetail(meaningId) {
-  setLoading(true);
-  await requestMeaningDetail(meaningId);
-  setLoading(false);
-}
-
-async function requestMeaningDetail(meaningId) {
-  try {
-    await renderDetailResponse(await fetch(`/meanings/${meaningId}`));
-  } catch {
-    showError("Could not reach the server.");
+  async searchMeanings() {
+    const query = this.query.trim();
+    if (!query) return;
+    await this.fetchMeanings(query);
   }
-}
 
-async function renderDetailResponse(response) {
-  const body = await response.json();
-  if (!response.ok) return showError(body.error?.message || "Could not load detail.");
-  renderDetail(body);
-}
-
-function renderDetail(meaning) {
-  backButton.hidden = false;
-  results.replaceChildren(createDetailPanel(meaning));
-  showStatus("Meaning Detail");
-}
-
-function showMeaningList() {
-  renderMeanings(currentMeanings);
-}
-
-function createDetailPanel(meaning) {
-  const panel = document.createElement("article");
-  panel.className = "detail-panel";
-  panel.innerHTML = createDetailHtml(meaning);
-  return panel;
-}
-
-function createDetailHtml(meaning) {
-  const detail = meaning.detail || {};
-  return `${createDetailHeader(meaning, detail)}${createDetailBody(detail, meaning.query)}` +
-    `${createQuoteLoader(meaning.query)}`;
-}
-
-function createDetailHeader(meaning, detail) {
-  const query = escapeHtml(meaning.query);
-  const pos = escapeHtml(meaning.pos);
-  const level = createLevelTag(detail.level);
-  return `<section class="detail-card detail-header"><h2>${query}<span class="pos">${pos}</span>${level}</h2>` +
-    `<p>${escapeHtml(meaning.definition)}</p></section>`;
-}
-
-function createLevelTag(level) {
-  if (!level) return "";
-  const className = `level-tag ${getLevelClass(level)}`;
-  return `<span class="${className}">${escapeHtml(level)}</span>`;
-}
-
-function getLevelClass(level) {
-  return `level-${String(level).toLowerCase()}`;
-}
-
-function createDetailBody(detail, query) {
-  return `${createExamples(detail.examples, query)}${createList("Synonyms", detail.synonyms)}` +
-    `${createList("Formations", detail.formations)}${createField("Description", detail.description)}` +
-    `${createField("History", detail.history)}`;
-}
-
-function createField(title, value) {
-  if (!value) return "";
-  return `<section class="detail-card"><h3>${title}</h3><p>${escapeHtml(value)}</p></section>`;
-}
-
-function createList(title, values) {
-  if (!values?.length) return "";
-  return `<section class="detail-card"><h3>${title}</h3><p>${values.map(createWordButton).join(" ")}</p></section>`;
-}
-
-function createWordButton(word) {
-  const safeWord = escapeHtml(word);
-  return `<button class="word-button" type="button" data-search-word="${safeWord}">${safeWord}</button>`;
-}
-
-function createExamples(examples, query) {
-  if (!examples?.length) return "";
-  const content = examples.map((example) => createExample(example, query)).join("");
-  return `<section class="detail-card"><h3>Examples</h3>${content}</section>`;
-}
-
-function createExample(example, query) {
-  const replacements = example.replacements?.map(escapeHtml).join(", ") || "";
-  return `<p>${highlightWord(example.sentence, query)}<br><small>${replacements}</small></p>`;
-}
-
-function createQuoteLoader(query) {
-  const safeQuery = escapeHtml(query);
-  return `<section class="quote-loader"><button type="button" data-load-quotes="${safeQuery}">Load Quotes</button></section>`;
-}
-
-async function fetchQuotes(query, source) {
-  setLoading(true);
-  await requestQuotes(query, source);
-  setLoading(false);
-}
-
-async function requestQuotes(query, source) {
-  try {
-    await renderQuoteResponse(await fetch(`/quotes/${encodeURIComponent(query)}`), source);
-  } catch {
-    showError("Could not reach the server.");
+  async fetchMeanings(query) {
+    this.startLoading();
+    await this.requestMeanings(query);
+    this.stopLoading();
   }
-}
 
-async function renderQuoteResponse(response, source) {
-  const body = await response.json();
-  if (!response.ok) return showError(body.error?.message || "Could not load quotes.");
-  renderQuotes(body, source);
-}
+  async requestMeanings(query) {
+    try {
+      await this.renderMeaningsResponse(await fetch(`/meanings/${encodeURIComponent(query)}`));
+    } catch {
+      this.showError("Could not reach the server.");
+    }
+  }
 
-function renderQuotes(quotes, source) {
-  const panel = source.closest(".detail-panel");
-  panel.querySelectorAll(".quote-card").forEach((card) => card.remove());
-  source.closest(".quote-loader").replaceWith(...quotes.map((quote) => createQuoteCard(quote, source.dataset.loadQuotes)));
-  showStatus("Meaning Detail");
-}
+  async renderMeaningsResponse(response) {
+    const body = await response.json();
+    if (!response.ok) return this.showError(body.error?.message || "Search failed.");
+    this.showMeanings(body);
+  }
 
-function createQuoteCard(quote, query) {
-  const card = document.createElement("section");
-  card.className = "detail-card quote-card";
-  card.innerHTML = createQuoteHtml(quote, query);
-  return card;
-}
+  showMeanings(meanings) {
+    this.meanings = meanings;
+    this.view = "list";
+    this.selectedMeaning = null;
+    this.showStatus(meanings.length ? "Meanings" : "No meanings found.");
+  }
 
-function createQuoteHtml(quote, query) {
-  return `<h3><span>${escapeHtml(quote.author)}</span>${createSourceLink(quote.url)}</h3>` +
-    `<p>${highlightWord(quote.text, query)}</p>`;
-}
+  async fetchMeaningDetail(meaningId) {
+    if (!meaningId) return;
+    this.startLoading();
+    await this.requestMeaningDetail(meaningId);
+    this.stopLoading();
+  }
 
-function createSourceLink(url) {
-  if (!url) return "";
-  const safeUrl = escapeHtml(url);
-  return `<a class="quote-source" href="${safeUrl}" target="_blank" rel="noopener noreferrer" ` +
-    `aria-label="Open on BrainyQuote">🔗</a>`;
-}
+  async requestMeaningDetail(meaningId) {
+    try {
+      await this.renderDetailResponse(await fetch(`/meanings/${meaningId}`));
+    } catch {
+      this.showError("Could not reach the server.");
+    }
+  }
 
-function highlightWord(sentence, word) {
-  const text = escapeHtml(sentence);
-  if (!word) return text;
-  return text.replace(createHighlightRegex(word), "<mark>$1</mark>");
-}
+  async renderDetailResponse(response) {
+    const body = await response.json();
+    if (!response.ok) return this.showError(body.error?.message || "Could not load detail.");
+    this.showDetail(body);
+  }
 
-function createHighlightRegex(word) {
-  const base = escapeRegExp(escapeHtml(word));
-  return new RegExp(`\\b(${base}(?:d|ed)?)\\b`, "gi");
-}
+  showDetail(meaning) {
+    this.selectedMeaning = meaning;
+    this.quotes = [];
+    this.quotesLoaded = false;
+    this.view = "detail";
+    this.showStatus("Meaning Detail");
+  }
 
-function escapeRegExp(value) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
+  showMeaningList() {
+    this.view = "list";
+    this.selectedMeaning = null;
+    this.showStatus(this.meanings.length ? "Meanings" : "No meanings found.");
+  }
 
-function setLoading(isLoading) {
-  button.disabled = isLoading;
-  input.disabled = isLoading;
-  if (isLoading) showStatus("Loading...");
-}
+  async searchWord(word) {
+    this.query = word;
+    await this.fetchMeanings(word);
+  }
 
-function showStatus(message) {
-  statusText.className = "status";
-  statusText.textContent = message;
-}
+  async fetchQuotes(query) {
+    this.startLoading();
+    await this.requestQuotes(query);
+    this.stopLoading();
+  }
 
-function showError(message) {
-  results.replaceChildren();
-  statusText.className = "status error";
-  statusText.textContent = message;
-}
+  async requestQuotes(query) {
+    try {
+      await this.renderQuoteResponse(await fetch(`/quotes/${encodeURIComponent(query)}`));
+    } catch {
+      this.showError("Could not reach the server.");
+    }
+  }
 
-function escapeHtml(value) {
-  const element = document.createElement("span");
-  element.textContent = value ?? "";
-  return element.innerHTML;
+  async renderQuoteResponse(response) {
+    const body = await response.json();
+    if (!response.ok) return this.showError(body.error?.message || "Could not load quotes.");
+    this.showQuotes(body);
+  }
+
+  showQuotes(quotes) {
+    this.quotes = quotes;
+    this.quotesLoaded = true;
+    this.showStatus("Meaning Detail");
+  }
+
+  detail() {
+    return { ...this._createEmptyDetail(), ...this.selectedMeaning?.detail };
+  }
+
+  hasWords(words) {
+    return Array.isArray(words) && words.length > 0;
+  }
+
+  joinWords(words) {
+    return this.hasWords(words) ? words.join(", ") : "";
+  }
+
+  getLevelClass(level) {
+    return level ? `level-${String(level).toLowerCase()}` : "";
+  }
+
+  highlightParts(sentence, word) {
+    const text = String(sentence || "");
+    if (!word) return [{ text, highlight: false }];
+    return this._splitHighlightParts(text, this._createHighlightRegex(word));
+  }
+
+  startLoading() {
+    this.isLoading = true;
+    this.showStatus("Loading...");
+  }
+
+  stopLoading() {
+    this.isLoading = false;
+  }
+
+  showStatus(message) {
+    this.isError = false;
+    this.status = message;
+  }
+
+  showError(message) {
+    this.view = "list";
+    this.meanings = [];
+    this.selectedMeaning = null;
+    this.isError = true;
+    this.status = message;
+  }
+
+  _createEmptyDetail() {
+    return { examples: [], synonyms: [], formations: [] };
+  }
+
+  _splitHighlightParts(text, regex) {
+    const parts = [];
+    let cursor = 0;
+    for (const match of text.matchAll(regex)) cursor = this._addHighlightMatch(parts, text, match, cursor);
+    this._addPlainPart(parts, text.slice(cursor));
+    return parts;
+  }
+
+  _addHighlightMatch(parts, text, match, cursor) {
+    this._addPlainPart(parts, text.slice(cursor, match.index));
+    parts.push({ text: match[0], highlight: true });
+    return match.index + match[0].length;
+  }
+
+  _addPlainPart(parts, text) {
+    if (text) parts.push({ text, highlight: false });
+  }
+
+  _createHighlightRegex(word) {
+    const base = this._escapeRegExp(String(word));
+    return new RegExp(`\\b(${base}(?:d|ed)?)\\b`, "gi");
+  }
+
+  _escapeRegExp(value) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
 }

@@ -201,32 +201,38 @@ async function renderQuoteResponse(response, source) {
 function renderQuotes(quotes, source) {
   const panel = source.closest(".detail-panel");
   panel.querySelectorAll(".quote-card").forEach((card) => card.remove());
-  source.closest(".quote-loader").replaceWith(...quotes.map(createQuoteCard));
+  source.closest(".quote-loader").replaceWith(...quotes.map((quote) => createQuoteCard(quote, source.dataset.loadQuotes)));
   showStatus("Meaning Detail");
 }
 
-function createQuoteCard(quote) {
+function createQuoteCard(quote, query) {
   const card = document.createElement("section");
   card.className = "detail-card quote-card";
-  card.innerHTML = createQuoteHtml(quote);
+  card.innerHTML = createQuoteHtml(quote, query);
   return card;
 }
 
-function createQuoteHtml(quote) {
-  return `<h3>${escapeHtml(quote.author)}</h3><p>${escapeHtml(quote.text)}</p>${createSourceLink(quote.url)}`;
+function createQuoteHtml(quote, query) {
+  return `<h3><span>${escapeHtml(quote.author)}</span>${createSourceLink(quote.url)}</h3>` +
+    `<p>${highlightWord(quote.text, query)}</p>`;
 }
 
 function createSourceLink(url) {
   if (!url) return "";
   const safeUrl = escapeHtml(url);
-  return `<p class="source-link"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer">Source</a></p>`;
+  return `<a class="quote-source" href="${safeUrl}" target="_blank" rel="noopener noreferrer" ` +
+    `aria-label="Open on BrainyQuote">🔗</a>`;
 }
 
 function highlightWord(sentence, word) {
   const text = escapeHtml(sentence);
   if (!word) return text;
-  const regex = new RegExp(`\\b(${escapeRegExp(escapeHtml(word))})\\b`, "gi");
-  return text.replace(regex, "<mark>$1</mark>");
+  return text.replace(createHighlightRegex(word), "<mark>$1</mark>");
+}
+
+function createHighlightRegex(word) {
+  const base = escapeRegExp(escapeHtml(word));
+  return new RegExp(`\\b(${base}(?:d|ed)?)\\b`, "gi");
 }
 
 function escapeRegExp(value) {

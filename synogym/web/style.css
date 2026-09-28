@@ -161,24 +161,27 @@ button:disabled {
 }
 
 .quote-loader button {
-  border: 0;
-  color: #175cd3;
-  text-decoration: underline;
-  background: transparent;
+  min-height: 40px;
+  border: 1px solid #d0d5dd;
+  border-radius: 12px;
+  padding: 0 14px;
+  color: #18212f;
+  background: #ffffff;
   cursor: pointer;
 }
 
 .quote-card h3 {
-  color: #1849a9;
-  background: #d1e9ff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ffffff;
+  background: #1e3a8a;
 }
 
-.source-link {
-  padding-top: 0 !important;
-}
-
-.source-link a {
-  color: #175cd3;
+.quote-source {
+  color: #ffffff;
+  line-height: 1;
+  text-decoration: none;
 }
 
 .word-button {

@@ -1,16 +1,19 @@
 from html import unescape
-from urllib.parse import urljoin
-from urllib.request import Request, urlopen
 import re
+from urllib.parse import urljoin
+from curl_cffi import requests
 from synogym.data_classes import Quote
 from synogym.generator.generator import Generator
 
 class QuoteFetcher(Generator[str, list[Quote]]):
     HEADERS = {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
         "Accept-Language": "en-US,en;q=0.9",
-        "Referer": "https://www.google.com/",
+        "Cache-Control": "max-age=0",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "none",
+        "Sec-Fetch-User": "?1",
         "Upgrade-Insecure-Requests": "1",
     }
 
@@ -28,8 +31,9 @@ class QuoteFetcher(Generator[str, list[Quote]]):
         return re.sub(r"[^a-z0-9]+", "-", query.lower()).strip("-")
 
     def _fetch_html(self, url: str) -> str:
-        with urlopen(Request(url, headers=self.HEADERS), timeout=10) as response:
-            return response.read().decode("utf-8", "ignore")
+        response = requests.get(url, headers=self.HEADERS, impersonate="chrome", timeout=10)
+        response.raise_for_status()
+        return response.text
 
     def _parse_quotes(self, html: str) -> list[Quote]:
         matches = re.findall(self._quote_pattern(), html, re.DOTALL)

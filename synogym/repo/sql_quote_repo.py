@@ -5,7 +5,8 @@ from synogym.repo.quote_repo import QuoteRepo
 
 class SqlQuoteRepo(QuoteRepo):
     LIST_QUOTES_SQL = "SELECT * FROM quotes WHERE LOWER(text) LIKE ? ORDER BY id"
-    INSERT_QUOTE_SQL = "INSERT INTO quotes (text, author, url) VALUES (?, ?, ?)"
+    INSERT_QUOTE_SQL = "INSERT OR IGNORE INTO quotes (text, author, url) VALUES (?, ?, ?)"
+    FIND_QUOTE_SQL = "SELECT * FROM quotes WHERE text = ? AND author = ? AND url = ?"
 
     def __init__(self, connection: sqlite3.Connection):
         self.connection = connection
@@ -16,11 +17,19 @@ class SqlQuoteRepo(QuoteRepo):
 
     def create_all(self, quotes: list[Quote]) -> list[Quote]:
         for quote in quotes:
-            values: tuple = (quote.text, quote.author, quote.url)
-            cursor = self.connection.execute(self.INSERT_QUOTE_SQL, values)
-            quote.id = cursor.lastrowid
+            self._create(quote)
         self.connection.commit()
         return quotes
+
+    def _create(self, quote: Quote) -> Quote:
+        values: tuple = (quote.text, quote.author, quote.url)
+        cursor = self.connection.execute(self.INSERT_QUOTE_SQL, values)
+        quote.id = cursor.lastrowid if cursor.rowcount else self._find_id(values)
+        return quote
+
+    def _find_id(self, values: tuple) -> int:
+        cursor = self.connection.execute(self.FIND_QUOTE_SQL, values)
+        return cursor.fetchone()["id"]
 
     def _get_quote(self, row: Row) -> Quote:
         return Quote(id=row["id"], text=row["text"], author=row["author"], url=row["url"])

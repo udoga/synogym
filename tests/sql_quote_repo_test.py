@@ -14,3 +14,10 @@ class SqlMeaningRepoTest(TestCase):
         quote = self.repo.create_all([Quote(text="Be happy.", author="Unknown", url="https://example.com")])[0]
         self.repo.create_all([Quote(text="Be sad.", author="Unknown", url="https://example.com/sad")])
         self.assertEqual([quote], self.repo.list_by_query("happy"))
+
+    def test_create_all_ignores_duplicate_quotes(self):
+        quote = Quote(text="Be happy.", author="Unknown", url="https://example.com")
+        duplicate = Quote(text="Be happy.", author="Unknown", url="https://example.com")
+        self.repo.create_all([quote])
+        self.repo.create_all([duplicate])
+        self.assertEqual([quote], self.repo.list_by_query("happy"))

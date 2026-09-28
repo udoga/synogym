@@ -281,7 +281,14 @@ mark {
     padding-top: 28px;
   }
 
-  .search-form {
-    flex-direction: column;
+  .search-form button {
+    width: 54px;
+    padding: 0;
+    font-size: 0;
+  }
+
+  .search-form button::before {
+    content: "🔍";
+    font-size: 1.15rem;
   }
 }

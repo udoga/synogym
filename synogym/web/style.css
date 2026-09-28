@@ -156,6 +156,31 @@ button:disabled {
   padding-top: 0;
 }
 
+.quote-loader {
+  text-align: center;
+}
+
+.quote-loader button {
+  border: 0;
+  color: #175cd3;
+  text-decoration: underline;
+  background: transparent;
+  cursor: pointer;
+}
+
+.quote-card h3 {
+  color: #1849a9;
+  background: #d1e9ff;
+}
+
+.source-link {
+  padding-top: 0 !important;
+}
+
+.source-link a {
+  color: #175cd3;
+}
+
 .word-button {
   margin: 0 6px 6px 0;
   border: 1px solid #d0d5dd;

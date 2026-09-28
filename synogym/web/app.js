@@ -62,6 +62,8 @@ function createMeaningHtml(meaning) {
 }
 
 async function handleResultsClick(event) {
+  const quotesButton = event.target.closest("[data-load-quotes]");
+  if (quotesButton) return fetchQuotes(quotesButton.dataset.loadQuotes, quotesButton);
   const wordButton = event.target.closest("[data-search-word]");
   if (wordButton) return searchWord(wordButton.dataset.searchWord);
   await openMeaningDetail(event);
@@ -117,7 +119,8 @@ function createDetailPanel(meaning) {
 
 function createDetailHtml(meaning) {
   const detail = meaning.detail || {};
-  return `${createDetailHeader(meaning, detail)}${createDetailBody(detail, meaning.query)}`;
+  return `${createDetailHeader(meaning, detail)}${createDetailBody(detail, meaning.query)}` +
+    `${createQuoteLoader(meaning.query)}`;
 }
 
 function createDetailHeader(meaning, detail) {
@@ -168,6 +171,55 @@ function createExamples(examples, query) {
 function createExample(example, query) {
   const replacements = example.replacements?.map(escapeHtml).join(", ") || "";
   return `<p>${highlightWord(example.sentence, query)}<br><small>${replacements}</small></p>`;
+}
+
+function createQuoteLoader(query) {
+  const safeQuery = escapeHtml(query);
+  return `<section class="quote-loader"><button type="button" data-load-quotes="${safeQuery}">Load Quotes</button></section>`;
+}
+
+async function fetchQuotes(query, source) {
+  setLoading(true);
+  await requestQuotes(query, source);
+  setLoading(false);
+}
+
+async function requestQuotes(query, source) {
+  try {
+    await renderQuoteResponse(await fetch(`/quotes/${encodeURIComponent(query)}`), source);
+  } catch {
+    showError("Could not reach the server.");
+  }
+}
+
+async function renderQuoteResponse(response, source) {
+  const body = await response.json();
+  if (!response.ok) return showError(body.error?.message || "Could not load quotes.");
+  renderQuotes(body, source);
+}
+
+function renderQuotes(quotes, source) {
+  const panel = source.closest(".detail-panel");
+  panel.querySelectorAll(".quote-card").forEach((card) => card.remove());
+  source.closest(".quote-loader").replaceWith(...quotes.map(createQuoteCard));
+  showStatus("Meaning Detail");
+}
+
+function createQuoteCard(quote) {
+  const card = document.createElement("section");
+  card.className = "detail-card quote-card";
+  card.innerHTML = createQuoteHtml(quote);
+  return card;
+}
+
+function createQuoteHtml(quote) {
+  return `<h3>${escapeHtml(quote.author)}</h3><p>${escapeHtml(quote.text)}</p>${createSourceLink(quote.url)}`;
+}
+
+function createSourceLink(url) {
+  if (!url) return "";
+  const safeUrl = escapeHtml(url);
+  return `<p class="source-link"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer">Source</a></p>`;
 }
 
 function highlightWord(sentence, word) {

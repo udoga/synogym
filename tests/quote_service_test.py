@@ -26,6 +26,15 @@ class QuoteServiceTest(TestCase):
         self.repo.create_all(quotes)
         self.assertEqual(quotes, self.service.list_by_query("yourself"))
 
+    def test_returns_ten_quotes_from_repo_when_repo_has_more(self):
+        quotes = self.create_quotes("Be yourself", 11)
+        self.repo.create_all(quotes)
+        self.assertEqual(quotes[:10], self.service.list_by_query("yourself"))
+
+    def test_returns_ten_quotes_from_fetcher_when_fetcher_has_more(self):
+        self.quote_fetcher.output = self.create_quotes("Generated yourself", 11)
+        self.assertEqual(self.quote_fetcher.output[:10], self.service.list_by_query("yourself"))
+
     def create_quotes(self, content: str, count: int) -> list[Quote]:
         return [Quote(text=f"{content} {number}", author="Oscar Wilde", url=f"https://example.com/{number}")
                 for number in range(count)]

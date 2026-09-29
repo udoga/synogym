@@ -14,3 +14,8 @@ class SqlUserRepoTest(TestCase):
         user = User(email="ada@example.com", first_name="Ada", last_name="Lovelace")
         self.assertEqual(user, self.repo.create(user))
         self.assertEqual(1, user.id)
+
+    def test_finds_user(self):
+        user = self.repo.create(User(email="ada@example.com", first_name="Ada", last_name="Lovelace"))
+        self.assertEqual(user, self.repo.find(user.id))
+        self.assertEqual(user, self.repo.find_by_email(user.email))

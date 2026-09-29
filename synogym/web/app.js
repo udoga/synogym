@@ -11,12 +11,71 @@ class Synogym {
     this.selectedMeaning = null;
     this.quotes = [];
     this.quotesLoaded = false;
+    this.user = null;
+    this.googleClientId = "";
   }
 
-  async searchMeanings() {
+  async init() {
+    await this.fetchAuthConfig();
+    await this.fetchCurrentUser();
+    this.renderGoogleButton();
+  }
+
+  async fetchAuthConfig() {
+    try {
+      const response = await fetch("/auth/config");
+      this.googleClientId = (await response.json()).google_client_id || "";
+    } catch {}
+  }
+
+  async fetchCurrentUser() {
+    try {
+      const response = await fetch("/auth/me");
+      this.user = (await response.json()).user;
+    } catch {}
+  }
+
+  renderGoogleButton() {
+    if (this.user || !this.googleClientId) return;
+    if (!window.google?.accounts?.id) return setTimeout(() => this.renderGoogleButton(), 100);
+    this.initializeGoogleButton();
+  }
+
+  initializeGoogleButton() {
+    const button = document.getElementById("google-signin-button");
+    google.accounts.id.initialize({ client_id: this.googleClientId, callback: r => this.signInWithGoogle(r.credential) });
+    google.accounts.id.renderButton(button, { theme: "outline", size: "large" });
+  }
+
+  signInWithGoogle(credential) {
+    if (!credential) return;
+    return this.requestGoogleSignIn(credential);
+  }
+
+  async requestGoogleSignIn(credential) {
+    try {
+      await this.renderGoogleSignInResponse(await this.postJson("/auth/google", { credential }));
+    } catch {
+      this.showError("Could not reach the server.");
+    }
+  }
+
+  async renderGoogleSignInResponse(response) {
+    const body = await response.json();
+    if (!response.ok) return this.showError(body.error?.message || "Google sign-in failed.");
+    this.user = body.user;
+  }
+
+  async logout() {
+    await this.postJson("/auth/logout", {});
+    this.user = null;
+    this.renderGoogleButton();
+  }
+
+  searchMeanings() {
     const query = this.query.trim();
     if (!query) return;
-    await this.fetchMeanings(query);
+    return this.fetchMeanings(query);
   }
 
   async fetchMeanings(query) {
@@ -81,9 +140,9 @@ class Synogym {
     this.showStatus(this.meanings.length ? "Meanings" : "No meanings found.");
   }
 
-  async searchWord(word) {
+  searchWord(word) {
     this.query = word;
-    await this.fetchMeanings(word);
+    return this.fetchMeanings(word);
   }
 
   async fetchQuotes(query) {
@@ -126,6 +185,10 @@ class Synogym {
 
   getLevelClass(level) {
     return level ? `level-${String(level).toLowerCase()}` : "";
+  }
+
+  postJson(url, body) {
+    return fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   }
 
   highlightParts(sentence, word) {

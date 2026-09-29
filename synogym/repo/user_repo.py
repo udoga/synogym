@@ -5,3 +5,11 @@ class UserRepo(ABC):
     @abstractmethod
     def create(self, user: User) -> User:
         pass
+
+    @abstractmethod
+    def find(self, user_id: int) -> User | None:
+        pass
+
+    @abstractmethod
+    def find_by_email(self, email: str) -> User | None:
+        pass

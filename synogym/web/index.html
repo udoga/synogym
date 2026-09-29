@@ -4,15 +4,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Synogym</title>
+  <link rel="icon" href="/web/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/web/style.css">
   <style>[x-cloak] { display: none !important; }</style>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script defer src="/web/app.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body>
   <main class="page" x-data="synogym()" x-cloak>
     <section class="search-panel" aria-labelledby="title">
-      <h1 id="title">Synogym</h1>
+      <div class="top-bar">
+        <h1 id="title">Synogym</h1>
+        <div class="auth-panel">
+          <p x-show="user"><strong x-text="`${user?.first_name || ''} ${user?.last_name || ''}`.trim()"></strong>
+            <button type="button" @click="logout">Logout</button>
+          </p>
+          <div id="google-signin-button" x-show="!user"></div>
+        </div>
+      </div>
       <form id="search-form" class="search-form" @submit.prevent="searchMeanings">
         <label class="sr-only" for="query-input">Word</label>
         <input id="query-input" name="query" type="search" placeholder="Search for a word" autocomplete="off"

@@ -13,3 +13,9 @@ class UserServiceTest(TestCase):
         self.assertEqual("Ada", user.first_name)
         self.assertEqual("Lovelace", user.last_name)
         self.assertEqual([user], self.repo.users)
+
+    def test_finds_or_creates_user(self):
+        first_user = self.service.find_or_create_user("ada@example.com", "Ada", "Lovelace")
+        second_user = self.service.find_or_create_user("ada@example.com", "Augusta", "Byron")
+        self.assertEqual(first_user, second_user)
+        self.assertEqual([first_user], self.repo.users)

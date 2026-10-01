@@ -1,13 +1,12 @@
 from collections.abc import Callable
-import os
 from flask import Flask, Response, jsonify
 from werkzeug.exceptions import HTTPException
 
 class RestServer:
-    def __init__(self, port: int = 5000):
+    def __init__(self, port: int = 5000, flask_secret_key: str = "dev-secret-key"):
         self.port = port
         self.app = Flask(__name__, static_folder="web")
-        self.app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
+        self.app.secret_key = flask_secret_key
         self.app.json.sort_keys = False
         self.add_home_route()
         self.add_error_handlers()
@@ -22,7 +21,9 @@ class RestServer:
         self.app.add_url_rule("/", view_func=self.render_home)
 
     def render_home(self) -> Response:
-        return self.app.send_static_file("index.html")
+        response = self.app.send_static_file("index.html")
+        response.headers["Cross-Origin-Opener-Policy"] = "same-origin-allow-popups"
+        return response
 
     def add_error_handlers(self):
         self.app.register_error_handler(ValueError, self.handle_value_error)

@@ -1,4 +1,3 @@
-import os
 from dataclasses import asdict
 from flask import Response, jsonify, request, session
 from google.auth.transport import requests
@@ -8,9 +7,9 @@ from synogym.rest_server import RestServer
 from synogym.service.user_service import UserService
 
 class UserController:
-    def __init__(self, server: RestServer, service: UserService, google_client_id: str | None = None):
+    def __init__(self, server: RestServer, service: UserService, google_client_id: str):
         self.service = service
-        self.google_client_id = google_client_id or os.environ.get("GOOGLE_CLIENT_ID")
+        self.google_client_id = google_client_id
         self._add_routes(server)
 
     def _add_routes(self, server: RestServer):
@@ -31,7 +30,7 @@ class UserController:
         return jsonify({"user": asdict(user)})
 
     def _verify_google_credential(self, credential: str) -> dict:
-        assert self.google_client_id, "GOOGLE_CLIENT_ID is not configured"
+        assert self.google_client_id, "Google client ID is not configured"
         payload = id_token.verify_oauth2_token(credential, requests.Request(), self.google_client_id)
         assert payload.get("email_verified"), "Google email is not verified"
         return payload

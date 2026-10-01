@@ -1,25 +1,21 @@
 from unittest import TestCase
 from synogym.controller.user_controller import UserController
-from synogym.google_token_verifier import GoogleUserInfo
 from synogym.repo.list_user_repo import ListUserRepo
 from synogym.rest_server import RestServer
 from synogym.service.user_service import UserService
 
-class MockVerifier:
-    client_id = "google-client-id"
-
-    def verify(self, credential: str) -> GoogleUserInfo:
-        self.credential = credential
-        return GoogleUserInfo("ada@example.com", "Ada", "Lovelace")
-
 class UserControllerTest(TestCase):
     def setUp(self):
         self.repo = ListUserRepo()
-        self.verifier = MockVerifier()
         self.rest_server = RestServer()
         self.service = UserService(self.repo)
-        self.controller = UserController(self.rest_server, self.service, self.verifier)
+        self.controller = UserController(self.rest_server, self.service, "google-client-id")
+        self.controller._verify_google_credential = self.verify_google_credential
         self.client = self.rest_server.app.test_client()
+
+    def verify_google_credential(self, credential: str) -> dict:
+        self.credential = credential
+        return {"email": "ada@example.com", "given_name": "Ada", "family_name": "Lovelace"}
 
     def test_returns_google_client_id(self):
         response = self.client.get("/auth/config")
@@ -30,7 +26,7 @@ class UserControllerTest(TestCase):
         expected = {"user": {"id": 1, "email": "ada@example.com", "first_name": "Ada", "last_name": "Lovelace"}}
         self.assertEqual(200, response.status_code)
         self.assertEqual(expected, response.get_json())
-        self.assertEqual("google-token", self.verifier.credential)
+        self.assertEqual("google-token", self.credential)
 
     def test_returns_current_user(self):
         self.client.post("/auth/google", json={"credential": "google-token"})

@@ -77,12 +77,16 @@ h1 {
 
 .sign-in-form {
   display: grid;
-  gap: 10px;
+  gap: 6px;
 }
 
 .sign-in-form label {
   color: #344054;
   font-weight: 600;
+}
+
+.sign-in-form label:not(:first-child) {
+  margin-top: 8px;
 }
 
 .sign-in-form input,
@@ -92,6 +96,7 @@ h1 {
 }
 
 .sign-in-form button {
+  margin-top: 8px;
   border: 0;
   color: #ffffff;
   background: #2563eb;

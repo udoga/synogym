@@ -1,6 +1,9 @@
 ### Setup
 
-- `uv sync`
-- `uv run pytest`
-- `uv run python main.py`
-- Login: user@example.com / user-pwd
+```
+uv sync
+uv run pytest
+uv run python main.py
+```
+
+Login: user@example.com / user-pwd

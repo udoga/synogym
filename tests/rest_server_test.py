@@ -16,7 +16,7 @@ class MockController:
 
 class RestServerTest(TestCase):
     def setUp(self):
-        self.rest_server = RestServer()
+        self.rest_server = RestServer(check_login=False)
         self.controller = MockController(self.rest_server)
         self.client = self.rest_server.app.test_client()
 
@@ -30,4 +30,12 @@ class RestServerTest(TestCase):
         response = self.client.get("/meanings/happy")
         expected = [{"id": None, "query": "happy", "definition": "feeling joy", "pos": "adjective"}]
         self.assertEqual(200, response.status_code)
+        self.assertEqual(expected, response.get_json())
+
+    def test_rejects_guest_requests(self):
+        rest_server = RestServer()
+        MockController(rest_server)
+        response = rest_server.app.test_client().get("/meanings/happy")
+        expected = {"error": {"status": 401, "type": "Unauthorized", "message": "Sign in required"}}
+        self.assertEqual(401, response.status_code)
         self.assertEqual(expected, response.get_json())

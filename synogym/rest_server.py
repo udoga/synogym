@@ -1,14 +1,17 @@
 from collections.abc import Callable
-from flask import Flask, Response, jsonify
-from werkzeug.exceptions import HTTPException
+from flask import Flask, Response, jsonify, request, session
+from werkzeug.exceptions import HTTPException, Unauthorized
 
 class RestServer:
-    def __init__(self, port: int = 5000, flask_secret_key: str = "dev-secret-key"):
+    def __init__(self, port: int = 5000, flask_secret_key: str = "dev-secret-key", check_login: bool = True):
         self.port = port
+        self.check_login = check_login
         self.app = Flask(__name__, static_folder="web")
         self.app.secret_key = flask_secret_key
         self.app.json.sort_keys = False
+        self.public_paths = {"/", "/auth/config", "/auth/google", "/auth/sign-in"}
         self.add_home_route()
+        self.add_request_hooks()
         self.add_error_handlers()
 
     def run(self):
@@ -19,6 +22,18 @@ class RestServer:
 
     def add_home_route(self):
         self.app.add_url_rule("/", view_func=self.render_home)
+
+    def add_request_hooks(self):
+        if self.check_login:
+            self.app.before_request(self.check_signed_in)
+
+    def check_signed_in(self) -> Response | None:
+        if self._is_public_request() or session.get("user_id"):
+            return None
+        raise Unauthorized("Sign in required")
+
+    def _is_public_request(self) -> bool:
+        return request.path in self.public_paths or request.endpoint == "static"
 
     def render_home(self) -> Response:
         response = self.app.send_static_file("index.html")

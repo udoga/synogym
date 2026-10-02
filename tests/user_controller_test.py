@@ -9,7 +9,7 @@ from werkzeug.security import generate_password_hash
 class UserControllerTest(TestCase):
     def setUp(self):
         self.repo = ListUserRepo()
-        self.rest_server = RestServer()
+        self.rest_server = RestServer(check_login=False)
         self.service = UserService(self.repo)
         self.controller = UserController(self.rest_server, self.service, "google-client-id")
         self.controller._verify_google_credential = self.verify_google_credential
@@ -49,6 +49,10 @@ class UserControllerTest(TestCase):
         response = self.client.get("/auth/me")
         expected = {"user": {"id": 1, "email": "ada@example.com", "first_name": "Ada", "last_name": "Lovelace"}}
         self.assertEqual(expected, response.get_json())
+
+    def test_returns_no_current_user_without_session(self):
+        response = self.client.get("/auth/me")
+        self.assertEqual({"user": None}, response.get_json())
 
     def test_logs_out_user(self):
         self.client.post("/auth/google", json={"credential": "google-token"})

@@ -6,6 +6,7 @@ class SqlUserRepo(UserRepo):
     INSERT_USER_SQL = "INSERT INTO users (email, first_name, last_name) VALUES (?, ?, ?)"
     SELECT_USER_SQL = "SELECT id, email, first_name, last_name FROM users WHERE id = ?"
     SELECT_USER_BY_EMAIL_SQL = "SELECT id, email, first_name, last_name FROM users WHERE email = ?"
+    SELECT_HASHED_PASSWORD_SQL = "SELECT hashed_password FROM users WHERE email = ?"
 
     def __init__(self, connection: sqlite3.Connection):
         self.connection = connection
@@ -23,6 +24,10 @@ class SqlUserRepo(UserRepo):
     def find_by_email(self, email: str) -> User | None:
         row = self.connection.execute(self.SELECT_USER_BY_EMAIL_SQL, (email,)).fetchone()
         return self._create_user(row) if row else None
+
+    def find_hashed_password_by_email(self, email: str) -> str | None:
+        row = self.connection.execute(self.SELECT_HASHED_PASSWORD_SQL, (email,)).fetchone()
+        return row["hashed_password"] if row else None
 
     def _get_values(self, user: User) -> tuple[str, str, str]:
         return user.email, user.first_name, user.last_name

@@ -23,7 +23,7 @@ if __name__ == "__main__":
     detail_generator = DetailGenerator(model)
     quote_fetcher = QuoteFetcher()
 
-    connection = SqliteConnector().connect("synogym.sqlite", "sqlite-schema.sql")
+    connection = SqliteConnector().connect("synogym.sqlite", ["sqlite-schema.sql", "sqlite-data.sql"])
     meaning_repo = SqlMeaningRepo(connection)
     quote_repo = SqlQuoteRepo(connection)
     user_repo = SqlUserRepo(connection)

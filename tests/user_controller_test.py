@@ -1,8 +1,10 @@
 from unittest import TestCase
 from synogym.controller.user_controller import UserController
+from synogym.data_classes import User
 from synogym.repo.list_user_repo import ListUserRepo
 from synogym.rest_server import RestServer
 from synogym.service.user_service import UserService
+from werkzeug.security import generate_password_hash
 
 class UserControllerTest(TestCase):
     def setUp(self):
@@ -27,6 +29,20 @@ class UserControllerTest(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertEqual(expected, response.get_json())
         self.assertEqual("google-token", self.credential)
+
+    def test_signs_in_user_with_password(self):
+        self.repo.create(User("ada@example.com", "Ada", "Lovelace"))
+        self.repo.hashed_passwords["ada@example.com"] = generate_password_hash("secret")
+        response = self.client.post("/auth/sign-in", json={"email": "ada@example.com", "password": "secret"})
+        expected = {"user": {"id": 1, "email": "ada@example.com", "first_name": "Ada", "last_name": "Lovelace"}}
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(expected, response.get_json())
+
+    def test_rejects_wrong_password(self):
+        self.repo.create(User("ada@example.com", "Ada", "Lovelace"))
+        self.repo.hashed_passwords["ada@example.com"] = generate_password_hash("secret")
+        response = self.client.post("/auth/sign-in", json={"email": "ada@example.com", "password": "wrong"})
+        self.assertEqual(401, response.status_code)
 
     def test_returns_current_user(self):
         self.client.post("/auth/google", json={"credential": "google-token"})

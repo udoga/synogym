@@ -15,6 +15,7 @@ class UserController:
     def _add_routes(self, server: RestServer):
         server.add_route("/auth/config", self.read_auth_config)
         server.add_route("/auth/google", self.sign_in_with_google, methods=["POST"])
+        server.add_route("/auth/sign-in", self.sign_in, methods=["POST"])
         server.add_route("/auth/me", self.read_current_user)
         server.add_route("/auth/logout", self.logout, methods=["POST"])
 
@@ -26,6 +27,12 @@ class UserController:
         payload = self._verify_google_credential(data["credential"])
         google_user = User(payload["email"], payload.get("given_name", ""), payload.get("family_name", ""))
         user = self.service.find_or_create_user(google_user)
+        session["user_id"] = user.id
+        return jsonify({"user": asdict(user)})
+
+    def sign_in(self) -> Response:
+        data = request.get_json() or {}
+        user = self.service.sign_in(data.get("email", ""), data.get("password", ""))
         session["user_id"] = user.id
         return jsonify({"user": asdict(user)})
 

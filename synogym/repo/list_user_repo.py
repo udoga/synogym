@@ -4,6 +4,7 @@ from synogym.repo.user_repo import UserRepo
 class ListUserRepo(UserRepo):
     def __init__(self):
         self.users: list[User] = []
+        self.hashed_passwords: dict[str, str] = {}
 
     def create(self, user: User) -> User:
         user.id = len(self.users) + 1
@@ -15,3 +16,6 @@ class ListUserRepo(UserRepo):
 
     def find_by_email(self, email: str) -> User | None:
         return next((user for user in self.users if user.email == email), None)
+
+    def find_hashed_password_by_email(self, email: str) -> str | None:
+        return self.hashed_passwords.get(email)

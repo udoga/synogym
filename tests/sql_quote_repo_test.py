@@ -7,7 +7,7 @@ from synogym.data_classes import Quote
 class SqlMeaningRepoTest(TestCase):
     def setUp(self):
         self.sql_path = str(Path(__file__).resolve().parent.parent / "sqlite-schema.sql")
-        self.connection = SqliteConnector().connect(":memory:", self.sql_path)
+        self.connection = SqliteConnector().connect(":memory:", [self.sql_path])
         self.repo = SqlQuoteRepo(self.connection)
 
     def test_quote_operations(self):

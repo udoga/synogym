@@ -7,7 +7,7 @@ from synogym.repo.sql_meaning_repo import SqlMeaningRepo
 class SqlMeaningRepoTest(TestCase):
     def setUp(self):
         self.sql_path = str(Path(__file__).resolve().parent.parent / "sqlite-schema.sql")
-        self.connection = SqliteConnector().connect(":memory:", self.sql_path)
+        self.connection = SqliteConnector().connect(":memory:", [self.sql_path])
         self.repo = SqlMeaningRepo(self.connection)
 
     def test_meaning_operations(self):

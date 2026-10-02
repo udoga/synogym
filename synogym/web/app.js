@@ -12,6 +12,9 @@ class Synogym {
     this.quotes = [];
     this.quotesLoaded = false;
     this.user = null;
+    this.email = "";
+    this.password = "";
+    this.authStatus = "";
     this.googleClientId = "";
   }
 
@@ -38,32 +41,73 @@ class Synogym {
   renderGoogleButton() {
     if (this.user || !this.googleClientId) return;
     if (!window.google?.accounts?.id) return setTimeout(() => this.renderGoogleButton(), 100);
+    if (!this._getGoogleButtonWidth()) return setTimeout(() => this.renderGoogleButton(), 100);
     this.initializeGoogleButton();
   }
 
   initializeGoogleButton() {
     const button = document.getElementById("google-signin-button");
-    google.accounts.id.initialize({ client_id: this.googleClientId, callback: r => this.signInWithGoogle(r.credential) });
-    google.accounts.id.renderButton(button, { theme: "outline", size: "large" });
+    const callback = response => this.signInWithGoogle(response.credential);
+    button.innerHTML = "";
+    google.accounts.id.initialize({ client_id: this.googleClientId, callback });
+    google.accounts.id.renderButton(button, { theme: "outline", size: "large", width: this._getGoogleButtonWidth() });
+  }
+
+  _getGoogleButtonWidth() {
+    const width = document.getElementById("google-signin-button")?.getBoundingClientRect().width || 0;
+    return Math.max(0, Math.floor(width) - 2);
   }
 
   signInWithGoogle(credential) {
-    if (!credential) return;
+    if (!credential) return this.showAuthError("Google did not return a credential.");
     return this.requestGoogleSignIn(credential);
   }
 
   async requestGoogleSignIn(credential) {
+    this.isLoading = true;
+    this.authStatus = "Signing in with Google...";
     try {
       await this.renderGoogleSignInResponse(await this.postJson("/auth/google", { credential }));
     } catch {
-      this.showError("Could not reach the server.");
+      this.showAuthError("Could not reach the server.");
+    } finally {
+      this.isLoading = false;
     }
   }
 
   async renderGoogleSignInResponse(response) {
     const body = await response.json();
-    if (!response.ok) return this.showError(body.error?.message || "Google sign-in failed.");
-    this.user = body.user;
+    if (!response.ok) return this.showAuthError(body.error?.message || "Google sign-in failed.");
+    this.setUser(body.user);
+  }
+
+  async signIn() {
+    this.startLoading();
+    await this.requestSignIn();
+    this.stopLoading();
+  }
+
+  async requestSignIn() {
+    try {
+      const body = { email: this.email, password: this.password };
+      await this.renderSignInResponse(await this.postJson("/auth/sign-in", body));
+    } catch {
+      this.showAuthError("Could not reach the server.");
+    }
+  }
+
+  async renderSignInResponse(response) {
+    const body = await response.json();
+    if (!response.ok) return this.showAuthError(body.error?.message || "Sign-in failed.");
+    this.setUser(body.user);
+  }
+
+  setUser(user) {
+    this.user = user;
+    this.password = "";
+    this.authStatus = "";
+    this.status = "";
+    this.isError = false;
   }
 
   async logout() {
@@ -217,6 +261,10 @@ class Synogym {
     this.selectedMeaning = null;
     this.isError = true;
     this.status = message;
+  }
+
+  showAuthError(message) {
+    this.authStatus = message;
   }
 
   _createEmptyDetail() {

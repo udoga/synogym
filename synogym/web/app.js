@@ -1,5 +1,42 @@
 document.addEventListener("alpine:init", () => Alpine.data("synogym", () => new Synogym()));
 
+class QuoteLoader {
+  constructor() {
+    this.quotes = [];
+    this.isLoading = false;
+  }
+
+  reset() {
+    this.quotes = [];
+    this.isLoading = false;
+  }
+
+  load(word) {
+    if (!word) return;
+    this._startLoading();
+    return this._fetchQuotes(word);
+  }
+
+  _startLoading() {
+    this.quotes = [];
+    this.isLoading = true;
+  }
+
+  async _fetchQuotes(word) {
+    try {
+      await this._showResponse(await fetch(`/quotes/${encodeURIComponent(word)}`));
+    } catch {
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  async _showResponse(response) {
+    if (!response.ok) return;
+    this.quotes = await response.json();
+  }
+}
+
 class Synogym {
   constructor() {
     this.query = "";
@@ -12,10 +49,7 @@ class Synogym {
     this.selectedMeaning = null;
     this.selectedBookmark = null;
     this.newBookmarkTag = "";
-    this.quotes = [];
-    this.quotesLoaded = false;
-    this.quoteStatus = "";
-    this.isLoadingQuotes = false;
+    this.quoteLoader = new QuoteLoader();
     this.user = null;
     this.email = "";
     this.password = "";
@@ -217,12 +251,10 @@ class Synogym {
     this.selectedMeaning = meaning;
     this.selectedBookmark = null;
     this.newBookmarkTag = "";
-    this.quotes = [];
-    this.quotesLoaded = false;
-    this.quoteStatus = "";
-    this.isLoadingQuotes = false;
+    this.quoteLoader.reset();
     this.view = "detail";
     this.fetchBookmark(meaning.id);
+    this.quoteLoader.load(meaning.query);
     this.showStatus("Word Details");
   }
 
@@ -302,37 +334,6 @@ class Synogym {
   searchWord(word) {
     this.query = word;
     return this.fetchMeanings(word);
-  }
-
-  async fetchQuotes(query) {
-    this.quoteStatus = "";
-    this.isLoadingQuotes = true;
-    await this.requestQuotes(query);
-    this.isLoadingQuotes = false;
-  }
-
-  async requestQuotes(query) {
-    try {
-      await this.renderQuoteResponse(await fetch(`/quotes/${encodeURIComponent(query)}`));
-    } catch {
-      this.showQuoteError();
-    }
-  }
-
-  async renderQuoteResponse(response) {
-    if (!response.ok) return this.showQuoteError();
-    this.showQuotes(await response.json());
-  }
-
-  showQuotes(quotes) {
-    this.quotes = quotes;
-    this.quotesLoaded = true;
-    this.quoteStatus = "";
-    this.showStatus("Word Details");
-  }
-
-  showQuoteError() {
-    this.quoteStatus = "Could not load quotes.";
   }
 
   detail() {

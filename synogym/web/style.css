@@ -160,7 +160,6 @@ input:focus {
 }
 
 .auth-panel button:hover:not(:disabled),
-.quote-loader button:hover:not(:disabled),
 .top-back-button:hover:not(:disabled),
 .top-save-button:hover:not(:disabled) {
   border-color: #2563eb;
@@ -279,16 +278,6 @@ button:disabled {
 
 .quote-loader {
   text-align: center;
-}
-
-.quote-loader button {
-  min-height: 40px;
-  border: 1px solid #243b5a;
-  border-radius: 12px;
-  padding: 0 14px;
-  color: #eeeeee;
-  background: #222222;
-  cursor: pointer;
 }
 
 .quote-card h3 {

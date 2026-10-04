@@ -85,15 +85,16 @@
                 </div>
                 <label class="sr-only" for="bookmark-tag-input">Add a tag...</label>
                 <input id="bookmark-tag-input" type="text" placeholder="Add a tag..." x-model="newBookmarkTag"
-                       @keydown.enter.prevent="addBookmarkTag">
+                       @keydown.enter.prevent="addBookmarkTag" @keydown.tab="addBookmarkTag">
+                <button class="bookmark-tag-add-button" type="button" aria-label="Add tag" @click="addBookmarkTag">✓</button>
               </section>
             </template>
             <template x-if="selectedBookmark">
               <section class="bookmark-note-card">
-                <strong>Note:</strong>
+                <strong>Note</strong>
                 <label class="sr-only" for="bookmark-note-input">Add a note...</label>
-                <input id="bookmark-note-input" type="text" placeholder="Add a note..." x-model="selectedBookmark.note"
-                       @input.debounce.600ms="updateBookmark">
+                <textarea id="bookmark-note-input" rows="1" placeholder="Add a note..." x-model="selectedBookmark.note"
+                          @input.debounce.600ms="updateBookmark"></textarea>
               </section>
             </template>
             <section class="detail-card" x-show="hasWords(detail().examples)">

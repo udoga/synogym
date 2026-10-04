@@ -7,7 +7,7 @@ class BookmarkController:
     def __init__(self, server: RestServer, service: BookmarkService):
         self.service = service
         server.add_route("/bookmarks", self.create, methods=["POST"])
-        server.add_route("/bookmarks", self.find_by_meaning, methods=["GET"])
+        server.add_route("/bookmarks", self.get, methods=["GET"])
         server.add_route("/bookmarks/<int:bookmark_id>", self.update, methods=["PUT"])
         server.add_route("/bookmarks/<int:bookmark_id>", self.delete, methods=["DELETE"])
 
@@ -15,6 +15,14 @@ class BookmarkController:
         data = request.get_json() or {}
         bookmark = self.service.create(self._get_user_id(), data["meaning_id"])
         return jsonify(asdict(bookmark))
+
+    def get(self) -> Response:
+        if "meaning_id" in request.args: return self.find_by_meaning()
+        return self.list_with_meanings()
+
+    def list_with_meanings(self) -> Response:
+        bookmarks = self.service.list_with_meanings(self._get_user_id())
+        return jsonify([asdict(bookmark) for bookmark in bookmarks])
 
     def find_by_meaning(self) -> Response:
         meaning_id = int(request.args["meaning_id"])

@@ -7,6 +7,7 @@ class Synogym {
     this.isError = false;
     this.isLoading = false;
     this.view = "list";
+    this.listTitle = "Bookmarks";
     this.meanings = [];
     this.selectedMeaning = null;
     this.selectedBookmark = null;
@@ -23,6 +24,7 @@ class Synogym {
   async init() {
     await this.fetchAuthConfig();
     await this.fetchCurrentUser();
+    await this.fetchBookmarks();
     this.renderGoogleButton();
   }
 
@@ -108,13 +110,15 @@ class Synogym {
     this.user = user;
     this.password = "";
     this.authStatus = "";
-    this.status = "";
     this.isError = false;
+    this.fetchBookmarks();
   }
 
   async logout() {
     await this.postJson("/auth/logout", {});
     this.user = null;
+    this.meanings = [];
+    this.status = "";
     this.renderGoogleButton();
   }
 
@@ -122,6 +126,40 @@ class Synogym {
     const query = this.query.trim();
     if (!query) return;
     return this.fetchMeanings(query);
+  }
+
+  showBookmarksWhenQueryCleared() {
+    if (this.query.trim()) return;
+    return this.fetchBookmarks();
+  }
+
+  async fetchBookmarks() {
+    if (!this.user) return;
+    this.startLoading();
+    await this.requestBookmarks();
+    this.stopLoading();
+  }
+
+  async requestBookmarks() {
+    try {
+      await this.renderBookmarksResponse(await fetch("/bookmarks"));
+    } catch {
+      this.showError("Could not reach the server.");
+    }
+  }
+
+  async renderBookmarksResponse(response) {
+    const body = await response.json();
+    if (!response.ok) return this.showError(body.error?.message || "Could not load bookmarks.");
+    this.showBookmarkedMeanings(body);
+  }
+
+  showBookmarkedMeanings(bookmarks) {
+    this.meanings = bookmarks.map(bookmark => ({ ...bookmark.meaning, bookmark }));
+    this.view = "list";
+    this.listTitle = "Bookmarks";
+    this.selectedMeaning = null;
+    this.showStatus(this.meanings.length ? this.listTitle : "No bookmarks yet.");
   }
 
   async fetchMeanings(query) {
@@ -147,8 +185,9 @@ class Synogym {
   showMeanings(meanings) {
     this.meanings = meanings;
     this.view = "list";
+    this.listTitle = "Meanings";
     this.selectedMeaning = null;
-    this.showStatus(meanings.length ? "Meanings" : "No meanings found.");
+    this.showStatus(meanings.length ? this.listTitle : "No meanings found.");
   }
 
   async fetchMeaningDetail(meaningId) {
@@ -188,7 +227,7 @@ class Synogym {
     this.selectedMeaning = null;
     this.selectedBookmark = null;
     this.newBookmarkTag = "";
-    this.showStatus(this.meanings.length ? "Meanings" : "No meanings found.");
+    this.showStatus(this.meanings.length ? this.listTitle : "No meanings found.");
   }
 
   async fetchBookmark(meaningId) {
@@ -304,7 +343,7 @@ class Synogym {
   }
 
   isPageHeader() {
-    return ["Meanings", "Word Details"].includes(this.status) && !this.isLoading && !this.isError;
+    return ["Bookmarks", "Meanings", "Word Details"].includes(this.status) && !this.isLoading && !this.isError;
   }
 
   postJson(url, body) {

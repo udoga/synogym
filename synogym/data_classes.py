@@ -23,6 +23,10 @@ class Bookmark:
     tags: str
 
 @dataclass
+class BookmarkWithMeaning(Bookmark):
+    meaning: Meaning
+
+@dataclass
 class Example:
     meaning_id: int | None = field(default=None, kw_only=True)
     sentence: str

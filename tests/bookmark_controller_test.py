@@ -26,6 +26,13 @@ class BookmarkControllerTest(TestCase):
         expected = {"id": 1, "user_id": 1, "meaning_id": 2, "note": "", "tags": ""}
         self.assertEqual(expected, response.get_json())
 
+    def test_lists_bookmarks_with_meanings(self):
+        self.client.post("/bookmarks", json={"meaning_id": 2})
+        response = self.client.get("/bookmarks")
+        expected = [{"id": 1, "user_id": 1, "meaning_id": 2, "note": "", "tags": "",
+                     "meaning": {"id": 2, "query": "", "definition": "", "pos": ""}}]
+        self.assertEqual(expected, response.get_json())
+
     def test_returns_null_for_unsaved_meaning(self):
         response = self.client.get("/bookmarks?meaning_id=2")
         self.assertEqual({"bookmark": None}, response.get_json())

@@ -17,6 +17,12 @@ class BookmarkServiceTest(TestCase):
         self.assertEqual(bookmark, self.service.create(1, 2))
         self.assertEqual(1, len(self.repo.bookmarks))
 
+    def test_lists_bookmarks_with_meanings(self):
+        self.service.create(1, 2)
+        bookmarks = self.service.list_with_meanings(1)
+        self.assertEqual(1, len(bookmarks))
+        self.assertEqual(2, bookmarks[0].meaning.id)
+
     def test_updates_note_and_tags_for_owner(self):
         bookmark = self.service.create(1, 2)
         updated = self.service.update(1, bookmark.id, "note", "tag")

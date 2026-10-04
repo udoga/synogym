@@ -1,9 +1,16 @@
 import sqlite3
-from synogym.data_classes import Bookmark
+from synogym.data_classes import Bookmark, BookmarkWithMeaning, Meaning
 from synogym.repo.bookmark_repo import BookmarkRepo
 
 class SqlBookmarkRepo(BookmarkRepo):
     INSERT_BOOKMARK_SQL = "INSERT INTO bookmarks (user_id, meaning_id, note, tags) VALUES (?, ?, ?, ?)"
+    LIST_WITH_MEANINGS_SQL = """
+        SELECT b.id AS bookmark_id, b.user_id, b.meaning_id, b.note, b.tags,
+               m.query, m.definition, m.pos
+        FROM bookmarks b JOIN meanings m ON m.id = b.meaning_id
+        WHERE b.user_id = ?
+        ORDER BY b.id
+    """
     SELECT_BOOKMARK_SQL = "SELECT * FROM bookmarks WHERE id = ?"
     SELECT_BY_USER_AND_MEANING_SQL = "SELECT * FROM bookmarks WHERE user_id = ? AND meaning_id = ?"
     UPDATE_BOOKMARK_SQL = "UPDATE bookmarks SET note = ?, tags = ? WHERE id = ?"
@@ -11,6 +18,10 @@ class SqlBookmarkRepo(BookmarkRepo):
 
     def __init__(self, connection: sqlite3.Connection):
         self.connection = connection
+
+    def list_with_meanings(self, user_id: int) -> list[BookmarkWithMeaning]:
+        cursor = self.connection.execute(self.LIST_WITH_MEANINGS_SQL, (user_id,))
+        return [self._create_bookmark_with_meaning(row) for row in cursor.fetchall()]
 
     def create(self, bookmark: Bookmark) -> Bookmark:
         cursor = self.connection.execute(self.INSERT_BOOKMARK_SQL, self._get_values(bookmark))
@@ -41,3 +52,8 @@ class SqlBookmarkRepo(BookmarkRepo):
     def _create_bookmark(self, row: sqlite3.Row) -> Bookmark:
         return Bookmark(id=row["id"], user_id=row["user_id"], meaning_id=row["meaning_id"], note=row["note"],
                         tags=row["tags"])
+
+    def _create_bookmark_with_meaning(self, row: sqlite3.Row) -> BookmarkWithMeaning:
+        meaning = Meaning(id=row["meaning_id"], query=row["query"], definition=row["definition"], pos=row["pos"])
+        return BookmarkWithMeaning(id=row["bookmark_id"], user_id=row["user_id"], meaning_id=row["meaning_id"],
+                                   note=row["note"], tags=row["tags"], meaning=meaning)

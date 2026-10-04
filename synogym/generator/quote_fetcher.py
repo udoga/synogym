@@ -1,6 +1,6 @@
 from html import unescape
 import re
-from urllib.parse import urljoin
+from urllib.parse import urlencode, urljoin
 from curl_cffi import requests
 from synogym.data_classes import Quote
 from synogym.generator.generator import Generator
@@ -25,10 +25,7 @@ class QuoteFetcher(Generator[str, list[Quote]]):
         return self._parse_quotes(html)
 
     def _make_url(self, query: str) -> str:
-        return f"https://www.brainyquote.com/topics/{self._make_slug(query)}-quotes"
-
-    def _make_slug(self, query: str) -> str:
-        return re.sub(r"[^a-z0-9]+", "-", query.lower()).strip("-")
+        return f"{self._base_url()}/search_results?{urlencode({'q': query})}"
 
     def _fetch_html(self, url: str) -> str:
         response = requests.get(url, headers=self.HEADERS, impersonate="chrome", timeout=10)

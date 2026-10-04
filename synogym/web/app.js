@@ -14,6 +14,8 @@ class Synogym {
     this.newBookmarkTag = "";
     this.quotes = [];
     this.quotesLoaded = false;
+    this.quoteStatus = "";
+    this.isLoadingQuotes = false;
     this.user = null;
     this.email = "";
     this.password = "";
@@ -217,6 +219,8 @@ class Synogym {
     this.newBookmarkTag = "";
     this.quotes = [];
     this.quotesLoaded = false;
+    this.quoteStatus = "";
+    this.isLoadingQuotes = false;
     this.view = "detail";
     this.fetchBookmark(meaning.id);
     this.showStatus("Word Details");
@@ -301,29 +305,34 @@ class Synogym {
   }
 
   async fetchQuotes(query) {
-    this.startLoading();
+    this.quoteStatus = "";
+    this.isLoadingQuotes = true;
     await this.requestQuotes(query);
-    this.stopLoading();
+    this.isLoadingQuotes = false;
   }
 
   async requestQuotes(query) {
     try {
       await this.renderQuoteResponse(await fetch(`/quotes/${encodeURIComponent(query)}`));
     } catch {
-      this.showError("Could not reach the server.");
+      this.showQuoteError();
     }
   }
 
   async renderQuoteResponse(response) {
-    const body = await response.json();
-    if (!response.ok) return this.showError(body.error?.message || "Could not load quotes.");
-    this.showQuotes(body);
+    if (!response.ok) return this.showQuoteError();
+    this.showQuotes(await response.json());
   }
 
   showQuotes(quotes) {
     this.quotes = quotes;
     this.quotesLoaded = true;
+    this.quoteStatus = "";
     this.showStatus("Word Details");
+  }
+
+  showQuoteError() {
+    this.quoteStatus = "Could not load quotes.";
   }
 
   detail() {

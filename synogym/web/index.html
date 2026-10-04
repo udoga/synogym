@@ -129,7 +129,9 @@
               <h3>History</h3><p x-text="detail().history"></p>
             </section>
             <section class="quote-loader" x-show="!quotesLoaded">
-              <button type="button" :disabled="isLoading" @click="fetchQuotes(selectedMeaning.query)">Load Quotes</button>
+              <button type="button" :disabled="isLoadingQuotes" @click="fetchQuotes(selectedMeaning.query)">Load Quotes</button>
+              <p class="status" x-show="isLoadingQuotes">Loading quotes...</p>
+              <p class="status error" x-show="quoteStatus" x-text="quoteStatus"></p>
             </section>
             <template x-for="quote in quotes" :key="quote.id || `${quote.author}-${quote.text}`">
               <section class="detail-card quote-card">

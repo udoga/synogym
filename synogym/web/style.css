@@ -1,8 +1,8 @@
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #18212f;
-  background: #f6f7fb;
+  color: #e8e8e8;
+  background: #101010;
 }
 
 * {
@@ -53,16 +53,16 @@ h1 {
   align-items: center;
   justify-content: flex-end;
   margin: 0;
-  color: #667085;
+  color: #b8b8b8;
 }
 
 .auth-panel button {
   min-height: 40px;
-  border: 1px solid #d0d5dd;
+  border: 1px solid #243b5a;
   border-radius: 12px;
   padding: 0 14px;
-  color: #18212f;
-  background: #ffffff;
+  color: #eeeeee;
+  background: #222222;
   cursor: pointer;
 }
 
@@ -70,9 +70,9 @@ h1 {
   max-width: 360px;
   margin: 42px auto 0;
   padding: 24px;
-  border: 1px solid #e4e7ee;
+  border: 1px solid #333333;
   border-radius: 18px;
-  background: #ffffff;
+  background: #1a1a1a;
 }
 
 .sign-in-form {
@@ -81,7 +81,7 @@ h1 {
 }
 
 .sign-in-form label {
-  color: #344054;
+  color: #d0d0d0;
   font-weight: 600;
 }
 
@@ -97,9 +97,9 @@ h1 {
 
 .sign-in-form button {
   margin-top: 8px;
-  border: 0;
+  border: 1px solid #1d4ed8;
   color: #ffffff;
-  background: #2563eb;
+  background: #1e3a8a;
   cursor: pointer;
 }
 
@@ -122,6 +122,15 @@ textarea {
   font: inherit;
 }
 
+button,
+input,
+textarea,
+.meaning-card,
+.bookmark-tags-card,
+.bookmark-note-card {
+  transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease, color 0.16s ease;
+}
+
 input,
 .search-form button {
   min-height: 48px;
@@ -130,18 +139,38 @@ input,
 
 input {
   width: 100%;
-  border: 1px solid #d0d5dd;
+  border: 1px solid #1e40af;
   padding: 0 15px;
-  color: #18212f;
-  background: #ffffff;
+  color: #eeeeee;
+  background: #161616;
+}
+
+input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px #1e3a8a66;
+  outline: 0;
 }
 
 .search-form button {
-  border: 0;
+  border: 1px solid #1d4ed8;
   padding: 0 20px;
   color: #ffffff;
-  background: #2563eb;
+  background: #1e3a8a;
   cursor: pointer;
+}
+
+.auth-panel button:hover:not(:disabled),
+.quote-loader button:hover:not(:disabled),
+.top-back-button:hover:not(:disabled),
+.top-save-button:hover:not(:disabled) {
+  border-color: #2563eb;
+  background: #1b2638;
+}
+
+.search-form button:hover:not(:disabled),
+.sign-in-form button:hover:not(:disabled) {
+  border-color: #3b82f6;
+  background: #1d4ed8;
 }
 
 button:disabled {
@@ -159,20 +188,20 @@ button:disabled {
   min-height: 24px;
   margin: 0;
   padding-top: 8px;
-  color: #667085;
+  color: #b8b8b8;
   text-align: center;
 }
 
 .page-header-status {
   padding-top: 12px;
-  color: #18212f;
+  color: #eeeeee;
   font-size: 1.08rem;
   font-weight: 400;
   letter-spacing: -0.01em;
 }
 
 .status.error {
-  color: #b42318;
+  color: #ff8a80;
 }
 
 .results {
@@ -184,16 +213,17 @@ button:disabled {
 .meaning-card {
   width: 100%;
   padding: 18px;
-  border: 1px solid #e4e7ee;
+  border: 1px solid #243b5a;
   border-radius: 18px;
-  color: #18212f;
+  color: #eeeeee;
   text-align: left;
-  background: #ffffff;
+  background: #1a1a1a;
   cursor: pointer;
 }
 
 .meaning-card:hover {
   border-color: #2563eb;
+  background: #1a1f2a;
 }
 
 .meaning-card h2 {
@@ -203,7 +233,7 @@ button:disabled {
 
 .meaning-card p {
   margin: 0;
-  color: #344054;
+  color: #c8c8c8;
 }
 
 .detail-panel {
@@ -213,9 +243,9 @@ button:disabled {
 
 .detail-card {
   overflow: hidden;
-  border: 1px solid #e4e7ee;
+  border: 1px solid #333333;
   border-radius: 18px;
-  background: #ffffff;
+  background: #1a1a1a;
 }
 
 .detail-header {
@@ -232,7 +262,7 @@ button:disabled {
   padding: 10px 18px;
   color: #ffffff;
   font-size: 0.95rem;
-  background: #344054;
+  background: #1e40af;
 }
 
 .detail-card p {
@@ -253,11 +283,11 @@ button:disabled {
 
 .quote-loader button {
   min-height: 40px;
-  border: 1px solid #d0d5dd;
+  border: 1px solid #243b5a;
   border-radius: 12px;
   padding: 0 14px;
-  color: #18212f;
-  background: #ffffff;
+  color: #eeeeee;
+  background: #222222;
   cursor: pointer;
 }
 
@@ -266,7 +296,7 @@ button:disabled {
   justify-content: space-between;
   align-items: center;
   color: #ffffff;
-  background: #1e3a8a;
+  background: #6d28d9;
 }
 
 .quote-source {
@@ -277,23 +307,18 @@ button:disabled {
 
 .word-button {
   margin: 0 6px 6px 0;
-  border: 1px solid #d0d5dd;
+  border: 1px solid #243b5a;
   border-radius: 999px;
   padding: 5px 10px;
-  color: #18212f;
-  background: #ffffff;
+  color: #eeeeee;
+  background: #222222;
   cursor: pointer;
 }
 
 .word-button:hover {
   border-color: #2563eb;
-  color: #175cd3;
-}
-
-mark {
-  border-radius: 4px;
-  padding: 0 3px;
-  background: #fef08a;
+  color: #ffffff;
+  background: #1b2638;
 }
 
 .top-back-button,
@@ -301,11 +326,11 @@ mark {
   position: absolute;
   top: 0;
   min-height: 40px;
-  border: 1px solid #d0d5dd;
+  border: 1px solid #243b5a;
   border-radius: 12px;
   padding: 0 14px;
-  color: #18212f;
-  background: #ffffff;
+  color: #eeeeee;
+  background: #222222;
   cursor: pointer;
 }
 
@@ -331,11 +356,11 @@ mark {
   align-items: center;
   gap: 6px;
   min-height: 42px;
-  border: 1px solid #e4e7ee;
+  border: 1px solid #333333;
   border-radius: 18px;
   padding: 10px 14px;
-  color: #18212f;
-  background: #ffffff;
+  color: #eeeeee;
+  background: #1a1a1a;
 }
 
 .bookmark-tags-card strong,
@@ -357,18 +382,18 @@ mark {
   flex: 0 0 auto;
   gap: 4px;
   align-items: center;
-  border: 1px solid #d0d5dd;
+  border: 1px solid #1e40af;
   border-radius: 999px;
   padding: 3px 7px;
-  color: #344054;
+  color: #d0d0d0;
   font-size: 0.82rem;
-  background: #ffffff;
+  background: #222222;
 }
 
 .bookmark-tag button {
   border: 0;
   padding: 0;
-  color: #667085;
+  color: #b8b8b8;
   line-height: 1;
   background: transparent;
   cursor: pointer;
@@ -380,7 +405,7 @@ mark {
   border: 0;
   border-radius: 0;
   padding: 0;
-  color: #667085;
+  color: #d0d0d0;
   text-align: left;
   background: transparent;
   outline: 0;
@@ -392,19 +417,25 @@ mark {
   min-width: 80px;
 }
 
+.bookmark-tags-card input:focus {
+  border: 0;
+  box-shadow: none;
+  outline: 0;
+}
+
 .bookmark-tag-add-button {
   flex: 0 0 auto;
   margin-left: auto;
   border: 0;
   padding: 2px 4px;
-  color: #667085;
+  color: #b8b8b8;
   line-height: 1;
   background: transparent;
   cursor: pointer;
 }
 
 .bookmark-tag-add-button:hover {
-  color: #175cd3;
+  color: #60a5fa;
 }
 
 .bookmark-note-card textarea {
@@ -419,6 +450,12 @@ mark {
   field-sizing: content;
 }
 
+.bookmark-tags-card:focus-within,
+.bookmark-note-card:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px #1e3a8a66;
+}
+
 .bookmark-note-card {
   display: grid;
   align-items: start;
@@ -431,7 +468,7 @@ mark {
 
 .bookmark-tags-card input::placeholder,
 .bookmark-note-card textarea::placeholder {
-  color: #98a2b3;
+  color: #888888;
 }
 
 .pos {
@@ -440,8 +477,8 @@ mark {
   padding: 3px 8px;
   border-radius: 999px;
   font-size: 0.78rem;
-  color: #175cd3;
-  background: #eff8ff;
+  color: #ffffff;
+  background: #1e40af;
 }
 
 .level-tag {
@@ -450,38 +487,38 @@ mark {
   padding: 3px 8px;
   border-radius: 999px;
   font-size: 0.78rem;
-  color: #166534;
-  background: #dcfce7;
+  color: #ffffff;
+  background: #1e3a8a;
 }
 
 .level-a1 {
-  color: #166534;
-  background: #dcfce7;
+  color: #ffffff;
+  background: #15803d;
 }
 
 .level-a2 {
-  color: #3f6212;
-  background: #ecfccb;
+  color: #ffffff;
+  background: #65a30d;
 }
 
 .level-b1 {
-  color: #854d0e;
-  background: #fef9c3;
+  color: #181818;
+  background: #eab308;
 }
 
 .level-b2 {
-  color: #9a3412;
-  background: #ffedd5;
+  color: #ffffff;
+  background: #ea580c;
 }
 
 .level-c1 {
-  color: #991b1b;
-  background: #fee2e2;
+  color: #ffffff;
+  background: #dc2626;
 }
 
 .level-c2 {
-  color: #7f1d1d;
-  background: #fecaca;
+  color: #ffffff;
+  background: #7e22ce;
 }
 
 .sr-only {

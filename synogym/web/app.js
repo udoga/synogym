@@ -358,12 +358,6 @@ class Synogym {
     return fetch(url, { method: "DELETE" });
   }
 
-  highlightParts(sentence, word) {
-    const text = String(sentence || "");
-    if (!word) return [{ text, highlight: false }];
-    return this._splitHighlightParts(text, this._createHighlightRegex(word));
-  }
-
   startLoading() {
     this.isLoading = true;
     this.showStatus("Loading...");
@@ -396,30 +390,4 @@ class Synogym {
     return { examples: [], synonyms: [], formations: [] };
   }
 
-  _splitHighlightParts(text, regex) {
-    const parts = [];
-    let cursor = 0;
-    for (const match of text.matchAll(regex)) cursor = this._addHighlightMatch(parts, text, match, cursor);
-    this._addPlainPart(parts, text.slice(cursor));
-    return parts;
-  }
-
-  _addHighlightMatch(parts, text, match, cursor) {
-    this._addPlainPart(parts, text.slice(cursor, match.index));
-    parts.push({ text: match[0], highlight: true });
-    return match.index + match[0].length;
-  }
-
-  _addPlainPart(parts, text) {
-    if (text) parts.push({ text, highlight: false });
-  }
-
-  _createHighlightRegex(word) {
-    const base = this._escapeRegExp(String(word));
-    return new RegExp(`\\b(${base}(?:d|ed)?)\\b`, "gi");
-  }
-
-  _escapeRegExp(value) {
-    return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  }
 }

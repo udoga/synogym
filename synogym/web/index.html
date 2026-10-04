@@ -101,10 +101,7 @@
               <h3>Examples</h3>
               <template x-for="example in detail().examples" :key="example.sentence">
                 <p>
-                  <template x-for="(part, index) in highlightParts(example.sentence, selectedMeaning.query)" :key="index">
-                    <span><span x-show="!part.highlight" x-text="part.text"></span><mark x-show="part.highlight"
-                                x-text="part.text"></mark></span>
-                  </template>
+                  <span x-text="example.sentence"></span>
                   <br><small x-text="joinWords(example.replacements)"></small>
                 </p>
               </template>
@@ -141,12 +138,7 @@
                   <a class="quote-source" x-show="quote.url" :href="quote.url" target="_blank" rel="noopener noreferrer"
                      aria-label="Open on BrainyQuote">🔗</a>
                 </h3>
-                <p>
-                  <template x-for="(part, index) in highlightParts(quote.text, selectedMeaning.query)" :key="index">
-                    <span><span x-show="!part.highlight" x-text="part.text"></span><mark x-show="part.highlight"
-                                x-text="part.text"></mark></span>
-                  </template>
-                </p>
+                <p x-text="quote.text"></p>
               </section>
             </template>
           </article>

@@ -45,8 +45,13 @@
         <div class="status-row">
           <button id="back-button" class="top-back-button" type="button" x-show="view === 'detail'"
                   @click="showMeaningList">← Back</button>
-          <p id="status" class="status" role="status" aria-live="polite" :class="{ error: isError }"
-             x-text="status"></p>
+          <p id="status" class="status" role="status" aria-live="polite"
+             :class="{ error: isError, 'page-header-status': isPageHeader() }" x-text="status"></p>
+          <button id="save-button" class="top-save-button" type="button" x-show="view === 'detail'"
+                  :disabled="isLoading || !selectedMeaning" @click="saveBookmark">
+            <span class="save-star" :class="{ saved: selectedBookmark }" x-text="selectedBookmark ? '★' : '☆'"></span>
+            <span x-text="selectedBookmark ? 'Saved' : 'Save'"></span>
+          </button>
         </div>
       </section>
       <section id="results" class="results" aria-label="Meanings">
@@ -67,6 +72,30 @@
               </h2>
               <p x-text="selectedMeaning.definition"></p>
             </section>
+            <template x-if="selectedBookmark">
+              <section class="bookmark-tags-card">
+                <strong>Tags:</strong>
+                <div class="bookmark-tag-list">
+                  <template x-for="tag in bookmarkTags()" :key="tag">
+                    <span class="bookmark-tag">
+                      <span x-text="tag"></span>
+                      <button type="button" :aria-label="`Remove ${tag}`" @click="removeBookmarkTag(tag)">×</button>
+                    </span>
+                  </template>
+                </div>
+                <label class="sr-only" for="bookmark-tag-input">Add a tag...</label>
+                <input id="bookmark-tag-input" type="text" placeholder="Add a tag..." x-model="newBookmarkTag"
+                       @keydown.enter.prevent="addBookmarkTag">
+              </section>
+            </template>
+            <template x-if="selectedBookmark">
+              <section class="bookmark-note-card">
+                <strong>Note:</strong>
+                <label class="sr-only" for="bookmark-note-input">Add a note...</label>
+                <input id="bookmark-note-input" type="text" placeholder="Add a note..." x-model="selectedBookmark.note"
+                       @input.debounce.600ms="updateBookmark">
+              </section>
+            </template>
             <section class="detail-card" x-show="hasWords(detail().examples)">
               <h3>Examples</h3>
               <template x-for="example in detail().examples" :key="example.sentence">

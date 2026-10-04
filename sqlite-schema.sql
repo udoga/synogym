@@ -34,6 +34,17 @@ CREATE TABLE IF NOT EXISTS examples (
     FOREIGN KEY (meaning_id) REFERENCES meanings(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS bookmarks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    meaning_id INTEGER NOT NULL,
+    note TEXT NOT NULL DEFAULT '',
+    tags TEXT NOT NULL DEFAULT '',
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (meaning_id) REFERENCES meanings(id) ON DELETE CASCADE,
+    UNIQUE (user_id, meaning_id)
+);
+
 CREATE TABLE IF NOT EXISTS quotes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     text TEXT NOT NULL,
@@ -44,3 +55,5 @@ CREATE TABLE IF NOT EXISTS quotes (
 
 CREATE INDEX IF NOT EXISTS idx_meanings_query ON meanings(query);
 CREATE INDEX IF NOT EXISTS idx_examples_meaning_id ON examples(meaning_id);
+CREATE INDEX IF NOT EXISTS idx_bookmarks_user_id ON bookmarks(user_id);
+CREATE INDEX IF NOT EXISTS idx_bookmarks_meaning_id ON bookmarks(meaning_id);

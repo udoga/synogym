@@ -9,6 +9,8 @@ class Synogym {
     this.view = "list";
     this.meanings = [];
     this.selectedMeaning = null;
+    this.selectedBookmark = null;
+    this.newBookmarkTag = "";
     this.quotes = [];
     this.quotesLoaded = false;
     this.user = null;
@@ -172,16 +174,86 @@ class Synogym {
 
   showDetail(meaning) {
     this.selectedMeaning = meaning;
+    this.selectedBookmark = null;
+    this.newBookmarkTag = "";
     this.quotes = [];
     this.quotesLoaded = false;
     this.view = "detail";
-    this.showStatus("Meaning Detail");
+    this.fetchBookmark(meaning.id);
+    this.showStatus("Word Details");
   }
 
   showMeaningList() {
     this.view = "list";
     this.selectedMeaning = null;
+    this.selectedBookmark = null;
+    this.newBookmarkTag = "";
     this.showStatus(this.meanings.length ? "Meanings" : "No meanings found.");
+  }
+
+  async fetchBookmark(meaningId) {
+    try {
+      const response = await fetch(`/bookmarks?meaning_id=${meaningId}`);
+      if (response.ok) this.showBookmark(await response.json());
+    } catch {}
+  }
+
+  showBookmark(body) {
+    this.selectedBookmark = body.bookmark === null ? null : body;
+  }
+
+  async saveBookmark() {
+    if (this.selectedBookmark) return this.deleteBookmark();
+    if (!this.selectedMeaning?.id) return;
+    const response = await this.postJson("/bookmarks", { meaning_id: this.selectedMeaning.id });
+    if (response.ok) this.selectedBookmark = await response.json();
+  }
+
+  async deleteBookmark() {
+    if (!this.selectedBookmark || !window.confirm("Remove the bookmark?")) return;
+    const bookmark = this.selectedBookmark;
+    this.selectedBookmark = null;
+    this.newBookmarkTag = "";
+    const response = await this.deleteJson(`/bookmarks/${bookmark.id}`);
+    if (!response.ok) this.selectedBookmark = bookmark;
+  }
+
+  async updateBookmark() {
+    if (!this.selectedBookmark?.id) return;
+    const response = await this.putJson(`/bookmarks/${this.selectedBookmark.id}`, this._getBookmarkBody());
+    if (response.ok) this.selectedBookmark = await response.json();
+  }
+
+  bookmarkTags() {
+    return this._splitTags(this.selectedBookmark?.tags || "");
+  }
+
+  addBookmarkTag() {
+    const tag = this._cleanTag(this.newBookmarkTag);
+    if (!tag) return;
+    this.newBookmarkTag = "";
+    return this._saveBookmarkTags([...this.bookmarkTags(), tag]);
+  }
+
+  removeBookmarkTag(tag) {
+    return this._saveBookmarkTags(this.bookmarkTags().filter(bookmarkTag => bookmarkTag !== tag));
+  }
+
+  _saveBookmarkTags(tags) {
+    this.selectedBookmark.tags = [...new Set(tags.map(tag => this._cleanTag(tag)).filter(Boolean))].join(", ");
+    return this.updateBookmark();
+  }
+
+  _getBookmarkBody() {
+    return { note: this.selectedBookmark.note || "", tags: this.selectedBookmark.tags || "" };
+  }
+
+  _splitTags(tags) {
+    return tags.split(",").map(tag => this._cleanTag(tag)).filter(Boolean);
+  }
+
+  _cleanTag(tag) {
+    return String(tag || "").trim();
   }
 
   searchWord(word) {
@@ -212,7 +284,7 @@ class Synogym {
   showQuotes(quotes) {
     this.quotes = quotes;
     this.quotesLoaded = true;
-    this.showStatus("Meaning Detail");
+    this.showStatus("Word Details");
   }
 
   detail() {
@@ -231,8 +303,20 @@ class Synogym {
     return level ? `level-${String(level).toLowerCase()}` : "";
   }
 
+  isPageHeader() {
+    return ["Meanings", "Word Details"].includes(this.status) && !this.isLoading && !this.isError;
+  }
+
   postJson(url, body) {
     return fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  }
+
+  putJson(url, body) {
+    return fetch(url, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  }
+
+  deleteJson(url) {
+    return fetch(url, { method: "DELETE" });
   }
 
   highlightParts(sentence, word) {
@@ -259,6 +343,8 @@ class Synogym {
     this.view = "list";
     this.meanings = [];
     this.selectedMeaning = null;
+    this.selectedBookmark = null;
+    this.newBookmarkTag = "";
     this.isError = true;
     this.status = message;
   }

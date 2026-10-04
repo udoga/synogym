@@ -15,6 +15,14 @@ class Meaning:
     pos: str
 
 @dataclass
+class Bookmark:
+    id: int | None = field(default=None, kw_only=True)
+    user_id: int
+    meaning_id: int
+    note: str
+    tags: str
+
+@dataclass
 class Example:
     meaning_id: int | None = field(default=None, kw_only=True)
     sentence: str

@@ -37,7 +37,7 @@ if __name__ == "__main__":
     quote_service = QuoteService(quote_repo, quote_fetcher)
     user_service = UserService(user_repo)
 
-    rest_server = RestServer(8080, config["flask_secret_key"])
+    rest_server = RestServer(config["server"])
     bookmark_controller = BookmarkController(rest_server, bookmark_service)
     meaning_controller = MeaningController(rest_server, meaning_service)
     quote_controller = QuoteController(rest_server, quote_service)

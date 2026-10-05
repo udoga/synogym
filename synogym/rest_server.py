@@ -5,11 +5,11 @@ from flask import Flask, Response, jsonify, request, session
 from werkzeug.exceptions import HTTPException, Unauthorized
 
 class RestServer:
-    def __init__(self, port: int = 5000, flask_secret_key: str = "dev-secret-key", check_login: bool = True):
-        self.port = port
-        self.check_login = check_login
-        self.app = Flask(__name__, static_folder="web")
-        self.app.secret_key = flask_secret_key
+    def __init__(self, config: dict):
+        self.port = config.get("port", 5000)
+        self.check_login = config.get("check_login", False)
+        self.app = Flask(__name__, static_folder=config.get("static_folder", None))
+        self.app.secret_key = config.get("secret_key", "dev-secret-key")
         self.app.json.sort_keys = False
         self.public_paths = {"/", "/auth/config", "/auth/google", "/auth/sign-in", "/auth/sign-up"}
         self.add_home_route()

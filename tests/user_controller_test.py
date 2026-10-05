@@ -9,7 +9,7 @@ from werkzeug.security import generate_password_hash
 class UserControllerTest(TestCase):
     def setUp(self):
         self.repo = ListUserRepo()
-        self.rest_server = RestServer(check_login=False)
+        self.rest_server = RestServer({})
         self.service = UserService(self.repo)
         self.controller = UserController(self.rest_server, self.service, "google-client-id")
         self.controller._verify_google_credential = self.verify_google_credential

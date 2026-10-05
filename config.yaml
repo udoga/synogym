@@ -4,5 +4,9 @@ database:
   sql_paths:
     - resources/sqlite-schema.sql
     - resources/sqlite-data.sql
+server:
+  port: 8080
+  secret_key: dev-secret-key
+  check_login: true
+  static_folder: ../web
 google_client_id: 33812809864-dr92pbet1sc9ph8vqum2bjl6s815km53.apps.googleusercontent.com
-flask_secret_key: dev-secret-key

@@ -1,4 +1,6 @@
 from collections.abc import Callable
+from dataclasses import asdict, is_dataclass
+from functools import partial
 from flask import Flask, Response, jsonify, request, session
 from werkzeug.exceptions import HTTPException, Unauthorized
 
@@ -17,8 +19,20 @@ class RestServer:
     def run(self):
         self.app.run(host="0.0.0.0", port=self.port)
 
-    def add_route(self, rule: str, view_func: Callable[..., Response], methods: list[str] | None = None):
-        self.app.add_url_rule(rule, view_func=view_func, methods=methods)
+    def add_route(self, rule: str, view_func: Callable[..., object], methods: list[str] | None = None):
+        endpoint = f"{rule}:{','.join(methods or ['GET'])}"
+        wrapped_view_func = partial(self._to_json_response, view_func)
+        self.app.add_url_rule(rule, endpoint=endpoint, view_func=wrapped_view_func, methods=methods)
+
+    def _to_json_response(self, view_func: Callable[..., object], *args: object, **kwargs: object) -> Response:
+        result = view_func(*args, **kwargs)
+        return result if isinstance(result, Response) else jsonify({"data": self._to_dict(result)})
+
+    def _to_dict(self, value: object) -> object:
+        if is_dataclass(value): return asdict(value)
+        if isinstance(value, list): return [self._to_dict(item) for item in value]
+        if isinstance(value, dict): return {key: self._to_dict(item) for key, item in value.items()}
+        return value
 
     def add_home_route(self):
         self.app.add_url_rule("/", view_func=self.render_home)

@@ -15,7 +15,7 @@ class BookmarkRepo(ABC):
         pass
 
     @abstractmethod
-    def find_by_user_and_meaning(self, user_id: int, meaning_id: int) -> Bookmark | None:
+    def find_by_user_and_meaning(self, user_id: int, meaning_id: int) -> list[Bookmark]:
         pass
 
     @abstractmethod

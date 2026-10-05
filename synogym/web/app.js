@@ -33,7 +33,8 @@ class QuoteLoader {
 
   async _showResponse(response) {
     if (!response.ok) return;
-    this.quotes = await response.json();
+    const body = await response.json();
+    this.quotes = body.data;
   }
 }
 
@@ -68,14 +69,14 @@ class Synogym {
   async fetchAuthConfig() {
     try {
       const response = await fetch("/auth/config");
-      this.googleClientId = (await response.json()).google_client_id || "";
+      this.googleClientId = (await response.json()).data.google_client_id || "";
     } catch {}
   }
 
   async fetchCurrentUser() {
     try {
       const response = await fetch("/auth/me");
-      this.user = (await response.json()).user;
+      this.user = (await response.json()).data;
     } catch {}
   }
 
@@ -120,7 +121,7 @@ class Synogym {
   async renderGoogleSignInResponse(response) {
     const body = await response.json();
     if (!response.ok) return this.showAuthError(body.error?.message || "Google sign-in failed.");
-    this.setUser(body.user);
+    this.setUser(body.data);
   }
 
   submitAuth() {
@@ -145,7 +146,7 @@ class Synogym {
   async renderSignInResponse(response) {
     const body = await response.json();
     if (!response.ok) return this.showAuthError(body.error?.message || "Sign-in failed.");
-    this.setUser(body.user);
+    this.setUser(body.data);
   }
 
   async signUp() {
@@ -166,7 +167,7 @@ class Synogym {
   async renderSignUpResponse(response) {
     const body = await response.json();
     if (!response.ok) return this.showAuthError(body.error?.message || "Sign-up failed.");
-    this.setUser(body.user);
+    this.setUser(body.data);
   }
 
   toggleAuthMode() {
@@ -223,7 +224,7 @@ class Synogym {
 
   async requestBookmarks() {
     try {
-      await this.renderBookmarksResponse(await fetch("/bookmarks"));
+      await this.renderBookmarksResponse(await fetch("/bookmarks/with-meaning"));
     } catch {
       this.showError("Could not reach the server.");
     }
@@ -232,7 +233,7 @@ class Synogym {
   async renderBookmarksResponse(response) {
     const body = await response.json();
     if (!response.ok) return this.showError(body.error?.message || "Could not load bookmarks.");
-    this.showBookmarkedMeanings(body);
+    this.showBookmarkedMeanings(body.data);
   }
 
   showBookmarkedMeanings(bookmarks) {
@@ -260,7 +261,7 @@ class Synogym {
   async renderMeaningsResponse(response) {
     const body = await response.json();
     if (!response.ok) return this.showError(body.error?.message || "Search failed.");
-    this.showMeanings(body);
+    this.showMeanings(body.data);
   }
 
   showMeanings(meanings) {
@@ -289,7 +290,7 @@ class Synogym {
   async renderDetailResponse(response) {
     const body = await response.json();
     if (!response.ok) return this.showError(body.error?.message || "Could not load detail.");
-    this.showDetail(body);
+    this.showDetail(body.data);
   }
 
   showDetail(meaning) {
@@ -313,20 +314,20 @@ class Synogym {
 
   async fetchBookmark(meaningId) {
     try {
-      const response = await fetch(`/bookmarks?meaning_id=${meaningId}`);
-      if (response.ok) this.showBookmark(await response.json());
+      const response = await fetch(`/bookmarks?meaning_id=${encodeURIComponent(meaningId)}`);
+      if (response.ok) this.showBookmark((await response.json()).data[0] || null);
     } catch {}
   }
 
-  showBookmark(body) {
-    this.selectedBookmark = body.bookmark === null ? null : body;
+  showBookmark(bookmark) {
+    this.selectedBookmark = bookmark;
   }
 
   async saveBookmark() {
     if (this.selectedBookmark) return this.deleteBookmark();
     if (!this.selectedMeaning?.id) return;
     const response = await this.postJson("/bookmarks", { meaning_id: this.selectedMeaning.id });
-    if (response.ok) this.selectedBookmark = await response.json();
+    if (response.ok) this.selectedBookmark = (await response.json()).data;
   }
 
   async deleteBookmark() {
@@ -341,7 +342,7 @@ class Synogym {
   async updateBookmark() {
     if (!this.selectedBookmark?.id) return;
     const response = await this.putJson(`/bookmarks/${this.selectedBookmark.id}`, this._getBookmarkBody());
-    if (response.ok) this.selectedBookmark = await response.json();
+    if (response.ok) this.selectedBookmark = (await response.json()).data;
   }
 
   bookmarkTags() {

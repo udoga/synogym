@@ -9,10 +9,11 @@ class BookmarkService:
         return self.repo.list_with_meanings(user_id)
 
     def create(self, user_id: int, meaning_id: int) -> Bookmark:
-        bookmark = self.repo.find_by_user_and_meaning(user_id, meaning_id)
-        return bookmark or self.repo.create(Bookmark(user_id=user_id, meaning_id=meaning_id, note="", tags=""))
+        bookmarks: list[Bookmark] = self.repo.find_by_user_and_meaning(user_id, meaning_id)
+        if len(bookmarks): return bookmarks[0]
+        return self.repo.create(Bookmark(user_id=user_id, meaning_id=meaning_id, note="", tags=""))
 
-    def find_by_meaning(self, user_id: int, meaning_id: int) -> Bookmark | None:
+    def find_by_meaning(self, user_id: int, meaning_id: int) -> list[Bookmark]:
         return self.repo.find_by_user_and_meaning(user_id, meaning_id)
 
     def update(self, user_id: int, bookmark_id: int, note: str, tags: str) -> Bookmark:

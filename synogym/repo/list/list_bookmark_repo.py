@@ -17,8 +17,8 @@ class ListBookmarkRepo(BookmarkRepo):
     def find(self, bookmark_id: int) -> Bookmark | None:
         return next((bookmark for bookmark in self.bookmarks if bookmark.id == bookmark_id), None)
 
-    def find_by_user_and_meaning(self, user_id: int, meaning_id: int) -> Bookmark | None:
-        return next((bookmark for bookmark in self.bookmarks if self._matches(bookmark, user_id, meaning_id)), None)
+    def find_by_user_and_meaning(self, user_id: int, meaning_id: int) -> list[Bookmark]:
+        return [b for b in self.bookmarks if self._matches(b, user_id, meaning_id)]
 
     def update(self, bookmark: Bookmark) -> Bookmark:
         existing = self.find(bookmark.id)

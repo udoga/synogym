@@ -21,11 +21,11 @@ class UserControllerTest(TestCase):
 
     def test_returns_google_client_id(self):
         response = self.client.get("/auth/config")
-        self.assertEqual({"google_client_id": "google-client-id"}, response.get_json())
+        self.assertEqual({"data": {"google_client_id": "google-client-id"}}, response.get_json())
 
     def test_signs_in_google_user(self):
         response = self.client.post("/auth/google", json={"credential": "google-token"})
-        expected = {"user": {"id": 1, "email": "ada@example.com", "first_name": "Ada", "last_name": "Lovelace"}}
+        expected = {"data": {"id": 1, "email": "ada@example.com", "first_name": "Ada", "last_name": "Lovelace"}}
         self.assertEqual(200, response.status_code)
         self.assertEqual(expected, response.get_json())
         self.assertEqual("google-token", self.credential)
@@ -34,13 +34,13 @@ class UserControllerTest(TestCase):
         self.repo.create(User("ada@example.com", "Ada", "Lovelace"))
         self.repo.hashed_passwords["ada@example.com"] = generate_password_hash("secret")
         response = self.client.post("/auth/sign-in", json={"email": "ada@example.com", "password": "secret"})
-        expected = {"user": {"id": 1, "email": "ada@example.com", "first_name": "Ada", "last_name": "Lovelace"}}
+        expected = {"data": {"id": 1, "email": "ada@example.com", "first_name": "Ada", "last_name": "Lovelace"}}
         self.assertEqual(200, response.status_code)
         self.assertEqual(expected, response.get_json())
 
     def test_signs_up_user_with_email_and_password(self):
         response = self.client.post("/auth/sign-up", json={"email": "ada@example.com", "password": "secret"})
-        expected = {"user": {"id": 1, "email": "ada@example.com", "first_name": "", "last_name": ""}}
+        expected = {"data": {"id": 1, "email": "ada@example.com", "first_name": "", "last_name": ""}}
         self.assertEqual(200, response.status_code)
         self.assertEqual(expected, response.get_json())
         self.assertIsNotNone(self.repo.hashed_passwords["ada@example.com"])
@@ -54,18 +54,18 @@ class UserControllerTest(TestCase):
     def test_returns_current_user(self):
         self.client.post("/auth/google", json={"credential": "google-token"})
         response = self.client.get("/auth/me")
-        expected = {"user": {"id": 1, "email": "ada@example.com", "first_name": "Ada", "last_name": "Lovelace"}}
+        expected = {"data": {"id": 1, "email": "ada@example.com", "first_name": "Ada", "last_name": "Lovelace"}}
         self.assertEqual(expected, response.get_json())
 
     def test_returns_no_current_user_without_session(self):
         response = self.client.get("/auth/me")
-        self.assertEqual({"user": None}, response.get_json())
+        self.assertEqual({"data": None}, response.get_json())
 
     def test_logs_out_user(self):
         self.client.post("/auth/google", json={"credential": "google-token"})
         response = self.client.post("/auth/logout", json={})
-        self.assertEqual({"user": None}, response.get_json())
-        self.assertEqual({"user": None}, self.client.get("/auth/me").get_json())
+        self.assertEqual({"data": None}, response.get_json())
+        self.assertEqual({"data": None}, self.client.get("/auth/me").get_json())
 
     def test_reuses_existing_google_user(self):
         self.client.post("/auth/google", json={"credential": "google-token"})

@@ -17,14 +17,14 @@ class SqlBookmarkRepoTest(TestCase):
 
     def test_creates_finds_and_updates_bookmark(self):
         bookmark = self.repo.create(Bookmark(user_id=self.user.id, meaning_id=self.meaning.id, note="", tags=""))
-        self.assertEqual(bookmark, self.repo.find_by_user_and_meaning(self.user.id, self.meaning.id))
+        self.assertEqual([bookmark], self.repo.find_by_user_and_meaning(self.user.id, self.meaning.id))
         bookmark.note = "Remember this one"
         bookmark.tags = "feeling,positive"
         self.assertEqual(bookmark, self.repo.update(bookmark))
         self.assertEqual(bookmark, self.repo.find(bookmark.id))
 
     def test_returns_none_for_missing_bookmark(self):
-        self.assertIsNone(self.repo.find_by_user_and_meaning(self.user.id, self.meaning.id))
+        self.assertEqual([], self.repo.find_by_user_and_meaning(self.user.id, self.meaning.id))
         self.assertIsNone(self.repo.find(123))
 
     def test_lists_bookmarks_with_meanings_for_user(self):

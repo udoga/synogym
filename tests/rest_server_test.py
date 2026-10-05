@@ -1,6 +1,4 @@
-from dataclasses import asdict
 from unittest import TestCase
-from flask import Response, jsonify
 from synogym.data_classes import Meaning
 from synogym.rest_server import RestServer
 
@@ -9,9 +7,9 @@ class MockController:
         self.meanings: list[Meaning] = [Meaning(query="happy", definition="feeling joy", pos="adjective")]
         rest_server.add_route("/meanings/<query>", self.get_meanings)
 
-    def get_meanings(self, query: str) -> Response:
+    def get_meanings(self, query: str) -> list[Meaning]:
         if query == "happy":
-            return jsonify([asdict(meaning) for meaning in self.meanings])
+            return self.meanings
         raise ValueError("Meaning not found")
 
 class RestServerTest(TestCase):
@@ -28,7 +26,7 @@ class RestServerTest(TestCase):
 
     def test_returns_meanings(self):
         response = self.client.get("/meanings/happy")
-        expected = [{"id": None, "query": "happy", "definition": "feeling joy", "pos": "adjective"}]
+        expected = {"data": [{"id": None, "query": "happy", "definition": "feeling joy", "pos": "adjective"}]}
         self.assertEqual(200, response.status_code)
         self.assertEqual(expected, response.get_json())
 

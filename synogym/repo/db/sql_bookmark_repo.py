@@ -39,10 +39,10 @@ class SqlBookmarkRepo(BookmarkRepo):
         row = self._fetch_one(self.SELECT_BOOKMARK_SQL, {"id": bookmark_id})
         return self._create_bookmark(row) if row else None
 
-    def find_by_user_and_meaning(self, user_id: int, meaning_id: int) -> Bookmark | None:
+    def find_by_user_and_meaning(self, user_id: int, meaning_id: int) -> list[Bookmark]:
         values = {"user_id": user_id, "meaning_id": meaning_id}
         row = self._fetch_one(self.SELECT_BY_USER_AND_MEANING_SQL, values)
-        return self._create_bookmark(row) if row else None
+        return [self._create_bookmark(row)] if row else []
 
     def update(self, bookmark: Bookmark) -> Bookmark:
         self.connection.execute(text(self.UPDATE_BOOKMARK_SQL), self._get_update_values(bookmark))

@@ -1,6 +1,6 @@
 import yaml
 from pathlib import Path
-from synogym.sqlite_connector import SqliteConnector
+from synogym.db_connector import DbConnector
 from synogym.generator.detail_generator import DetailGenerator
 from synogym.generator.meaning_generator import MeaningGenerator
 from synogym.generator.quote_fetcher import QuoteFetcher
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     detail_generator = DetailGenerator(model)
     quote_fetcher = QuoteFetcher()
 
-    connection = SqliteConnector().connect("synogym.sqlite", ["sqlite-schema.sql", "sqlite-data.sql"])
+    connection = DbConnector().connect(config["database"])
     bookmark_repo = SqlBookmarkRepo(connection)
     meaning_repo = SqlMeaningRepo(connection)
     quote_repo = SqlQuoteRepo(connection)

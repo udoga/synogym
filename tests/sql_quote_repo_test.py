@@ -1,13 +1,13 @@
 from pathlib import Path
 from unittest import TestCase
 from synogym.repo.db.sql_quote_repo import SqlQuoteRepo
-from synogym.sqlite_connector import SqliteConnector
+from synogym.db_connector import DbConnector
 from synogym.data_classes import Quote
 
 class SqlMeaningRepoTest(TestCase):
     def setUp(self):
         self.sql_path = str(Path(__file__).resolve().parent.parent / "sqlite-schema.sql")
-        self.connection = SqliteConnector().connect(":memory:", [self.sql_path])
+        self.connection = DbConnector().connect({"type": "sqlite", "uri": ":memory:", "sql_paths": [self.sql_path]})
         self.repo = SqlQuoteRepo(self.connection)
 
     def test_quote_operations(self):

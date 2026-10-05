@@ -4,12 +4,12 @@ from synogym.data_classes import Bookmark, BookmarkWithMeaning, Meaning, User
 from synogym.repo.db.sql_bookmark_repo import SqlBookmarkRepo
 from synogym.repo.db.sql_meaning_repo import SqlMeaningRepo
 from synogym.repo.db.sql_user_repo import SqlUserRepo
-from synogym.sqlite_connector import SqliteConnector
+from synogym.db_connector import DbConnector
 
 class SqlBookmarkRepoTest(TestCase):
     def setUp(self):
         self.sql_path = str(Path(__file__).resolve().parent.parent / "sqlite-schema.sql")
-        self.connection = SqliteConnector().connect(":memory:", [self.sql_path])
+        self.connection = DbConnector().connect({"type": "sqlite", "uri": ":memory:", "sql_paths": [self.sql_path]})
         meanings = [Meaning(query="happy", definition="joyful", pos="adj")]
         self.meaning = SqlMeaningRepo(self.connection).create_all(meanings)[0]
         self.user = SqlUserRepo(self.connection).create(User("ada@example.com", "Ada", "Lovelace"))

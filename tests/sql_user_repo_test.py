@@ -2,12 +2,12 @@ from pathlib import Path
 from unittest import TestCase
 from synogym.data_classes import User
 from synogym.repo.db.sql_user_repo import SqlUserRepo
-from synogym.sqlite_connector import SqliteConnector
+from synogym.db_connector import DbConnector
 
 class SqlUserRepoTest(TestCase):
     def setUp(self):
         self.sql_path = str(Path(__file__).resolve().parent.parent / "sqlite-schema.sql")
-        self.connection = SqliteConnector().connect(":memory:", [self.sql_path])
+        self.connection = DbConnector().connect({"type": "sqlite", "uri": ":memory:", "sql_paths": [self.sql_path]})
         self.repo = SqlUserRepo(self.connection)
 
     def test_creates_user(self):

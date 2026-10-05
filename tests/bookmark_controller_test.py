@@ -1,6 +1,6 @@
 from unittest import TestCase
 from synogym.controller.bookmark_controller import BookmarkController
-from synogym.repo.list_bookmark_repo import ListBookmarkRepo
+from synogym.repo.list.list_bookmark_repo import ListBookmarkRepo
 from synogym.rest_server import RestServer
 from synogym.service.bookmark_service import BookmarkService
 

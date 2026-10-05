@@ -1,6 +1,6 @@
 from pathlib import Path
 from unittest import TestCase
-from synogym.repo.sql_quote_repo import SqlQuoteRepo
+from synogym.repo.db.sql_quote_repo import SqlQuoteRepo
 from synogym.sqlite_connector import SqliteConnector
 from synogym.data_classes import Quote
 

@@ -1,7 +1,7 @@
 from pathlib import Path
 from unittest import TestCase
 from synogym.data_classes import User
-from synogym.repo.sql_user_repo import SqlUserRepo
+from synogym.repo.db.sql_user_repo import SqlUserRepo
 from synogym.sqlite_connector import SqliteConnector
 
 class SqlUserRepoTest(TestCase):

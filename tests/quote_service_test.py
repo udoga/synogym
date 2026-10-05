@@ -1,6 +1,6 @@
 from unittest import TestCase
 from synogym.data_classes import Quote
-from synogym.repo.list_quote_repo import ListQuoteRepo
+from synogym.repo.list.list_quote_repo import ListQuoteRepo
 from synogym.generator.mock_generator import MockGenerator
 from synogym.service.quote_service import QuoteService
 

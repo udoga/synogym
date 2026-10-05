@@ -1,9 +1,9 @@
 from pathlib import Path
 from unittest import TestCase
 from synogym.data_classes import Bookmark, BookmarkWithMeaning, Meaning, User
-from synogym.repo.sql_bookmark_repo import SqlBookmarkRepo
-from synogym.repo.sql_meaning_repo import SqlMeaningRepo
-from synogym.repo.sql_user_repo import SqlUserRepo
+from synogym.repo.db.sql_bookmark_repo import SqlBookmarkRepo
+from synogym.repo.db.sql_meaning_repo import SqlMeaningRepo
+from synogym.repo.db.sql_user_repo import SqlUserRepo
 from synogym.sqlite_connector import SqliteConnector
 
 class SqlBookmarkRepoTest(TestCase):

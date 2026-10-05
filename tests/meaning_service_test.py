@@ -1,7 +1,7 @@
 from unittest import TestCase
 from synogym.data_classes import Detail, Meaning, MeaningWithDetail
 from synogym.service.meaning_service import MeaningService
-from synogym.repo.list_meaning_repo import ListMeaningRepo
+from synogym.repo.list.list_meaning_repo import ListMeaningRepo
 from synogym.generator.mock_generator import MockGenerator
 
 class MeaningServiceTest(TestCase):

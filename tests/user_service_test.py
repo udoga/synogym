@@ -1,6 +1,6 @@
 from unittest import TestCase
 from synogym.data_classes import User
-from synogym.repo.list_user_repo import ListUserRepo
+from synogym.repo.list.list_user_repo import ListUserRepo
 from synogym.service.user_service import UserService
 from werkzeug.exceptions import Conflict, Unauthorized
 from werkzeug.security import generate_password_hash

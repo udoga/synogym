@@ -1,6 +1,6 @@
 from unittest import TestCase
 from synogym.data_classes import Bookmark
-from synogym.repo.list_bookmark_repo import ListBookmarkRepo
+from synogym.repo.list.list_bookmark_repo import ListBookmarkRepo
 from synogym.service.bookmark_service import BookmarkService
 
 class BookmarkServiceTest(TestCase):

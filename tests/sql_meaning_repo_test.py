@@ -2,7 +2,7 @@ from pathlib import Path
 from unittest import TestCase
 from synogym.sqlite_connector import SqliteConnector
 from synogym.data_classes import Detail, Example, Meaning
-from synogym.repo.sql_meaning_repo import SqlMeaningRepo
+from synogym.repo.db.sql_meaning_repo import SqlMeaningRepo
 
 class SqlMeaningRepoTest(TestCase):
     def setUp(self):

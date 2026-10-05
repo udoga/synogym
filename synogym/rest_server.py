@@ -9,7 +9,7 @@ class RestServer:
         self.app = Flask(__name__, static_folder="web")
         self.app.secret_key = flask_secret_key
         self.app.json.sort_keys = False
-        self.public_paths = {"/", "/auth/config", "/auth/google", "/auth/sign-in"}
+        self.public_paths = {"/", "/auth/config", "/auth/google", "/auth/sign-in", "/auth/sign-up"}
         self.add_home_route()
         self.add_request_hooks()
         self.add_error_handlers()

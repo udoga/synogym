@@ -4,6 +4,9 @@ from synogym.repo.user_repo import UserRepo
 
 class SqlUserRepo(UserRepo):
     INSERT_USER_SQL = "INSERT INTO users (email, first_name, last_name) VALUES (?, ?, ?)"
+    INSERT_USER_WITH_PASSWORD_SQL = """
+        INSERT INTO users (email, hashed_password, first_name, last_name) VALUES (?, ?, ?, ?)
+    """
     SELECT_USER_SQL = "SELECT id, email, first_name, last_name FROM users WHERE id = ?"
     SELECT_USER_BY_EMAIL_SQL = "SELECT id, email, first_name, last_name FROM users WHERE email = ?"
     SELECT_HASHED_PASSWORD_SQL = "SELECT hashed_password FROM users WHERE email = ?"
@@ -13,6 +16,13 @@ class SqlUserRepo(UserRepo):
 
     def create(self, user: User) -> User:
         cursor = self.connection.execute(self.INSERT_USER_SQL, self._get_values(user))
+        self.connection.commit()
+        user.id = cursor.lastrowid
+        return user
+
+    def create_with_hashed_password(self, user: User, hashed_password: str) -> User:
+        values = (user.email, hashed_password, user.first_name, user.last_name)
+        cursor = self.connection.execute(self.INSERT_USER_WITH_PASSWORD_SQL, values)
         self.connection.commit()
         user.id = cursor.lastrowid
         return user

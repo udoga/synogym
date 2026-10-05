@@ -38,6 +38,13 @@ class UserControllerTest(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertEqual(expected, response.get_json())
 
+    def test_signs_up_user_with_email_and_password(self):
+        response = self.client.post("/auth/sign-up", json={"email": "ada@example.com", "password": "secret"})
+        expected = {"user": {"id": 1, "email": "ada@example.com", "first_name": "", "last_name": ""}}
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(expected, response.get_json())
+        self.assertIsNotNone(self.repo.hashed_passwords["ada@example.com"])
+
     def test_rejects_wrong_password(self):
         self.repo.create(User("ada@example.com", "Ada", "Lovelace"))
         self.repo.hashed_passwords["ada@example.com"] = generate_password_hash("secret")

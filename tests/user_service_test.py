@@ -2,7 +2,7 @@ from unittest import TestCase
 from synogym.data_classes import User
 from synogym.repo.list_user_repo import ListUserRepo
 from synogym.service.user_service import UserService
-from werkzeug.exceptions import Unauthorized
+from werkzeug.exceptions import Conflict, Unauthorized
 from werkzeug.security import generate_password_hash
 
 class UserServiceTest(TestCase):
@@ -28,3 +28,13 @@ class UserServiceTest(TestCase):
         self.repo.hashed_passwords[user.email] = generate_password_hash("secret")
         with self.assertRaises(Unauthorized):
             self.service.sign_in("ada@example.com", "wrong")
+
+    def test_signs_up_user_with_email_and_password(self):
+        user = self.service.sign_up("ada@example.com", "secret")
+        self.assertEqual(User(id=1, email="ada@example.com", first_name="", last_name=""), user)
+        self.assertTrue(self.service.sign_in("ada@example.com", "secret"))
+
+    def test_rejects_sign_up_for_existing_email(self):
+        self.service.sign_up("ada@example.com", "secret")
+        with self.assertRaises(Conflict):
+            self.service.sign_up("ada@example.com", "secret")

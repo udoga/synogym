@@ -75,6 +75,12 @@ h1 {
   background: #1a1a1a;
 }
 
+.sign-in-panel h2 {
+  margin: 0 0 20px;
+  font-size: 1.35rem;
+  text-align: center;
+}
+
 .sign-in-form {
   display: grid;
   gap: 6px;
@@ -107,8 +113,37 @@ h1 {
   display: flex;
   width: 100%;
   justify-content: center;
-  margin-top: 24px;
   overflow: visible;
+}
+
+.auth-divider {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 22px 0;
+  color: #9a9a9a;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  flex: 1;
+  height: 1px;
+  background: #333333;
+  content: "";
+}
+
+.auth-switch {
+  margin: 18px 0 0;
+  color: #b8b8b8;
+  text-align: center;
+}
+
+.auth-switch button {
+  border: 0;
+  padding: 0;
+  color: #93c5fd;
+  background: transparent;
+  cursor: pointer;
 }
 
 .search-form {

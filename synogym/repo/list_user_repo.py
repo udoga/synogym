@@ -11,6 +11,10 @@ class ListUserRepo(UserRepo):
         self.users.append(user)
         return user
 
+    def create_with_hashed_password(self, user: User, hashed_password: str) -> User:
+        self.hashed_passwords[user.email] = hashed_password
+        return self.create(user)
+
     def find(self, user_id: int) -> User | None:
         return next((user for user in self.users if user.id == user_id), None)
 

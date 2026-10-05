@@ -16,6 +16,7 @@ class UserController:
         server.add_route("/auth/config", self.read_auth_config)
         server.add_route("/auth/google", self.sign_in_with_google, methods=["POST"])
         server.add_route("/auth/sign-in", self.sign_in, methods=["POST"])
+        server.add_route("/auth/sign-up", self.sign_up, methods=["POST"])
         server.add_route("/auth/me", self.read_current_user)
         server.add_route("/auth/logout", self.logout, methods=["POST"])
 
@@ -33,6 +34,12 @@ class UserController:
     def sign_in(self) -> Response:
         data = request.get_json() or {}
         user = self.service.sign_in(data.get("email", ""), data.get("password", ""))
+        session["user_id"] = user.id
+        return jsonify({"user": asdict(user)})
+
+    def sign_up(self) -> Response:
+        data = request.get_json() or {}
+        user = self.service.sign_up(data.get("email", ""), data.get("password", ""))
         session["user_id"] = user.id
         return jsonify({"user": asdict(user)})
 

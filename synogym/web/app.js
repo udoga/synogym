@@ -53,6 +53,7 @@ class Synogym {
     this.user = null;
     this.email = "";
     this.password = "";
+    this.authMode = "sign-in";
     this.authStatus = "";
     this.googleClientId = "";
   }
@@ -90,7 +91,8 @@ class Synogym {
     const callback = response => this.signInWithGoogle(response.credential);
     button.innerHTML = "";
     google.accounts.id.initialize({ client_id: this.googleClientId, callback });
-    google.accounts.id.renderButton(button, { theme: "outline", size: "large", width: this._getGoogleButtonWidth() });
+    const options = { theme: "outline", size: "large", text: "continue_with", width: this._getGoogleButtonWidth() };
+    google.accounts.id.renderButton(button, options);
   }
 
   _getGoogleButtonWidth() {
@@ -121,6 +123,10 @@ class Synogym {
     this.setUser(body.user);
   }
 
+  submitAuth() {
+    return this.authMode === "sign-up" ? this.signUp() : this.signIn();
+  }
+
   async signIn() {
     this.startLoading();
     await this.requestSignIn();
@@ -140,6 +146,45 @@ class Synogym {
     const body = await response.json();
     if (!response.ok) return this.showAuthError(body.error?.message || "Sign-in failed.");
     this.setUser(body.user);
+  }
+
+  async signUp() {
+    this.startLoading();
+    await this.requestSignUp();
+    this.stopLoading();
+  }
+
+  async requestSignUp() {
+    try {
+      const body = { email: this.email, password: this.password };
+      await this.renderSignUpResponse(await this.postJson("/auth/sign-up", body));
+    } catch {
+      this.showAuthError("Could not reach the server.");
+    }
+  }
+
+  async renderSignUpResponse(response) {
+    const body = await response.json();
+    if (!response.ok) return this.showAuthError(body.error?.message || "Sign-up failed.");
+    this.setUser(body.user);
+  }
+
+  toggleAuthMode() {
+    this.authMode = this.authMode === "sign-up" ? "sign-in" : "sign-up";
+    this.authStatus = "";
+    this.password = "";
+  }
+
+  authSubmitText() {
+    return this.authMode === "sign-up" ? "Create account" : "Sign in";
+  }
+
+  authSwitchText() {
+    return this.authMode === "sign-up" ? "Sign in" : "Create an account";
+  }
+
+  passwordAutocomplete() {
+    return this.authMode === "sign-up" ? "new-password" : "current-password";
   }
 
   setUser(user) {

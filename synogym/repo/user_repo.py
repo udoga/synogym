@@ -7,6 +7,10 @@ class UserRepo(ABC):
         pass
 
     @abstractmethod
+    def create_with_hashed_password(self, user: User, hashed_password: str) -> User:
+        pass
+
+    @abstractmethod
     def find(self, user_id: int) -> User | None:
         pass
 

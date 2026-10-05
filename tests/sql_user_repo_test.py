@@ -24,3 +24,8 @@ class SqlUserRepoTest(TestCase):
         user = self.repo.create(User(email="ada@example.com", first_name="Ada", last_name="Lovelace"))
         self.connection.execute("UPDATE users SET hashed_password = ? WHERE email = ?", ("hash", user.email))
         self.assertEqual("hash", self.repo.find_hashed_password_by_email(user.email))
+
+    def test_creates_user_with_hashed_password(self):
+        user = self.repo.create_with_hashed_password(User("ada@example.com", "", ""), "hash")
+        self.assertEqual(user, self.repo.find_by_email("ada@example.com"))
+        self.assertEqual("hash", self.repo.find_hashed_password_by_email("ada@example.com"))

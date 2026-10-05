@@ -8,7 +8,7 @@ from synogym.db_connector import DbConnector
 
 class SqlBookmarkRepoTest(TestCase):
     def setUp(self):
-        self.sql_path = str(Path(__file__).resolve().parent.parent / "sqlite-schema.sql")
+        self.sql_path = str(Path(__file__).resolve().parent.parent / "resources" / "sqlite-schema.sql")
         self.connection = DbConnector().connect({"type": "sqlite", "uri": ":memory:", "sql_paths": [self.sql_path]})
         meanings = [Meaning(query="happy", definition="joyful", pos="adj")]
         self.meaning = SqlMeaningRepo(self.connection).create_all(meanings)[0]

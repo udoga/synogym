@@ -2,8 +2,7 @@ database:
   type: sqlite
   uri: synogym.sqlite
   sql_paths:
-    - resources/sqlite-schema.sql
-    - resources/sqlite-data.sql
+    - schema-sqlite.sql
 server:
   port: 8080
   secret_key: dev-secret-key

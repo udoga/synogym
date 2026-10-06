@@ -1,0 +1,11 @@
+.git
+.idea
+.venv
+.pytest_cache
+__pycache__
+**/__pycache__
+*.pyc
+*.sqlite
+.env
+config.yaml
+config.prod.yaml

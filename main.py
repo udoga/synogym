@@ -19,7 +19,7 @@ from synogym.service.meaning_service import MeaningService
 from synogym.service.quote_service import QuoteService
 from synogym.service.user_service import UserService
 
-if __name__ == "__main__":
+def setup() -> RestServer:
     config: dict = yaml.safe_load(Path("config.yaml").read_text(encoding="utf-8"))
     model = GptModel(model="gpt-5", reasoning_effort="minimal")
     meaning_generator = MeaningGenerator(model)
@@ -38,8 +38,13 @@ if __name__ == "__main__":
     user_service = UserService(user_repo)
 
     rest_server = RestServer(config["server"])
-    bookmark_controller = BookmarkController(rest_server, bookmark_service)
-    meaning_controller = MeaningController(rest_server, meaning_service)
-    quote_controller = QuoteController(rest_server, quote_service)
-    user_controller = UserController(rest_server, user_service, config["google_client_id"])
-    rest_server.run()
+    BookmarkController(rest_server, bookmark_service)
+    MeaningController(rest_server, meaning_service)
+    QuoteController(rest_server, quote_service)
+    UserController(rest_server, user_service, config["google_client_id"])
+    return rest_server
+
+if __name__ == "__main__":
+    setup().run()
+else: # gunicorn
+    app = setup().app

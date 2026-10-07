@@ -21,8 +21,9 @@ from synogym.service.quote_service import QuoteService
 from synogym.service.user_service import UserService
 
 def setup() -> RestServer:
-    config: dict = yaml.safe_load(Path("config.yaml").read_text(encoding="utf-8"))
-    model = GptModel("gpt-5", config["openai_api_key"] or os.environ.get("OPENAI_API_KEY"), reasoning_effort="minimal")
+    config_path = Path(os.environ.get("SYNOGYM_CONFIG_PATH", "config.yaml"))
+    config: dict = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    model = GptModel("gpt-5", config.get("openai_api_key", os.environ.get("OPENAI_API_KEY")), reasoning_effort="minimal")
     meaning_generator = MeaningGenerator(model)
     detail_generator = DetailGenerator(model)
     quote_fetcher = QuoteFetcher()

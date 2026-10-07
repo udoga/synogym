@@ -1,4 +1,8 @@
-### Setup
+# Synogym
+
+https://www.synogym.com
+
+### Project Setup
 
 Set openai_api_key in [config.yaml](config.yaml).
 

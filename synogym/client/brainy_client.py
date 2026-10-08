@@ -5,7 +5,7 @@ from curl_cffi import requests
 from synogym.data_classes import Quote
 from synogym.generator.generator import Generator
 
-class QuoteFetcher(Generator[str, list[Quote]]):
+class BrainyClient(Generator[str, list[Quote]]):
     HEADERS = {
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
         "Accept-Language": "en-US,en;q=0.9",

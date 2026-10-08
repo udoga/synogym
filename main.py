@@ -4,7 +4,7 @@ from pathlib import Path
 from synogym.db_connector import DbConnector
 from synogym.generator.detail_generator import DetailGenerator
 from synogym.generator.meaning_generator import MeaningGenerator
-from synogym.generator.quote_fetcher import QuoteFetcher
+from synogym.client.brainy_client import BrainyClient
 from synogym.gpt_model import GptModel
 from synogym.controller.bookmark_controller import BookmarkController
 from synogym.controller.meaning_controller import MeaningController
@@ -26,7 +26,7 @@ def setup() -> RestServer:
     model = GptModel("gpt-5", config.get("openai_api_key", os.environ.get("OPENAI_API_KEY")), reasoning_effort="minimal")
     meaning_generator = MeaningGenerator(model)
     detail_generator = DetailGenerator(model)
-    quote_fetcher = QuoteFetcher()
+    brainy_client = BrainyClient()
 
     connection = DbConnector().connect(config["database"])
     bookmark_repo = SqlBookmarkRepo(connection)
@@ -36,7 +36,7 @@ def setup() -> RestServer:
 
     bookmark_service = BookmarkService(bookmark_repo)
     meaning_service = MeaningService(meaning_repo, meaning_generator, detail_generator)
-    quote_service = QuoteService(quote_repo, quote_fetcher)
+    quote_service = QuoteService(quote_repo, brainy_client)
     user_service = UserService(user_repo)
 
     rest_server = RestServer(config["server"])

@@ -26,7 +26,7 @@ def setup() -> RestServer:
     model = GptModel("gpt-5", config.get("openai_api_key", os.environ.get("OPENAI_API_KEY")), reasoning_effort="minimal")
     meaning_generator = MeaningGenerator(model)
     detail_generator = DetailGenerator(model)
-    brainy_client = BrainyClient()
+    brainy_client = BrainyClient() if config["brainy_quotes_enabled"] else None
 
     connection = DbConnector().connect(config["database"])
     bookmark_repo = SqlBookmarkRepo(connection)

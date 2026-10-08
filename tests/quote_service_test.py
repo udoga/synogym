@@ -35,6 +35,12 @@ class QuoteServiceTest(TestCase):
         self.brainy_client.output = self.create_quotes("Generated yourself", 11)
         self.assertEqual(self.brainy_client.output[:10], self.service.list_by_query("yourself"))
 
+    def test_returns_repo_quotes_when_quote_generator_is_none(self):
+        service = QuoteService(self.repo, None)
+        quotes = self.create_quotes("Be yourself", 2)
+        self.repo.create_all(quotes)
+        self.assertEqual(quotes, service.list_by_query("yourself"))
+
     def create_quotes(self, content: str, count: int) -> list[Quote]:
         return [Quote(text=f"{content} {number}", author="Oscar Wilde", url=f"https://example.com/{number}")
                 for number in range(count)]

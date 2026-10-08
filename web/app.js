@@ -339,10 +339,26 @@ class Synogym {
     if (!response.ok) this.selectedBookmark = bookmark;
   }
 
-  async updateBookmark() {
+  updateBookmarkFromNote() {
+    return this.updateBookmark({ keepFocusedNote: true });
+  }
+
+  async updateBookmark(options = {}) {
     if (!this.selectedBookmark?.id) return;
     const response = await this.putJson(`/bookmarks/${this.selectedBookmark.id}`, this._getBookmarkBody());
-    if (response.ok) this.selectedBookmark = (await response.json()).data;
+    if (response.ok) this._showUpdatedBookmark((await response.json()).data, options);
+  }
+
+  _showUpdatedBookmark(bookmark, options) {
+    if (!options.keepFocusedNote || !this._isFocusedElement("bookmark-note-input")) {
+      this.selectedBookmark = bookmark;
+      return;
+    }
+    this.selectedBookmark.tags = bookmark.tags || "";
+  }
+
+  _isFocusedElement(id) {
+    return document.activeElement?.id === id;
   }
 
   bookmarkTags() {

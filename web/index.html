@@ -99,8 +99,9 @@
               <section class="bookmark-note-card">
                 <strong>Note</strong>
                 <label class="sr-only" for="bookmark-note-input">Add a note...</label>
-                <textarea id="bookmark-note-input" rows="1" placeholder="Add a note..." x-model="selectedBookmark.note"
-                          @input.debounce.600ms="updateBookmark"></textarea>
+                <textarea id="bookmark-note-input" rows="1" placeholder="Add a note..." lang="en" inputmode="text"
+                          autocomplete="off" autocapitalize="sentences" spellcheck="true"
+                          x-model="selectedBookmark.note" @input.debounce.600ms="updateBookmarkFromNote"></textarea>
               </section>
             </template>
             <section class="detail-card" x-show="hasWords(detail().examples)">

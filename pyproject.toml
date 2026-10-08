@@ -1,7 +1,7 @@
 [project]
 name = "synogym"
 version = "0.1.0"
-description = "English synonym finding game to improve recall and paraphrasing skills."
+description = "English synonym recall practices."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

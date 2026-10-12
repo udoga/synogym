@@ -1,6 +1,6 @@
 # Synogym
 
-***Status:*** This project is under active development as a personal learning project.
+This project is currently under development as a personal learning project.
 
 https://www.synogym.com
 

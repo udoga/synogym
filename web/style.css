@@ -75,10 +75,26 @@ h1 {
   background: #1a1a1a;
 }
 
-.sign-in-panel h2 {
-  margin: 0 0 20px;
-  font-size: 1.35rem;
-  text-align: center;
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.auth-tabs button {
+  min-height: 40px;
+  border: 1px solid #333333;
+  border-radius: 12px;
+  color: #d0d0d0;
+  background: #222222;
+  cursor: pointer;
+}
+
+.auth-tabs button.active {
+  border-color: #1d4ed8;
+  color: #ffffff;
+  background: #1e3a8a;
 }
 
 .sign-in-form {
@@ -102,7 +118,7 @@ h1 {
 }
 
 .sign-in-form button {
-  margin-top: 8px;
+  margin-top: 18px;
   border: 1px solid #1d4ed8;
   color: #ffffff;
   background: #1e3a8a;
@@ -110,40 +126,15 @@ h1 {
 }
 
 .google-signin-button {
-  display: flex;
   width: 100%;
-  justify-content: center;
-  overflow: visible;
+  height: 40px;
+  margin-top: 22px;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-.auth-divider {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin: 22px 0;
-  color: #9a9a9a;
-}
-
-.auth-divider::before,
-.auth-divider::after {
-  flex: 1;
-  height: 1px;
-  background: #333333;
-  content: "";
-}
-
-.auth-switch {
-  margin: 18px 0 0;
-  color: #b8b8b8;
-  text-align: center;
-}
-
-.auth-switch button {
-  border: 0;
-  padding: 0;
-  color: #93c5fd;
-  background: transparent;
-  cursor: pointer;
+.google-signin-button iframe {
+  border-radius: 12px;
 }
 
 .search-form {

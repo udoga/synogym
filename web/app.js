@@ -83,7 +83,7 @@ class Synogym {
   renderGoogleButton() {
     if (this.user || !this.googleClientId) return;
     if (!window.google?.accounts?.id) return setTimeout(() => this.renderGoogleButton(), 100);
-    if (!this._getGoogleButtonWidth()) return setTimeout(() => this.renderGoogleButton(), 100);
+    if (!this._getAuthButtonWidth()) return setTimeout(() => this.renderGoogleButton(), 100);
     this.initializeGoogleButton();
   }
 
@@ -92,13 +92,13 @@ class Synogym {
     const callback = response => this.signInWithGoogle(response.credential);
     button.innerHTML = "";
     google.accounts.id.initialize({ client_id: this.googleClientId, callback });
-    const options = { theme: "outline", size: "large", text: "continue_with", width: this._getGoogleButtonWidth() };
+    const options = { theme: "outline", size: "large", text: "continue_with", width: this._getAuthButtonWidth() };
     google.accounts.id.renderButton(button, options);
   }
 
-  _getGoogleButtonWidth() {
-    const width = document.getElementById("google-signin-button")?.getBoundingClientRect().width || 0;
-    return Math.max(0, Math.floor(width) - 2);
+  _getAuthButtonWidth() {
+    const button = document.querySelector(".sign-in-form button");
+    return Math.floor(button?.getBoundingClientRect().width || 0);
   }
 
   signInWithGoogle(credential) {
@@ -170,18 +170,14 @@ class Synogym {
     this.setUser(body.data);
   }
 
-  toggleAuthMode() {
-    this.authMode = this.authMode === "sign-up" ? "sign-in" : "sign-up";
+  setAuthMode(authMode) {
+    this.authMode = authMode;
     this.authStatus = "";
     this.password = "";
   }
 
   authSubmitText() {
-    return this.authMode === "sign-up" ? "Create account" : "Sign in";
-  }
-
-  authSwitchText() {
-    return this.authMode === "sign-up" ? "Sign in" : "Create an account";
+    return this.authMode === "sign-up" ? "Register with Email" : "Sign In with Email";
   }
 
   passwordAutocomplete() {

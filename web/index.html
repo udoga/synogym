@@ -22,9 +22,12 @@
       </div>
     </section>
     <section class="sign-in-panel" x-show="!user" aria-label="Authentication">
-      <h2 x-text="authMode === 'sign-up' ? 'Create your account' : 'Sign in to Synogym'"></h2>
-      <div id="google-signin-button" class="google-signin-button"></div>
-      <div class="auth-divider"><span>or</span></div>
+      <div class="auth-tabs" role="tablist" aria-label="Authentication mode">
+        <button type="button" role="tab" :aria-selected="authMode === 'sign-in'"
+                :class="{ active: authMode === 'sign-in' }" @click="setAuthMode('sign-in')">Sign In</button>
+        <button type="button" role="tab" :aria-selected="authMode === 'sign-up'"
+                :class="{ active: authMode === 'sign-up' }" @click="setAuthMode('sign-up')">Register</button>
+      </div>
       <form class="sign-in-form" @submit.prevent="submitAuth">
         <label for="email-input">Email</label>
         <input id="email-input" name="email" type="email" autocomplete="email" required x-model="email"
@@ -34,11 +37,8 @@
                x-model="password" :disabled="isLoading">
         <button type="submit" :disabled="isLoading" x-text="authSubmitText()"></button>
       </form>
+      <div id="google-signin-button" class="google-signin-button"></div>
       <p class="status error" x-show="authStatus" x-text="authStatus"></p>
-      <p class="auth-switch">
-        <span x-text="authMode === 'sign-up' ? 'Already have an account?' : 'New to Synogym?'"></span>
-        <button type="button" @click="toggleAuthMode" x-text="authSwitchText()"></button>
-      </p>
     </section>
     <section x-show="user">
       <section class="search-panel" aria-label="Search">

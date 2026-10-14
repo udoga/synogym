@@ -3,11 +3,14 @@ database:
   uri: synogym.sqlite
   sql_paths:
     - schema-sqlite.sql
+llm:
+  llm_name: gpt-5
+  reasoning_effort: minimal
+  openai_api_key:
 server:
   port: 8080
   secret_key: dev-secret-key
   check_login: true
   static_folder: ../web
 google_client_id: 33812809864-dr92pbet1sc9ph8vqum2bjl6s815km53.apps.googleusercontent.com
-openai_api_key:
 brainy_quotes_enabled: false

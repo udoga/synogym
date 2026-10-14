@@ -3,14 +3,16 @@ import os
 from pathlib import Path
 from synogym.db_connector import DbConnector
 from synogym.generator.detail_generator import DetailGenerator
+from synogym.llm_gateway import LlmGateway
 from synogym.generator.meaning_generator import MeaningGenerator
 from synogym.client.brainy_client import BrainyClient
-from synogym.gpt_model import GptModel
+from synogym.client.gpt_client import GptClient
 from synogym.controller.bookmark_controller import BookmarkController
 from synogym.controller.meaning_controller import MeaningController
 from synogym.controller.quote_controller import QuoteController
 from synogym.controller.user_controller import UserController
 from synogym.repo.db.sql_bookmark_repo import SqlBookmarkRepo
+from synogym.repo.db.sql_llm_call_repo import SqlLlmCallRepo
 from synogym.repo.db.sql_meaning_repo import SqlMeaningRepo
 from synogym.repo.db.sql_quote_repo import SqlQuoteRepo
 from synogym.repo.db.sql_user_repo import SqlUserRepo
@@ -23,16 +25,19 @@ from synogym.service.user_service import UserService
 def setup() -> RestServer:
     config_path = Path(os.environ.get("SYNOGYM_CONFIG_PATH", "config.yaml"))
     config: dict = yaml.safe_load(config_path.read_text(encoding="utf-8"))
-    model = GptModel("gpt-5", config.get("openai_api_key", os.environ.get("OPENAI_API_KEY")), reasoning_effort="minimal")
-    meaning_generator = MeaningGenerator(model)
-    detail_generator = DetailGenerator(model)
-    brainy_client = BrainyClient() if config["brainy_quotes_enabled"] else None
 
     connection = DbConnector().connect(config["database"])
     bookmark_repo = SqlBookmarkRepo(connection)
     meaning_repo = SqlMeaningRepo(connection)
     quote_repo = SqlQuoteRepo(connection)
     user_repo = SqlUserRepo(connection)
+    llm_call_repo = SqlLlmCallRepo(connection)
+
+    gpt_client = GptClient(config["llm"])
+    llm_gateway = LlmGateway(config["llm"], gpt_client, llm_call_repo)
+    meaning_generator = MeaningGenerator(llm_gateway)
+    detail_generator = DetailGenerator(llm_gateway)
+    brainy_client = BrainyClient() if config["brainy_quotes_enabled"] else None
 
     bookmark_service = BookmarkService(bookmark_repo)
     meaning_service = MeaningService(meaning_repo, meaning_generator, detail_generator)

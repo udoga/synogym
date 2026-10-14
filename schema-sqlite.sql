@@ -53,6 +53,17 @@ CREATE TABLE IF NOT EXISTS quotes (
     UNIQUE (text, author, url)
 );
 
+CREATE TABLE IF NOT EXISTS llm_calls (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    llm_name TEXT NOT NULL,
+    reasoning_effort TEXT NOT NULL DEFAULT '',
+    operation TEXT NOT NULL,
+    input_token_count INTEGER NOT NULL,
+    output_token_count INTEGER NOT NULL,
+    first_token_latency REAL NOT NULL,
+    generation_latency REAL NOT NULL
+);
+
 CREATE INDEX IF NOT EXISTS idx_meanings_query ON meanings(query);
 CREATE INDEX IF NOT EXISTS idx_examples_meaning_id ON examples(meaning_id);
 CREATE INDEX IF NOT EXISTS idx_bookmarks_user_id ON bookmarks(user_id);

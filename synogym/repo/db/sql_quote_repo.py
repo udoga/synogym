@@ -1,3 +1,4 @@
+import re
 from sqlalchemy import text
 from sqlalchemy.engine import Connection, RowMapping
 from synogym.data_classes import Quote
@@ -17,7 +18,13 @@ class SqlQuoteRepo(QuoteRepo):
 
     def list_by_query(self, query: str) -> list[Quote]:
         rows = self.connection.execute(text(self.LIST_QUOTES_SQL), {"query": f"%{query.lower()}%"}).mappings().all()
-        return [self._get_quote(row) for row in rows]
+        quotes = [self._get_quote(row) for row in rows]
+        return [quote for quote in quotes if self._has_query_word(quote, query)]
+
+    def _has_query_word(self, quote: Quote, query: str) -> bool:
+        query_word = re.escape(query)
+        pattern = rf"(?<![A-Za-z0-9]){query_word}(?![A-Za-z0-9])"
+        return re.search(pattern, quote.text, re.IGNORECASE) is not None
 
     def create_all(self, quotes: list[Quote]) -> list[Quote]:
         for quote in quotes:

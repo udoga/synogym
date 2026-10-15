@@ -21,3 +21,8 @@ class SqlMeaningRepoTest(TestCase):
         self.repo.create_all([quote])
         self.repo.create_all([duplicate])
         self.assertEqual([quote], self.repo.list_by_query("happy"))
+
+    def test_list_by_query_matches_whole_words_only(self):
+        quote = self.repo.create_all([Quote(text="A cat sleeps.", author="Unknown", url="https://example.com/cat")])[0]
+        self.repo.create_all([Quote(text="A catch is different.", author="Unknown", url="https://example.com/catch")])
+        self.assertEqual([quote], self.repo.list_by_query("cat"))

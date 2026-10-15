@@ -8,150 +8,19 @@
   <link rel="stylesheet" href="/web/style.css">
   <style>[x-cloak] { display: none !important; }</style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script defer src="/web/app.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="/web/helper/JsonApi.js"></script>
+  <script src="/web/helper/Router.js"></script>
+  <script src="/web/api/AuthApi.js"></script>
+  <script src="/web/api/MeaningApi.js"></script>
+  <script src="/web/api/BookmarkApi.js"></script>
+  <script src="/web/api/QuoteApi.js"></script>
+  <script src="/web/component/LoginComponent.js"></script>
+  <script src="/web/component/LayoutComponent.js"></script>
+  <script src="/web/component/MeaningListComponent.js"></script>
+  <script src="/web/component/MeaningDetailComponent.js"></script>
+  <script src="/web/main.js"></script>
 </head>
-<body>
-  <main class="page" x-data="synogym()" x-cloak>
-    <section class="top-bar" :class="{ 'login-top-bar': !user }" aria-labelledby="title">
-      <h1 id="title">Synogym</h1>
-      <div class="auth-panel" x-show="user">
-        <p><strong x-text="`${user?.first_name || ''} ${user?.last_name || ''}`.trim()"></strong>
-          <button type="button" @click="logout">Logout</button>
-        </p>
-      </div>
-    </section>
-    <section class="sign-in-panel" x-show="!user" aria-label="Authentication">
-      <div class="auth-tabs" role="tablist" aria-label="Authentication mode">
-        <button type="button" role="tab" :aria-selected="authMode === 'sign-in'"
-                :class="{ active: authMode === 'sign-in' }" @click="setAuthMode('sign-in')">Sign In</button>
-        <button type="button" role="tab" :aria-selected="authMode === 'sign-up'"
-                :class="{ active: authMode === 'sign-up' }" @click="setAuthMode('sign-up')">Register</button>
-      </div>
-      <form class="sign-in-form" @submit.prevent="submitAuth">
-        <label for="email-input">Email</label>
-        <input id="email-input" name="email" type="email" autocomplete="email" required x-model="email"
-               :disabled="isLoading">
-        <label for="password-input">Password</label>
-        <input id="password-input" name="password" type="password" :autocomplete="passwordAutocomplete()" required
-               x-model="password" :disabled="isLoading">
-        <button type="submit" :disabled="isLoading" x-text="authSubmitText()"></button>
-      </form>
-      <div id="google-signin-button" class="google-signin-button"></div>
-      <p class="status error" x-show="authStatus" x-text="authStatus"></p>
-    </section>
-    <section x-show="user">
-      <section class="search-panel" aria-label="Search">
-        <form id="search-form" class="search-form" @submit.prevent="searchMeanings">
-          <label class="sr-only" for="query-input">Word</label>
-          <input id="query-input" name="query" type="search" placeholder="Search for a word" autocomplete="off"
-                 required x-model="query" :disabled="isLoading" @input.debounce.200ms="showBookmarksWhenQueryCleared">
-          <button id="search-button" type="submit" :disabled="isLoading">Search</button>
-        </form>
-        <div class="status-row">
-          <button id="back-button" class="top-back-button" type="button" x-show="view === 'detail'"
-                  @click="showMeaningList">← Back</button>
-          <p id="status" class="status" role="status" aria-live="polite"
-             :class="{ error: isError, 'page-header-status': isPageHeader() }" x-text="status"></p>
-          <button id="save-button" class="top-save-button" type="button" x-show="view === 'detail'"
-                  :disabled="isLoading || !selectedMeaning" @click="saveBookmark">
-            <span class="save-star" :class="{ saved: selectedBookmark }" x-text="selectedBookmark ? '★' : '☆'"></span>
-            <span x-text="selectedBookmark ? 'Saved' : 'Save'"></span>
-          </button>
-        </div>
-      </section>
-      <section id="results" class="results" aria-label="Meanings">
-        <template x-for="meaning in meanings" :key="meaning.id || `${meaning.query}-${meaning.pos}`">
-          <button class="meaning-card" type="button" x-show="view === 'list'" @click="fetchMeaningDetail(meaning.id)">
-            <h2><span x-text="meaning.query"></span><span class="pos" x-text="meaning.pos"></span></h2>
-            <p x-text="meaning.definition"></p>
-          </button>
-        </template>
-        <template x-if="view === 'detail' && selectedMeaning">
-          <article class="detail-panel">
-            <section class="detail-card detail-header">
-              <h2>
-                <span x-text="selectedMeaning.query"></span>
-                <span class="pos" x-text="selectedMeaning.pos"></span>
-                <span x-show="detail().level" class="level-tag" :class="getLevelClass(detail().level)"
-                      x-text="detail().level"></span>
-              </h2>
-              <p x-text="selectedMeaning.definition"></p>
-            </section>
-            <template x-if="selectedBookmark">
-              <section class="bookmark-tags-card">
-                <strong>Tags:</strong>
-                <div class="bookmark-tag-list">
-                  <template x-for="tag in bookmarkTags()" :key="tag">
-                    <span class="bookmark-tag">
-                      <span x-text="tag"></span>
-                      <button type="button" :aria-label="`Remove ${tag}`" @click="removeBookmarkTag(tag)">×</button>
-                    </span>
-                  </template>
-                </div>
-                <label class="sr-only" for="bookmark-tag-input">Add a tag...</label>
-                <input id="bookmark-tag-input" type="text" placeholder="Add a tag..." x-model="newBookmarkTag"
-                       @keydown.enter.prevent="addBookmarkTag" @keydown.tab="addBookmarkTag">
-                <button class="bookmark-tag-add-button" type="button" aria-label="Add tag" @click="addBookmarkTag">✓</button>
-              </section>
-            </template>
-            <template x-if="selectedBookmark">
-              <section class="bookmark-note-card">
-                <strong>Note</strong>
-                <label class="sr-only" for="bookmark-note-input">Add a note...</label>
-                <textarea id="bookmark-note-input" rows="1" placeholder="Add a note..." lang="en" inputmode="text"
-                          autocomplete="off" autocapitalize="sentences" spellcheck="true"
-                          x-model="selectedBookmark.note" @input.debounce.600ms="updateBookmarkFromNote"></textarea>
-              </section>
-            </template>
-            <section class="detail-card" x-show="hasWords(detail().examples)">
-              <h3>Examples</h3>
-              <template x-for="example in detail().examples" :key="example.sentence">
-                <p>
-                  <span x-text="example.sentence"></span>
-                  <br><small x-text="joinWords(example.replacements)"></small>
-                </p>
-              </template>
-            </section>
-            <section class="detail-card" x-show="detail().description">
-              <h3>Description</h3><p x-text="detail().description"></p>
-            </section>
-            <section class="detail-card" x-show="hasWords(detail().synonyms)">
-              <h3>Synonyms</h3>
-              <p>
-                <template x-for="word in detail().synonyms" :key="word">
-                  <button class="word-button" type="button" @click="searchWord(word)" x-text="word"></button>
-                </template>
-              </p>
-            </section>
-            <section class="detail-card" x-show="hasWords(detail().formations)">
-              <h3>Formations</h3>
-              <p>
-                <template x-for="word in detail().formations" :key="word">
-                  <button class="word-button" type="button" @click="searchWord(word)" x-text="word"></button>
-                </template>
-              </p>
-            </section>
-            <section class="detail-card" x-show="detail().history">
-              <h3>History</h3><p x-text="detail().history"></p>
-            </section>
-            <section class="quote-loader" x-show="quoteLoader.isLoading">
-              <p class="status">Loading quotes...</p>
-            </section>
-            <template x-for="quote in quoteLoader.quotes" :key="quote.id || `${quote.author}-${quote.text}`">
-              <section class="detail-card quote-card">
-                <h3>
-                  <span x-text="quote.author"></span>
-                  <a class="quote-source" x-show="quote.url" :href="quote.url" target="_blank" rel="noopener noreferrer"
-                     aria-label="Open on BrainyQuote">🔗</a>
-                </h3>
-                <p x-text="quote.text"></p>
-              </section>
-            </template>
-          </article>
-        </template>
-      </section>
-    </section>
-  </main>
+<body x-data="{}" x-init="await router.refresh(); router.loadNode($el)" @hashchange.window="router.refresh()">
 </body>
 </html>

@@ -11,7 +11,7 @@ class RestServer:
         self.app = Flask(__name__, static_folder=config.get("static_folder", None))
         self.app.secret_key = config.get("secret_key", "dev-secret-key")
         self.app.json.sort_keys = False
-        self.public_paths = {"/", "/auth/config", "/auth/google", "/auth/sign-in", "/auth/sign-up"}
+        self.public_paths = {"/", "/auth/config", "/auth/google", "/auth/sign-in", "/auth/sign-up", "/auth/me"}
         self.add_home_route()
         self.add_request_hooks()
         self.add_error_handlers()

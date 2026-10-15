@@ -1,0 +1,13 @@
+<section x-data="new MeaningListComponent(router, meaningApi, bookmarkApi)" x-init="load()">
+  <div class="status-row">
+    <p class="status page-header-status" role="status" aria-live="polite" :class="{ error: isError }" x-text="status"></p>
+  </div>
+  <section class="results" :aria-label="label()">
+    <template x-for="meaning in meanings" :key="meaning.id || `${meaning.query}-${meaning.pos}`">
+      <button class="meaning-card" type="button" @click="openMeaning(meaning)">
+        <h2><span x-text="meaning.query"></span><span class="pos" x-text="meaning.pos"></span></h2>
+        <p x-text="meaning.definition"></p>
+      </button>
+    </template>
+  </section>
+</section>

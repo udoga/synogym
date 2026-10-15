@@ -37,3 +37,10 @@ class RestServerTest(TestCase):
         expected = {"error": {"status": 401, "type": "Unauthorized", "message": "Sign in required"}}
         self.assertEqual(401, response.status_code)
         self.assertEqual(expected, response.get_json())
+
+    def test_allows_current_user_check_for_guests(self):
+        rest_server = RestServer({"check_login": True})
+        rest_server.add_route("/auth/me", lambda: None)
+        response = rest_server.app.test_client().get("/auth/me")
+        self.assertEqual(200, response.status_code)
+        self.assertEqual({"data": None}, response.get_json())

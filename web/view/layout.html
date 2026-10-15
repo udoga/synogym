@@ -1,0 +1,20 @@
+<main class="page" x-data="new LayoutComponent(authApi, router)" x-init="load()" x-cloak>
+  <section class="top-bar" aria-labelledby="title">
+    <h1 id="title">Synogym</h1>
+    <div class="auth-panel">
+      <p>
+        <strong x-text="username()"></strong>
+        <button type="button" @click="logout()">Logout</button>
+      </p>
+    </div>
+  </section>
+  <section class="search-panel" aria-label="Search">
+    <form class="search-form" @submit.prevent="search()">
+      <label class="sr-only" for="query-input">Word</label>
+      <input id="query-input" name="query" type="search" placeholder="Search for a word" autocomplete="off" required
+             x-model="query">
+      <button type="submit">Search</button>
+    </form>
+  </section>
+  <div x-init="router.loadNode($el)"></div>
+</main>

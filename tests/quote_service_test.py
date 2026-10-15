@@ -41,6 +41,14 @@ class QuoteServiceTest(TestCase):
         self.repo.create_all(quotes)
         self.assertEqual(quotes, service.list_by_query("yourself"))
 
+    def test_returns_quotes_sorted_by_length(self):
+        long_quote = Quote(text="Be yourself and keep moving forward", author="Oscar Wilde", url="long")
+        short_quote = Quote(text="Be yourself", author="Oscar Wilde", url="short")
+        medium_quote = Quote(text="Be yourself today", author="Oscar Wilde", url="medium")
+        service = QuoteService(self.repo, None)
+        self.repo.create_all([long_quote, short_quote, medium_quote])
+        self.assertEqual([short_quote, medium_quote, long_quote], service.list_by_query("yourself"))
+
     def create_quotes(self, content: str, count: int) -> list[Quote]:
         return [Quote(text=f"{content} {number}", author="Oscar Wilde", url=f"https://example.com/{number}")
                 for number in range(count)]

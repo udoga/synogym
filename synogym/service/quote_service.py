@@ -12,4 +12,7 @@ class QuoteService:
         quotes = self.repo.list_by_query(query)
         if len(quotes) < self.quote_limit and self.generator is not None:
             quotes = self.repo.create_all(self.generator.generate(query))
-        return quotes[:self.quote_limit]
+        return self._sort_by_length(quotes)[:self.quote_limit]
+
+    def _sort_by_length(self, quotes: list[Quote]) -> list[Quote]:
+        return sorted(quotes, key=lambda quote: len(quote.text))

@@ -17,15 +17,23 @@ class SqlBookmarkRepoTest(TestCase):
 
     def test_creates_finds_and_updates_bookmark(self):
         bookmark = self.repo.create(Bookmark(user_id=self.user.id, meaning_id=self.meaning.id, note="", tags=""))
-        self.assertEqual([bookmark], self.repo.find_by_user_and_meaning(self.user.id, self.meaning.id))
+        self.assertEqual([bookmark], self.repo.list_by(self.user.id, self.meaning.id))
         bookmark.note = "Remember this one"
         bookmark.tags = "feeling,positive"
         self.assertEqual(bookmark, self.repo.update(bookmark))
         self.assertEqual(bookmark, self.repo.find(bookmark.id))
 
     def test_returns_none_for_missing_bookmark(self):
-        self.assertEqual([], self.repo.find_by_user_and_meaning(self.user.id, self.meaning.id))
+        self.assertEqual([], self.repo.list_by(self.user.id, self.meaning.id))
         self.assertIsNone(self.repo.find(123))
+
+    def test_lists_bookmarks_by_user_without_meaning_filter(self):
+        other_meaning = self._create_meaning("sad")
+        other_user = SqlUserRepo(self.connection).create(User("grace@example.com", "Grace", "Hopper"))
+        first = self.repo.create(Bookmark(user_id=self.user.id, meaning_id=self.meaning.id, note="n1", tags="t1"))
+        second = self.repo.create(Bookmark(user_id=self.user.id, meaning_id=other_meaning.id, note="n2", tags="t2"))
+        self.repo.create(Bookmark(user_id=other_user.id, meaning_id=self.meaning.id, note="n3", tags="t3"))
+        self.assertEqual([first, second], self.repo.list_by(self.user.id, None))
 
     def test_lists_bookmarks_with_meanings_for_user(self):
         bookmark = self.repo.create(Bookmark(user_id=self.user.id, meaning_id=self.meaning.id, note="n", tags="t"))
@@ -37,3 +45,6 @@ class SqlBookmarkRepoTest(TestCase):
         bookmark = self.repo.create(Bookmark(user_id=self.user.id, meaning_id=self.meaning.id, note="", tags=""))
         self.repo.delete(bookmark.id)
         self.assertIsNone(self.repo.find(bookmark.id))
+
+    def _create_meaning(self, query: str) -> Meaning:
+        return SqlMeaningRepo(self.connection).create_all([Meaning(query=query, definition="unhappy", pos="adj")])[0]

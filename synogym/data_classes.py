@@ -47,6 +47,10 @@ class BookmarkWithMeaning(Bookmark):
     meaning: Meaning
 
 @dataclass
+class ExampleWithBookmark(Example):
+    bookmark: Bookmark
+
+@dataclass
 class Quote:
     id: int | None = field(default=None, kw_only=True)
     text: str

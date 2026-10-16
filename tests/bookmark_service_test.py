@@ -9,36 +9,36 @@ class BookmarkServiceTest(TestCase):
         self.service = BookmarkService(self.repo)
 
     def test_creates_bookmark_with_empty_note_and_tags(self):
-        bookmark = self.service.create(1, 2)
+        bookmark = self.service.read_or_create(1, 2)
         self.assertEqual(Bookmark(id=1, user_id=1, meaning_id=2, note="", tags=""), bookmark)
 
     def test_reuses_existing_bookmark(self):
-        bookmark = self.service.create(1, 2)
-        self.assertEqual(bookmark, self.service.create(1, 2))
+        bookmark = self.service.read_or_create(1, 2)
+        self.assertEqual(bookmark, self.service.read_or_create(1, 2))
         self.assertEqual(1, len(self.repo.bookmarks))
 
     def test_lists_bookmarks_with_meanings(self):
-        self.service.create(1, 2)
+        self.service.read_or_create(1, 2)
         bookmarks = self.service.list_with_meanings(1)
         self.assertEqual(1, len(bookmarks))
         self.assertEqual(2, bookmarks[0].meaning.id)
 
     def test_updates_note_and_tags_for_owner(self):
-        bookmark = self.service.create(1, 2)
+        bookmark = self.service.read_or_create(1, 2)
         updated = self.service.update(1, bookmark.id, "note", "tag")
         self.assertEqual(Bookmark(id=1, user_id=1, meaning_id=2, note="note", tags="tag"), updated)
 
     def test_rejects_update_for_other_user(self):
-        bookmark = self.service.create(1, 2)
+        bookmark = self.service.read_or_create(1, 2)
         with self.assertRaises(ValueError):
             self.service.update(2, bookmark.id, "note", "tag")
 
     def test_deletes_bookmark_for_owner(self):
-        bookmark = self.service.create(1, 2)
+        bookmark = self.service.read_or_create(1, 2)
         self.service.delete(1, bookmark.id)
         self.assertIsNone(self.repo.find(bookmark.id))
 
     def test_rejects_delete_for_other_user(self):
-        bookmark = self.service.create(1, 2)
+        bookmark = self.service.read_or_create(1, 2)
         with self.assertRaises(ValueError):
             self.service.delete(2, bookmark.id)

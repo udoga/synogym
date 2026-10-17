@@ -1,6 +1,6 @@
 class BookmarkApi extends JsonApi {
-  listWithMeaning() {
-    return this.get("/bookmarks/with-meaning");
+  listMeanings() {
+    return this.get("/bookmarks/meanings");
   }
 
   listByMeaningId(meaningId) {

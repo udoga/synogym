@@ -24,7 +24,7 @@ class MeaningListComponent {
   async loadBookmarks() {
     this.startLoading();
     try {
-      this.showBookmarks(await this.bookmarkApi.listWithMeaning());
+      this.showBookmarks(await this.bookmarkApi.listMeanings());
     } catch {
       this.showError("Could not reach the server.");
     }
@@ -45,7 +45,7 @@ class MeaningListComponent {
 
   showBookmarks(result) {
     if (!result.response.ok) return this.showError(result.body.error?.message || "Could not load bookmarks.");
-    this.meanings = result.body.data.map(bookmark => ({ ...bookmark.meaning, bookmark }));
+    this.meanings = result.body.data;
     this.showStatus(this.meanings.length ? "Bookmarks" : "No bookmarks yet.");
   }
 

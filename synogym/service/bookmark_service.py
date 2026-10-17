@@ -1,5 +1,5 @@
 from dataclasses import replace
-from synogym.data_classes import Bookmark, BookmarkWithMeaning, ExampleWithBookmark
+from synogym.data_classes import Bookmark, MeaningWithBookmark, ExampleWithBookmark
 from synogym.repo.bookmark_repo import BookmarkRepo
 
 class BookmarkService:
@@ -9,8 +9,8 @@ class BookmarkService:
     def list_by(self, user_id: int, meaning_id: int | None) -> list[Bookmark]:
         return self.repo.list_by(user_id, meaning_id)
 
-    def list_with_meanings(self, user_id: int) -> list[BookmarkWithMeaning]:
-        return self.repo.list_with_meanings(user_id)
+    def list_meanings_with_bookmark(self, user_id: int) -> list[MeaningWithBookmark]:
+        return self.repo.list_meanings_with_bookmark(user_id)
 
     def list_examples_with_bookmark(self, user_id: int) -> list[ExampleWithBookmark]:
         return self.repo.list_examples_with_bookmark(user_id)

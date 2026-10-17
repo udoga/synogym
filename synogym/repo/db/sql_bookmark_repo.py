@@ -1,7 +1,7 @@
 import json
 from sqlalchemy import text
 from sqlalchemy.engine import Connection, RowMapping
-from synogym.data_classes import Bookmark, BookmarkWithMeaning, ExampleWithBookmark, Meaning
+from synogym.data_classes import Bookmark, MeaningWithBookmark, ExampleWithBookmark
 from synogym.repo.bookmark_repo import BookmarkRepo
 
 class SqlBookmarkRepo(BookmarkRepo):
@@ -10,14 +10,14 @@ class SqlBookmarkRepo(BookmarkRepo):
         VALUES (:user_id, :meaning_id, :note, :tags)
         RETURNING id
     """
-    LIST_WITH_MEANINGS_SQL = """
-        SELECT b.id AS bookmark_id, b.user_id, b.meaning_id, b.note, b.tags, m.query, m.definition, m.pos
-        FROM bookmarks b JOIN meanings m ON m.id = b.meaning_id
+    LIST_MEANINGS_WITH_BOOKMARK_SQL = """
+        SELECT m.id AS meaning_id, m.query, m.definition, m.pos, b.id, b.user_id, b.note, b.tags
+        FROM meanings m JOIN bookmarks b ON b.meaning_id = m.id
         WHERE b.user_id = :user_id
         ORDER BY b.id
     """
     LIST_EXAMPLES_WITH_BOOKMARK_SQL = """
-        SELECT e.meaning_id, e.sentence, e.replacements, b.id AS bookmark_id, b.user_id, b.note, b.tags
+        SELECT e.meaning_id, e.sentence, e.replacements, b.id, b.user_id, b.note, b.tags
         FROM examples e JOIN bookmarks b ON b.meaning_id = e.meaning_id
         WHERE b.user_id = :user_id
         ORDER BY b.id, e.id
@@ -37,9 +37,9 @@ class SqlBookmarkRepo(BookmarkRepo):
         rows = self.connection.execute(text(sql + " ORDER BY id"), values).mappings().all()
         return [self._create_bookmark(row) for row in rows]
 
-    def list_with_meanings(self, user_id: int) -> list[BookmarkWithMeaning]:
-        rows = self.connection.execute(text(self.LIST_WITH_MEANINGS_SQL), {"user_id": user_id}).mappings().all()
-        return [self._create_bookmark_with_meaning(row) for row in rows]
+    def list_meanings_with_bookmark(self, user_id: int) -> list[MeaningWithBookmark]:
+        rows = self.connection.execute(text(self.LIST_MEANINGS_WITH_BOOKMARK_SQL), {"user_id": user_id})
+        return [self._create_meaning_with_bookmark(row) for row in rows.mappings().all()]
 
     def list_examples_with_bookmark(self, user_id: int) -> list[ExampleWithBookmark]:
         rows = self.connection.execute(text(self.LIST_EXAMPLES_WITH_BOOKMARK_SQL), {"user_id": user_id})
@@ -74,16 +74,21 @@ class SqlBookmarkRepo(BookmarkRepo):
         return {"id": bookmark.id, "note": bookmark.note, "tags": bookmark.tags}
 
     def _create_bookmark(self, row: RowMapping) -> Bookmark:
-        return Bookmark(id=row["id"], user_id=row["user_id"], meaning_id=row["meaning_id"], note=row["note"],
+        return Bookmark(id=row["id"],
+                        user_id=row["user_id"],
+                        meaning_id=row["meaning_id"],
+                        note=row["note"],
                         tags=row["tags"])
 
-    def _create_bookmark_with_meaning(self, row: RowMapping) -> BookmarkWithMeaning:
-        meaning = Meaning(id=row["meaning_id"], query=row["query"], definition=row["definition"], pos=row["pos"])
-        return BookmarkWithMeaning(id=row["bookmark_id"], user_id=row["user_id"], meaning_id=row["meaning_id"],
-                                   note=row["note"], tags=row["tags"], meaning=meaning)
+    def _create_meaning_with_bookmark(self, row: RowMapping) -> MeaningWithBookmark:
+        return MeaningWithBookmark(id=row["meaning_id"],
+                                   query=row["query"],
+                                   definition=row["definition"],
+                                   pos=row["pos"],
+                                   bookmark=self._create_bookmark(row))
 
     def _create_example_with_bookmark(self, row: RowMapping) -> ExampleWithBookmark:
-        bookmark = Bookmark(id=row["bookmark_id"], user_id=row["user_id"], meaning_id=row["meaning_id"],
-                            note=row["note"], tags=row["tags"])
-        return ExampleWithBookmark(meaning_id=row["meaning_id"], sentence=row["sentence"],
-                                   replacements=json.loads(row["replacements"]), bookmark=bookmark)
+        return ExampleWithBookmark(meaning_id=row["meaning_id"],
+                                   sentence=row["sentence"],
+                                   replacements=json.loads(row["replacements"]),
+                                   bookmark=self._create_bookmark(row))

@@ -1,5 +1,5 @@
 from flask import request, session
-from synogym.data_classes import Bookmark, BookmarkWithMeaning, ExampleWithBookmark
+from synogym.data_classes import Bookmark, ExampleWithBookmark, MeaningWithBookmark
 from synogym.rest_server import RestServer
 from synogym.service.bookmark_service import BookmarkService
 
@@ -8,7 +8,7 @@ class BookmarkController:
         self.service = service
         server.add_route("/bookmarks", self.read_or_create, methods=["POST"])
         server.add_route("/bookmarks", self.list_by, methods=["GET"])
-        server.add_route("/bookmarks/with-meaning", self.list_with_meaning, methods=["GET"])
+        server.add_route("/bookmarks/meanings", self.list_meanings_with_bookmark, methods=["GET"])
         server.add_route("/bookmarks/examples", self.list_examples_with_bookmark, methods=["GET"])
         server.add_route("/bookmarks/<int:bookmark_id>", self.update, methods=["PUT"])
         server.add_route("/bookmarks/<int:bookmark_id>", self.delete, methods=["DELETE"])
@@ -16,8 +16,8 @@ class BookmarkController:
     def list_by(self) -> list[Bookmark]:
         return self.service.list_by(self._get_user_id(), self._get_int_arg("meaning_id"))
 
-    def list_with_meaning(self) -> list[BookmarkWithMeaning]:
-        return self.service.list_with_meanings(self._get_user_id())
+    def list_meanings_with_bookmark(self) -> list[MeaningWithBookmark]:
+        return self.service.list_meanings_with_bookmark(self._get_user_id())
 
     def list_examples_with_bookmark(self) -> list[ExampleWithBookmark]:
         return self.service.list_examples_with_bookmark(self._get_user_id())

@@ -1,17 +1,17 @@
-from synogym.data_classes import Bookmark, BookmarkWithMeaning, Meaning, ExampleWithBookmark
+from synogym.data_classes import Bookmark, Meaning, ExampleWithBookmark, MeaningWithBookmark
 from synogym.repo.bookmark_repo import BookmarkRepo
 
 class ListBookmarkRepo(BookmarkRepo):
     def __init__(self):
         self.bookmarks: list[Bookmark] = []
+        self.meanings_with_bookmark: list[MeaningWithBookmark] = []
         self.examples_with_bookmark: list[ExampleWithBookmark] = []
 
     def list_by(self, user_id: int, meaning_id: int | None) -> list[Bookmark]:
         return [b for b in self.bookmarks if b.user_id == user_id and (not meaning_id or b.meaning_id == meaning_id)]
 
-    def list_with_meanings(self, user_id: int) -> list[BookmarkWithMeaning]:
-        bookmarks = [bookmark for bookmark in self.bookmarks if bookmark.user_id == user_id]
-        return [self._create_bookmark_with_meaning(bookmark) for bookmark in bookmarks]
+    def list_meanings_with_bookmark(self, user_id: int) -> list[MeaningWithBookmark]:
+        return [m for m in self.meanings_with_bookmark if m.bookmark.user_id == user_id]
 
     def list_examples_with_bookmark(self, user_id: int) -> list[ExampleWithBookmark]:
         return [e for e in self.examples_with_bookmark if e.bookmark.user_id == user_id]
@@ -33,8 +33,3 @@ class ListBookmarkRepo(BookmarkRepo):
 
     def delete(self, bookmark_id: int):
         self.bookmarks = [bookmark for bookmark in self.bookmarks if bookmark.id != bookmark_id]
-
-    def _create_bookmark_with_meaning(self, bookmark: Bookmark) -> BookmarkWithMeaning:
-        meaning = Meaning(id=bookmark.meaning_id, query="", definition="", pos="")
-        return BookmarkWithMeaning(id=bookmark.id, user_id=bookmark.user_id, meaning_id=bookmark.meaning_id,
-                                   note=bookmark.note, tags=bookmark.tags, meaning=meaning)

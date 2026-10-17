@@ -43,8 +43,8 @@ class Bookmark:
     tags: str
 
 @dataclass
-class BookmarkWithMeaning(Bookmark):
-    meaning: Meaning
+class MeaningWithBookmark(Meaning):
+    bookmark: Bookmark
 
 @dataclass
 class ExampleWithBookmark(Example):

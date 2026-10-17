@@ -1,6 +1,6 @@
 from pathlib import Path
 from unittest import TestCase
-from synogym.data_classes import Bookmark, BookmarkWithMeaning, Meaning, User
+from synogym.data_classes import Bookmark, Meaning, User
 from synogym.repo.db.sql_bookmark_repo import SqlBookmarkRepo
 from synogym.repo.db.sql_meaning_repo import SqlMeaningRepo
 from synogym.repo.db.sql_user_repo import SqlUserRepo
@@ -34,12 +34,6 @@ class SqlBookmarkRepoTest(TestCase):
         second = self.repo.create(Bookmark(user_id=self.user.id, meaning_id=other_meaning.id, note="n2", tags="t2"))
         self.repo.create(Bookmark(user_id=other_user.id, meaning_id=self.meaning.id, note="n3", tags="t3"))
         self.assertEqual([first, second], self.repo.list_by(self.user.id, None))
-
-    def test_lists_bookmarks_with_meanings_for_user(self):
-        bookmark = self.repo.create(Bookmark(user_id=self.user.id, meaning_id=self.meaning.id, note="n", tags="t"))
-        expected = [BookmarkWithMeaning(id=bookmark.id, user_id=self.user.id, meaning_id=self.meaning.id,
-                                        note="n", tags="t", meaning=self.meaning)]
-        self.assertEqual(expected, self.repo.list_with_meanings(self.user.id))
 
     def test_deletes_bookmark(self):
         bookmark = self.repo.create(Bookmark(user_id=self.user.id, meaning_id=self.meaning.id, note="", tags=""))

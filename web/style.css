@@ -151,6 +151,7 @@ textarea {
 button,
 input,
 textarea,
+.home-card,
 .meaning-card,
 .bookmark-tags-card,
 .bookmark-note-card {
@@ -233,6 +234,32 @@ button:disabled {
   display: grid;
   gap: 12px;
   margin-top: 14px;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.home-card {
+  min-height: 180px;
+  border: 1px solid #243b5a;
+  border-radius: 18px;
+  color: #eeeeee;
+  background: #1a1a1a;
+  cursor: pointer;
+}
+
+.home-card:hover {
+  border-color: #2563eb;
+  background: #1a1f2a;
+}
+
+.home-card h2 {
+  margin: 0;
+  font-size: 1.35rem;
 }
 
 .meaning-card {
@@ -548,6 +575,10 @@ button:disabled {
 @media (max-width: 540px) {
   .page {
     padding-top: 28px;
+  }
+
+  .home-grid {
+    grid-template-columns: 1fr;
   }
 
   .search-form button {

@@ -24,6 +24,7 @@ class LayoutComponent {
   username() {
     const firstName = this.user?.first_name || "";
     const lastName = this.user?.last_name || "";
-    return `${firstName} ${lastName}`.trim() || this.user?.email || "";
+    const name = `${firstName} ${lastName}`.trim() || this.user?.email || "";
+    return name.split("@")[0];
   }
 }

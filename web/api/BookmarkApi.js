@@ -3,6 +3,10 @@ class BookmarkApi extends JsonApi {
     return this.get("/bookmarks/meanings");
   }
 
+  listExamples() {
+    return this.get("/bookmarks/examples");
+  }
+
   listByMeaningId(meaningId) {
     return this.get(`/bookmarks?meaning_id=${encodeURIComponent(meaningId)}`);
   }

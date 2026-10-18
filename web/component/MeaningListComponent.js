@@ -14,11 +14,11 @@ class MeaningListComponent {
   }
 
   isBookmarks() {
-    return location.hash.startsWith("#/bookmarks");
+    return location.hash.startsWith("#/bookmarks/meanings") || location.hash === "#/bookmarks";
   }
 
   label() {
-    return this.isBookmarks() ? "Bookmarks" : "Meanings";
+    return "Meanings";
   }
 
   async loadBookmarks() {
@@ -44,9 +44,9 @@ class MeaningListComponent {
   }
 
   showBookmarks(result) {
-    if (!result.response.ok) return this.showError(result.body.error?.message || "Could not load bookmarks.");
+    if (!result.response.ok) return this.showError(result.body.error?.message || "Could not load meanings.");
     this.meanings = result.body.data;
-    this.showStatus(this.meanings.length ? "Bookmarks" : "No bookmarks yet.");
+    this.showStatus(this.meanings.length ? "Meanings" : "No saved meanings yet.");
   }
 
   showMeanings(result) {
@@ -57,6 +57,10 @@ class MeaningListComponent {
 
   openMeaning(meaning) {
     if (meaning?.id) this.router.route(`#/meaning/${meaning.id}`);
+  }
+
+  home() {
+    this.router.route("#/home");
   }
 
   startLoading() {

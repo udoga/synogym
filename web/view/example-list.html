@@ -1,0 +1,15 @@
+<section x-data="new ExampleListComponent(router, bookmarkApi)" x-init="load()">
+  <div class="status-row">
+    <button class="top-back-button" type="button" @click="home()">← Home</button>
+    <p class="status page-header-status" role="status" aria-live="polite" :class="{ error: isError }"
+       x-text="status"></p>
+  </div>
+  <section class="results" aria-label="Examples">
+    <template x-for="example in examples" :key="`${example.meaning_id}-${example.sentence}`">
+      <button class="meaning-card example-card" type="button" @click="openExample(example)">
+        <h2 x-text="example.sentence"></h2>
+        <p x-text="joinWords(example.replacements)"></p>
+      </button>
+    </template>
+  </section>
+</section>

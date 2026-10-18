@@ -1,6 +1,8 @@
 <section x-data="new MeaningListComponent(router, meaningApi, bookmarkApi)" x-init="load()">
   <div class="status-row">
-    <p class="status page-header-status" role="status" aria-live="polite" :class="{ error: isError }" x-text="status"></p>
+    <button class="top-back-button" type="button" @click="home()">← Home</button>
+    <p class="status page-header-status" role="status" aria-live="polite" :class="{ error: isError }"
+       x-text="status"></p>
   </div>
   <section class="results" :aria-label="label()">
     <template x-for="meaning in meanings" :key="meaning.id || `${meaning.query}-${meaning.pos}`">

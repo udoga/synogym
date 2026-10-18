@@ -30,7 +30,7 @@ class Router {
   redirectIfNeeded() {
     const hashUrl = location.hash;
     if (!this.user && hashUrl !== "#/login") return this.redirect("#/login");
-    if (this.user && ["", "#", "#/", "#/login"].includes(hashUrl)) return this.redirect("#/bookmarks");
+    if (this.user && ["", "#", "#/", "#/login"].includes(hashUrl)) return this.redirect("#/home");
     return false;
   }
 
@@ -85,8 +85,10 @@ class Router {
 
   findViews() {
     if (!this.user) return ["login"];
+    if (location.hash.startsWith("#/home")) return ["layout", "home"];
     if (location.hash.startsWith("#/meanings")) return ["layout", "meaning-list"];
     if (location.hash.startsWith("#/meaning/")) return ["layout", "meaning-detail"];
+    if (location.hash.startsWith("#/bookmarks/examples")) return ["layout", "example-list"];
     if (location.hash.startsWith("#/bookmarks")) return ["layout", "meaning-list"];
     return ["layout", "not-found"];
   }

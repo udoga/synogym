@@ -6,10 +6,10 @@ from synogym.service.bookmark_service import BookmarkService
 class BookmarkController:
     def __init__(self, server: RestServer, service: BookmarkService):
         self.service = service
-        server.add_route("/bookmarks", self.read_or_create, methods=["POST"])
         server.add_route("/bookmarks", self.list_by, methods=["GET"])
         server.add_route("/bookmarks/meanings", self.list_meanings_with_bookmark, methods=["GET"])
         server.add_route("/bookmarks/examples", self.list_examples_with_bookmark, methods=["GET"])
+        server.add_route("/bookmarks", self.create, methods=["POST"])
         server.add_route("/bookmarks/<int:bookmark_id>", self.update, methods=["PUT"])
         server.add_route("/bookmarks/<int:bookmark_id>", self.delete, methods=["DELETE"])
 
@@ -22,9 +22,9 @@ class BookmarkController:
     def list_examples_with_bookmark(self) -> list[ExampleWithBookmark]:
         return self.service.list_examples_with_bookmark(self._get_user_id())
 
-    def read_or_create(self) -> Bookmark:
+    def create(self) -> Bookmark:
         data = request.get_json() or {}
-        return self.service.read_or_create(self._get_user_id(), data["meaning_id"])
+        return self.service.create(self._get_user_id(), data["meaning_id"])
 
     def update(self, bookmark_id: int) -> Bookmark:
         data = request.get_json() or {}

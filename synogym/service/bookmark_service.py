@@ -1,3 +1,4 @@
+import random
 from dataclasses import replace
 from synogym.data_classes import Bookmark, MeaningWithBookmark, ExampleWithBookmark
 from synogym.repo.bookmark_repo import BookmarkRepo
@@ -12,12 +13,13 @@ class BookmarkService:
     def list_meanings_with_bookmark(self, user_id: int) -> list[MeaningWithBookmark]:
         return self.repo.list_meanings_with_bookmark(user_id)
 
-    def list_examples_with_bookmark(self, user_id: int) -> list[ExampleWithBookmark]:
-        return self.repo.list_examples_with_bookmark(user_id)
+    def list_examples_with_bookmark(self, user_id: int, seed: int | None = None) -> list[ExampleWithBookmark]:
+        examples = self.repo.list_examples_with_bookmark(user_id)
+        return random.Random(seed).sample(examples, min(50, len(examples)))
 
-    def read_or_create(self, user_id: int, meaning_id: int) -> Bookmark:
+    def create(self, user_id: int, meaning_id: int) -> Bookmark:
         bookmarks: list[Bookmark] = self.repo.list_by(user_id, meaning_id)
-        if len(bookmarks): return bookmarks[0]
+        if len(bookmarks): raise ValueError("Bookmark already exists")
         return self.repo.create(Bookmark(user_id=user_id, meaning_id=meaning_id, note="", tags=""))
 
     def update(self, user_id: int, bookmark_id: int, note: str, tags: str) -> Bookmark:

@@ -9,7 +9,7 @@ class ExampleListComponent {
   }
 
   async load() {
-    this.startLoading();
+    this.startLoading("Loading...");
     try {
       this.showExamples(await this.bookmarkApi.listExamples());
     } catch {
@@ -18,9 +18,25 @@ class ExampleListComponent {
     this.isLoading = false;
   }
 
+  async loadMore() {
+    this.startLoading("Loading more...");
+    try {
+      this.addExamples(await this.bookmarkApi.listExamples());
+    } catch {
+      this.showAppendError("Could not reach the server.");
+    }
+    this.isLoading = false;
+  }
+
   showExamples(result) {
     if (!result.response.ok) return this.showError(result.body.error?.message || "Could not load examples.");
     this.examples = result.body.data;
+    this.showStatus(this.examples.length ? "Examples" : "No saved examples yet.");
+  }
+
+  addExamples(result) {
+    if (!result.response.ok) return this.showAppendError(result.body.error?.message || "Could not load examples.");
+    this.examples = [...this.examples, ...result.body.data];
     this.showStatus(this.examples.length ? "Examples" : "No saved examples yet.");
   }
 
@@ -36,9 +52,9 @@ class ExampleListComponent {
     return Array.isArray(words) && words.length ? words.join(", ") : "";
   }
 
-  startLoading() {
+  startLoading(message) {
     this.isLoading = true;
-    this.showStatus("Loading...");
+    this.showStatus(message);
   }
 
   showStatus(message) {
@@ -49,6 +65,11 @@ class ExampleListComponent {
   showError(message) {
     this.isError = true;
     this.examples = [];
+    this.status = message;
+  }
+
+  showAppendError(message) {
+    this.isError = true;
     this.status = message;
   }
 }

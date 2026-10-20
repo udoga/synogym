@@ -178,7 +178,8 @@ input:focus {
   outline: 0;
 }
 
-.search-form button {
+.search-form button,
+.load-more-button {
   border: 1px solid #1d4ed8;
   padding: 0 20px;
   color: #ffffff;
@@ -194,7 +195,8 @@ input:focus {
 }
 
 .search-form button:hover:not(:disabled),
-.sign-in-form button:hover:not(:disabled) {
+.sign-in-form button:hover:not(:disabled),
+.load-more-button:hover:not(:disabled) {
   border-color: #3b82f6;
   background: #1d4ed8;
 }
@@ -234,6 +236,17 @@ button:disabled {
   display: grid;
   gap: 12px;
   margin-top: 14px;
+}
+
+.load-more-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.load-more-button {
+  min-height: 44px;
+  border-radius: 14px;
 }
 
 .home-grid {

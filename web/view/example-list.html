@@ -5,11 +5,15 @@
        x-text="status"></p>
   </div>
   <section class="results" aria-label="Examples">
-    <template x-for="example in examples" :key="`${example.meaning_id}-${example.sentence}`">
+    <template x-for="(example, index) in examples" :key="`${example.meaning_id}-${example.sentence}-${index}`">
       <button class="meaning-card example-card" type="button" @click="openExample(example)">
         <h2 x-text="example.sentence"></h2>
         <p x-text="joinWords(example.replacements)"></p>
       </button>
     </template>
   </section>
+  <div class="load-more-row" x-show="examples.length">
+    <button class="load-more-button" type="button" @click="loadMore()" :disabled="isLoading"
+            x-text="isLoading ? 'Loading...' : 'Load More'"></button>
+  </div>
 </section>

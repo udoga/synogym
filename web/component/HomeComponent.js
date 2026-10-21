@@ -10,4 +10,8 @@ class HomeComponent {
   openExamples() {
     this.router.route("#/bookmarks/examples");
   }
+
+  openNotes() {
+    this.router.route("#/bookmarks/meanings?notes=true");
+  }
 }

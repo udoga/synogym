@@ -18,7 +18,11 @@ class MeaningListComponent {
   }
 
   label() {
-    return "Meanings";
+    return this.isNotes() ? "Notes" : "Meanings";
+  }
+
+  isNotes() {
+    return this.router.getUrlParams().notes === "true";
   }
 
   async loadBookmarks() {
@@ -45,14 +49,35 @@ class MeaningListComponent {
 
   showBookmarks(result) {
     if (!result.response.ok) return this.showError(result.body.error?.message || "Could not load meanings.");
-    this.meanings = result.body.data;
-    this.showStatus(this.meanings.length ? "Meanings" : "No saved meanings yet.");
+    this.meanings = this.getVisibleBookmarks(result.body.data);
+    this.showStatus(this.getBookmarkStatus());
+  }
+
+  getVisibleBookmarks(bookmarks) {
+    return this.isNotes() ? bookmarks.filter(meaning => this.hasNote(meaning)) : bookmarks;
+  }
+
+  hasNote(meaning) {
+    return Boolean(this.note(meaning).trim());
+  }
+
+  note(meaning) {
+    return String(meaning?.bookmark?.note || "");
+  }
+
+  getBookmarkStatus() {
+    if (this.meanings.length) return this.label();
+    return this.isNotes() ? "No notes yet." : "No saved meanings yet.";
   }
 
   showMeanings(result) {
     if (!result.response.ok) return this.showError(result.body.error?.message || "Search failed.");
     this.meanings = result.body.data;
     this.showStatus(this.meanings.length ? "Meanings" : "No meanings found.");
+  }
+
+  meaningText(meaning) {
+    return this.isNotes() ? this.note(meaning) : meaning.definition;
   }
 
   openMeaning(meaning) {

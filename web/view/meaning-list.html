@@ -8,7 +8,7 @@
     <template x-for="meaning in meanings" :key="meaning.id || `${meaning.query}-${meaning.pos}`">
       <button class="meaning-card" type="button" @click="openMeaning(meaning)">
         <h2><span x-text="meaning.query"></span><span class="pos" x-text="meaning.pos"></span></h2>
-        <p x-text="meaning.definition"></p>
+        <p x-text="meaningText(meaning)"></p>
       </button>
     </template>
   </section>

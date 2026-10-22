@@ -7,7 +7,12 @@
   <section class="results" :aria-label="label()">
     <template x-for="meaning in meanings" :key="meaning.id || `${meaning.query}-${meaning.pos}`">
       <button class="meaning-card" type="button" @click="openMeaning(meaning)">
-        <h2><span x-text="meaning.query"></span><span class="pos" x-text="meaning.pos"></span></h2>
+        <h2>
+          <span x-text="meaning.query"></span><span class="pos" x-text="meaning.pos"></span>
+          <template x-for="(tag, index) in userTags(meaning)" :key="tag">
+            <span class="pos user-tag" :class="{ 'first-user-tag': index === 0 }" x-text="tag"></span>
+          </template>
+        </h2>
         <p x-text="meaningText(meaning)"></p>
       </button>
     </template>

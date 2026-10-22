@@ -67,7 +67,8 @@ class MeaningListComponent {
 
   getBookmarkStatus() {
     if (this.meanings.length) return this.label();
-    return this.isNotes() ? "No notes yet." : "No saved meanings yet.";
+    if (this.isNotes()) return "Search, save a word, and add a note to see your notes here.";
+    return "Search and save a word to see your meanings here.";
   }
 
   showMeanings(result) {
@@ -78,6 +79,10 @@ class MeaningListComponent {
 
   meaningText(meaning) {
     return this.isNotes() ? this.note(meaning) : meaning.definition;
+  }
+
+  userTags(meaning) {
+    return String(meaning?.bookmark?.tags || "").split(",").map(tag => tag.trim()).filter(Boolean);
   }
 
   openMeaning(meaning) {

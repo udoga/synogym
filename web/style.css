@@ -536,6 +536,15 @@ button:disabled {
   background: #1e40af;
 }
 
+.user-tag {
+  color: #000000;
+  background: #ffffff;
+}
+
+.first-user-tag {
+  margin-left: 4px;
+}
+
 .level-tag {
   display: inline-flex;
   margin-left: 8px;

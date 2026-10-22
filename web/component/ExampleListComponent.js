@@ -31,13 +31,13 @@ class ExampleListComponent {
   showExamples(result) {
     if (!result.response.ok) return this.showError(result.body.error?.message || "Could not load examples.");
     this.examples = result.body.data;
-    this.showStatus(this.examples.length ? "Examples" : "No saved examples yet.");
+    this.showStatus(this.examples.length ? "Examples" : "Search and save a word to see your examples here.");
   }
 
   addExamples(result) {
     if (!result.response.ok) return this.showAppendError(result.body.error?.message || "Could not load examples.");
     this.examples = [...this.examples, ...result.body.data];
-    this.showStatus(this.examples.length ? "Examples" : "No saved examples yet.");
+    this.showStatus(this.examples.length ? "Examples" : "Search and save a word to see your examples here.");
   }
 
   openExample(example) {

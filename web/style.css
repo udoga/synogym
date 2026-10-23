@@ -238,6 +238,13 @@ button:disabled {
   margin-top: 14px;
 }
 
+.empty-message {
+  margin: 0;
+  padding: 18px;
+  color: #b8b8b8;
+  text-align: center;
+}
+
 .load-more-row {
   display: flex;
   justify-content: center;

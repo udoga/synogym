@@ -5,6 +5,8 @@
        x-text="status"></p>
   </div>
   <section class="results" aria-label="Examples">
+    <p class="empty-message" x-show="!isLoading && !isError && !examples.length && emptyMessage"
+       x-text="emptyMessage"></p>
     <template x-for="(example, index) in examples" :key="`${example.meaning_id}-${example.sentence}-${index}`">
       <button class="meaning-card example-card" type="button" @click="openExample(example)">
         <h2 x-text="example.sentence"></h2>

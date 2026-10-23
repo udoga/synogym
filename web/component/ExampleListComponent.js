@@ -4,12 +4,13 @@ class ExampleListComponent {
     this.bookmarkApi = bookmarkApi;
     this.examples = [];
     this.status = "";
+    this.emptyMessage = "";
     this.isError = false;
     this.isLoading = false;
   }
 
   async load() {
-    this.startLoading("Loading...");
+    this.startLoading("Examples");
     try {
       this.showExamples(await this.bookmarkApi.listExamples());
     } catch {
@@ -19,7 +20,7 @@ class ExampleListComponent {
   }
 
   async loadMore() {
-    this.startLoading("Loading more...");
+    this.startLoading("Examples");
     try {
       this.addExamples(await this.bookmarkApi.listExamples());
     } catch {
@@ -31,13 +32,15 @@ class ExampleListComponent {
   showExamples(result) {
     if (!result.response.ok) return this.showError(result.body.error?.message || "Could not load examples.");
     this.examples = result.body.data;
-    this.showStatus(this.examples.length ? "Examples" : "Search and save a word to see your examples here.");
+    this.emptyMessage = this.examples.length ? "" : "Search and save words to see the examples.";
+    this.showStatus("Examples");
   }
 
   addExamples(result) {
     if (!result.response.ok) return this.showAppendError(result.body.error?.message || "Could not load examples.");
     this.examples = [...this.examples, ...result.body.data];
-    this.showStatus(this.examples.length ? "Examples" : "Search and save a word to see your examples here.");
+    this.emptyMessage = this.examples.length ? "" : "Search and save words to see the examples.";
+    this.showStatus("Examples");
   }
 
   openExample(example) {
@@ -54,6 +57,7 @@ class ExampleListComponent {
 
   startLoading(message) {
     this.isLoading = true;
+    this.emptyMessage = "";
     this.showStatus(message);
   }
 
@@ -65,6 +69,7 @@ class ExampleListComponent {
   showError(message) {
     this.isError = true;
     this.examples = [];
+    this.emptyMessage = "";
     this.status = message;
   }
 

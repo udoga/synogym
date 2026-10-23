@@ -5,6 +5,7 @@ class MeaningListComponent {
     this.bookmarkApi = bookmarkApi;
     this.meanings = [];
     this.status = "";
+    this.emptyMessage = "";
     this.isError = false;
     this.isLoading = false;
   }
@@ -18,7 +19,8 @@ class MeaningListComponent {
   }
 
   label() {
-    return this.isNotes() ? "Notes" : "Meanings";
+    if (this.isNotes()) return "Notes";
+    return this.isBookmarks() ? "Words" : "Meanings";
   }
 
   isNotes() {
@@ -50,7 +52,8 @@ class MeaningListComponent {
   showBookmarks(result) {
     if (!result.response.ok) return this.showError(result.body.error?.message || "Could not load meanings.");
     this.meanings = this.getVisibleBookmarks(result.body.data);
-    this.showStatus(this.getBookmarkStatus());
+    this.emptyMessage = this.meanings.length ? "" : this.getBookmarkMessage();
+    this.showStatus(this.label());
   }
 
   getVisibleBookmarks(bookmarks) {
@@ -65,16 +68,16 @@ class MeaningListComponent {
     return String(meaning?.bookmark?.note || "");
   }
 
-  getBookmarkStatus() {
-    if (this.meanings.length) return this.label();
-    if (this.isNotes()) return "Search, save a word, and add a note to see your notes here.";
-    return "Search and save a word to see your meanings here.";
+  getBookmarkMessage() {
+    if (this.isNotes()) return "Add a note to your words to see your notes.";
+    return "Search and save words to see them here.";
   }
 
   showMeanings(result) {
     if (!result.response.ok) return this.showError(result.body.error?.message || "Search failed.");
     this.meanings = result.body.data;
-    this.showStatus(this.meanings.length ? "Meanings" : "No meanings found.");
+    this.emptyMessage = this.meanings.length ? "" : "No words found.";
+    this.showStatus(this.label());
   }
 
   meaningText(meaning) {
@@ -95,7 +98,8 @@ class MeaningListComponent {
 
   startLoading() {
     this.isLoading = true;
-    this.showStatus("Loading...");
+    this.emptyMessage = "";
+    this.showStatus(this.label());
   }
 
   showStatus(message) {
@@ -106,6 +110,7 @@ class MeaningListComponent {
   showError(message) {
     this.isError = true;
     this.meanings = [];
+    this.emptyMessage = "";
     this.status = message;
   }
 }

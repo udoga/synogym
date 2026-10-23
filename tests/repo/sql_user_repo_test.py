@@ -1,7 +1,7 @@
 from unittest import TestCase
 from sqlalchemy import text
 from synogym.data_classes import User
-from synogym.repo.sqlalchemy.sql_user_repo import SqlUserRepo
+from synogym.repo.sqlalchemy import SqlUserRepo
 from synogym.db_connector import DbConnector
 
 class SqlUserRepoTest(TestCase):

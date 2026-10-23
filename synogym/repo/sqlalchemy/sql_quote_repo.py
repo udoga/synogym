@@ -2,7 +2,7 @@ import re
 from sqlalchemy import text
 from sqlalchemy.engine import Connection, RowMapping
 from synogym.data_classes import Quote
-from synogym.repo.interface.quote_repo import QuoteRepo
+from synogym.repo.interface import QuoteRepo
 
 class SqlQuoteRepo(QuoteRepo):
     def __init__(self, connection: Connection):

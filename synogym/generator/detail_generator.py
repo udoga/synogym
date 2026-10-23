@@ -1,8 +1,7 @@
 from dataclasses import asdict
-from synogym.generator.generator import Generator
-from synogym.parser.detail_parser import DetailParser
+from synogym.generator import Generator
+from synogym.parser import DetailParser
 from synogym.data_classes import Detail, Meaning, LlmRequest
-
 
 class DetailGenerator(Generator[Meaning, Detail]):
     PROMPT = """You are a dictionary API for English learners.

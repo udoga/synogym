@@ -1,8 +1,8 @@
 from unittest import TestCase
 from synogym.data_classes import Detail, Meaning, MeaningWithDetail
-from synogym.service.meaning_service import MeaningService
-from synogym.repo.memory.memory_meaning_repo import MemoryMeaningRepo
-from synogym.generator.mock_generator import MockGenerator
+from synogym.service import MeaningService
+from synogym.repo.memory import MemoryMeaningRepo
+from synogym.generator import MockGenerator
 
 class MeaningServiceTest(TestCase):
     def setUp(self):

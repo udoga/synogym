@@ -1,5 +1,5 @@
 from synogym.data_classes import User
-from synogym.repo.interface.user_repo import UserRepo
+from synogym.repo.interface import UserRepo
 
 class MemoryUserRepo(UserRepo):
     def __init__(self):

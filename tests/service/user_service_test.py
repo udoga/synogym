@@ -1,9 +1,9 @@
 from unittest import TestCase
-from synogym.data_classes import User
-from synogym.repo.memory.memory_user_repo import MemoryUserRepo
-from synogym.service.user_service import UserService
 from werkzeug.exceptions import Conflict, Unauthorized
 from werkzeug.security import generate_password_hash
+from synogym.data_classes import User
+from synogym.repo.memory import MemoryUserRepo
+from synogym.service import UserService
 
 class UserServiceTest(TestCase):
     def setUp(self):

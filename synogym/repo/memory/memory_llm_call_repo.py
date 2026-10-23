@@ -1,4 +1,4 @@
-from synogym.repo.interface.llm_call_repo import LlmCallRepo
+from synogym.repo.interface import LlmCallRepo
 from synogym.data_classes import LlmCall
 
 class MemoryLlmCallRepo(LlmCallRepo):

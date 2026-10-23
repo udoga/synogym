@@ -3,7 +3,7 @@ from google.auth.transport import requests
 from google.oauth2 import id_token
 from synogym.data_classes import User
 from synogym.rest_server import RestServer
-from synogym.service.user_service import UserService
+from synogym.service import UserService
 
 class UserController:
     def __init__(self, server: RestServer, service: UserService, google_client_id: str):

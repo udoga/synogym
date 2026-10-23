@@ -1,7 +1,7 @@
 from unittest import TestCase
 from synogym.data_classes import LlmCall
 from synogym.db_connector import DbConnector
-from synogym.repo.sqlalchemy.sql_llm_call_repo import SqlLlmCallRepo
+from synogym.repo.sqlalchemy import SqlLlmCallRepo
 
 class SqlLlmCallRepoTest(TestCase):
     def setUp(self):

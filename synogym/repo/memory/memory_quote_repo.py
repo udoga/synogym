@@ -1,4 +1,4 @@
-from synogym.repo.interface.quote_repo import QuoteRepo
+from synogym.repo.interface import QuoteRepo
 from synogym.data_classes import Quote
 
 class MemoryQuoteRepo(QuoteRepo):

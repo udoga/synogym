@@ -1,7 +1,7 @@
 from flask import request, session
 from synogym.data_classes import Bookmark, ExampleWithBookmark, MeaningWithBookmark
+from synogym.service import BookmarkService
 from synogym.rest_server import RestServer
-from synogym.service.bookmark_service import BookmarkService
 
 class BookmarkController:
     def __init__(self, server: RestServer, service: BookmarkService):

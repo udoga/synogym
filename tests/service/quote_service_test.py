@@ -1,8 +1,8 @@
 from unittest import TestCase
 from synogym.data_classes import Quote
-from synogym.repo.memory.memory_quote_repo import MemoryQuoteRepo
-from synogym.generator.mock_generator import MockGenerator
-from synogym.service.quote_service import QuoteService
+from synogym.repo.memory import MemoryQuoteRepo
+from synogym.generator import MockGenerator
+from synogym.service import QuoteService
 
 class QuoteServiceTest(TestCase):
     def setUp(self):

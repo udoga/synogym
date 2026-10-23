@@ -3,7 +3,7 @@ import re
 from urllib.parse import urlencode, urljoin
 from curl_cffi import requests
 from synogym.data_classes import Quote
-from synogym.generator.generator import Generator
+from synogym.generator import Generator
 
 class BrainyClient(Generator[str, list[Quote]]):
     HEADERS = {

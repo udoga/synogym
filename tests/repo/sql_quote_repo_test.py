@@ -1,5 +1,5 @@
 from unittest import TestCase
-from synogym.repo.sqlalchemy.sql_quote_repo import SqlQuoteRepo
+from synogym.repo.sqlalchemy import SqlQuoteRepo
 from synogym.db_connector import DbConnector
 from synogym.data_classes import Quote
 

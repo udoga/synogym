@@ -1,7 +1,7 @@
 from unittest import TestCase
 from synogym.db_connector import DbConnector
 from synogym.data_classes import Detail, Example, Meaning
-from synogym.repo.sqlalchemy.sql_meaning_repo import SqlMeaningRepo
+from synogym.repo.sqlalchemy import SqlMeaningRepo
 
 class SqlMeaningRepoTest(TestCase):
     def setUp(self):

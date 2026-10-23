@@ -1,5 +1,5 @@
 from unittest import TestCase, skip
-from synogym.client.brainy_client import BrainyClient
+from synogym.client import BrainyClient
 
 class BrainyClientTest(TestCase):
     def test_makes_search_url_for_word(self):

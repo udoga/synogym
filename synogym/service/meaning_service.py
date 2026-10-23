@@ -1,7 +1,7 @@
 from dataclasses import asdict
 from synogym.data_classes import Detail, Meaning, MeaningWithDetail
-from synogym.generator.generator import Generator
-from synogym.repo.interface.meaning_repo import MeaningRepo
+from synogym.generator import Generator
+from synogym.repo.interface import MeaningRepo
 
 class MeaningService:
     def __init__(self, repo: MeaningRepo,

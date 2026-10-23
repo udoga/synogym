@@ -1,4 +1,4 @@
-from synogym.repo.interface.meaning_repo import MeaningRepo
+from synogym.repo.interface import MeaningRepo
 from synogym.data_classes import Detail, Meaning
 
 class MemoryMeaningRepo(MeaningRepo):

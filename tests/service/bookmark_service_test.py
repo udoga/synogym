@@ -1,7 +1,7 @@
 from unittest import TestCase
 from synogym.data_classes import Bookmark, ExampleWithBookmark
-from synogym.repo.memory.memory_bookmark_repo import MemoryBookmarkRepo
-from synogym.service.bookmark_service import BookmarkService
+from synogym.repo.memory import MemoryBookmarkRepo
+from synogym.service import BookmarkService
 
 class BookmarkServiceTest(TestCase):
     def setUp(self):

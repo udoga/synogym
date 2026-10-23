@@ -2,7 +2,7 @@ from unittest import TestCase
 from synogym.data_classes import LlmCall, LlmResponse, LlmRequest
 from synogym.generator.generator import Generator
 from synogym.llm_gateway import LlmGateway
-from synogym.repo.memory.memory_llm_call_repo import MemoryLlmCallRepo
+from synogym.repo.memory import MemoryLlmCallRepo
 
 class MockLlmClient(Generator[str, LlmResponse]):
     def generate(self, request: LlmRequest) -> LlmResponse:

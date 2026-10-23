@@ -1,8 +1,6 @@
 from unittest import TestCase
 from synogym.data_classes import Bookmark, Meaning, User
-from synogym.repo.sqlalchemy.sql_bookmark_repo import SqlBookmarkRepo
-from synogym.repo.sqlalchemy.sql_meaning_repo import SqlMeaningRepo
-from synogym.repo.sqlalchemy.sql_user_repo import SqlUserRepo
+from synogym.repo.sqlalchemy import SqlBookmarkRepo, SqlMeaningRepo, SqlUserRepo
 from synogym.db_connector import DbConnector
 
 class SqlBookmarkRepoTest(TestCase):

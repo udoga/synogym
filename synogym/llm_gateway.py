@@ -1,6 +1,6 @@
 from synogym.data_classes import LlmCall, LlmResponse, LlmRequest
-from synogym.generator.generator import Generator
-from synogym.repo.interface.llm_call_repo import LlmCallRepo
+from synogym.generator import Generator
+from synogym.repo.interface import LlmCallRepo
 
 class LlmGateway(Generator[LlmRequest, str]):
     def __init__(self, config: dict[str, str], llm_client: Generator[str, LlmResponse], repo: LlmCallRepo):

@@ -1,5 +1,5 @@
 from synogym.data_classes import Bookmark, ExampleWithBookmark, MeaningWithBookmark
-from synogym.repo.interface.bookmark_repo import BookmarkRepo
+from synogym.repo.interface import BookmarkRepo
 
 class MemoryBookmarkRepo(BookmarkRepo):
     def __init__(self):

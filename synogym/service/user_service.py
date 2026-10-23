@@ -1,7 +1,7 @@
-from synogym.data_classes import User
-from synogym.repo.interface.user_repo import UserRepo
 from werkzeug.exceptions import BadRequest, Conflict, Unauthorized
 from werkzeug.security import check_password_hash, generate_password_hash
+from synogym.data_classes import User
+from synogym.repo.interface import UserRepo
 
 class UserService:
     def __init__(self, repo: UserRepo):

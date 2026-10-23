@@ -1,4 +1,4 @@
-from synogym.service.meaning_service import MeaningService
+from synogym.service import MeaningService
 from synogym.rest_server import RestServer
 
 class MeaningController:

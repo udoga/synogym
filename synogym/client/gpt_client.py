@@ -3,7 +3,7 @@ from time import perf_counter
 from typing import Any
 from openai import OpenAI
 from synogym.data_classes import LlmResponse
-from synogym.generator.generator import Generator
+from synogym.generator import Generator
 
 class GptClient(Generator[str, LlmResponse]):
     def __init__(self, config: dict[str, str]):

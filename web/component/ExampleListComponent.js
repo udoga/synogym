@@ -31,16 +31,26 @@ class ExampleListComponent {
 
   showExamples(result) {
     if (!result.response.ok) return this.showError(result.body.error?.message || "Could not load examples.");
-    this.examples = result.body.data;
+    this.examples = this.deduplicateExamples(result.body.data);
     this.emptyMessage = this.examples.length ? "" : "Search and save words to see the examples.";
     this.showStatus("Examples");
   }
 
   addExamples(result) {
     if (!result.response.ok) return this.showAppendError(result.body.error?.message || "Could not load examples.");
-    this.examples = [...this.examples, ...result.body.data];
+    this.examples = this.deduplicateExamples([...this.examples, ...result.body.data]);
     this.emptyMessage = this.examples.length ? "" : "Search and save words to see the examples.";
     this.showStatus("Examples");
+  }
+
+  deduplicateExamples(examples) {
+    const examplesByKey = new Map();
+    for (const example of examples) examplesByKey.set(this.identifyExample(example), example);
+    return [...examplesByKey.values()];
+  }
+
+  identifyExample(example) {
+    return `${example.meaning_id}-${example.sentence}`;
   }
 
   openExample(example) {

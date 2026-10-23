@@ -99,7 +99,7 @@ class MeaningListComponent {
   startLoading() {
     this.isLoading = true;
     this.emptyMessage = "";
-    this.showStatus(this.label());
+    this.showStatus("Loading...");
   }
 
   showStatus(message) {

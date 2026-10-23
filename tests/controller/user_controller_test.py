@@ -1,14 +1,14 @@
 from unittest import TestCase
 from synogym.controller.user_controller import UserController
 from synogym.data_classes import User
-from synogym.repo.list.list_user_repo import ListUserRepo
+from synogym.repo.memory.memory_user_repo import MemoryUserRepo
 from synogym.rest_server import RestServer
 from synogym.service.user_service import UserService
 from werkzeug.security import generate_password_hash
 
 class UserControllerTest(TestCase):
     def setUp(self):
-        self.repo = ListUserRepo()
+        self.repo = MemoryUserRepo()
         self.rest_server = RestServer({})
         self.service = UserService(self.repo)
         self.controller = UserController(self.rest_server, self.service, "google-client-id")

@@ -1,7 +1,7 @@
 import random
 from dataclasses import replace
 from synogym.data_classes import Bookmark, MeaningWithBookmark, ExampleWithBookmark
-from synogym.repo.bookmark_repo import BookmarkRepo
+from synogym.repo.interface.bookmark_repo import BookmarkRepo
 
 class BookmarkService:
     def __init__(self, repo: BookmarkRepo):

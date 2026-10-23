@@ -1,44 +1,39 @@
-from pathlib import Path
 from unittest import TestCase
 from synogym.data_classes import Bookmark, Meaning, User
-from synogym.repo.db.sql_bookmark_repo import SqlBookmarkRepo
-from synogym.repo.db.sql_meaning_repo import SqlMeaningRepo
-from synogym.repo.db.sql_user_repo import SqlUserRepo
+from synogym.repo.sqlalchemy.sql_bookmark_repo import SqlBookmarkRepo
+from synogym.repo.sqlalchemy.sql_meaning_repo import SqlMeaningRepo
+from synogym.repo.sqlalchemy.sql_user_repo import SqlUserRepo
 from synogym.db_connector import DbConnector
 
 class SqlBookmarkRepoTest(TestCase):
     def setUp(self):
-        self.sql_path = str(Path(__file__).resolve().parent.parent.parent / "schema-sqlite.sql")
-        self.connection = DbConnector().connect({"type": "sqlite", "uri": ":memory:", "sql_paths": [self.sql_path]})
-        meanings = [Meaning(query="happy", definition="joyful", pos="adj")]
-        self.meaning = SqlMeaningRepo(self.connection).create_all(meanings)[0]
-        self.user = SqlUserRepo(self.connection).create(User("ada@example.com", "Ada", "Lovelace"))
-        self.repo = SqlBookmarkRepo(self.connection)
+        self.connection = DbConnector().connect_test()
+        self.meaning_repo = SqlMeaningRepo(self.connection)
+        self.user_repo = SqlUserRepo(self.connection)
+        self.bookmark_repo = SqlBookmarkRepo(self.connection)
+        self.meaning = self.meaning_repo.create_all([Meaning(query="happy", definition="joyful", pos="adj")])[0]
+        self.user = self.user_repo.create(User("ada@example.com", "Ada", "Lovelace"))
+        self.bookmark = self.bookmark_repo.create(Bookmark(self.user.id, self.meaning.id, note="", tags=""))
 
-    def test_creates_finds_and_updates_bookmark(self):
-        bookmark = self.repo.create(Bookmark(user_id=self.user.id, meaning_id=self.meaning.id, note="", tags=""))
-        self.assertEqual([bookmark], self.repo.list_by(self.user.id, self.meaning.id))
-        bookmark.note = "Remember this one"
-        bookmark.tags = "feeling,positive"
-        self.assertEqual(bookmark, self.repo.update(bookmark))
-        self.assertEqual(bookmark, self.repo.find(bookmark.id))
+    def test_lists_by_user_id_and_meaning_id(self):
+        self.assertEqual([self.bookmark], self.bookmark_repo.list_by(self.user.id, self.meaning.id))
+        self.assertEqual([], self.bookmark_repo.list_by(self.user.id, 2))
+        self.assertEqual([], self.bookmark_repo.list_by(2, self.meaning.id))
 
-    def test_returns_none_for_missing_bookmark(self):
-        self.assertEqual([], self.repo.list_by(self.user.id, self.meaning.id))
-        self.assertIsNone(self.repo.find(123))
+    def test_lists_by_user_id(self):
+        meaning_2 = self.meaning_repo.create_all([Meaning(query="sad", definition="unhappy", pos="adj")])[0]
+        user_2 = SqlUserRepo(self.connection).create(User("grace@example.com", "Grace", "Hopper"))
+        bookmark_2 = self.bookmark_repo.create(Bookmark(user_id=user_2.id, meaning_id=meaning_2.id, note="", tags=""))
+        self.assertEqual([self.bookmark], self.bookmark_repo.list_by(self.user.id, None))
+        self.assertEqual([bookmark_2], self.bookmark_repo.list_by(user_2.id, None))
 
-    def test_lists_bookmarks_by_user_without_meaning_filter(self):
-        other_meaning = self._create_meaning("sad")
-        other_user = SqlUserRepo(self.connection).create(User("grace@example.com", "Grace", "Hopper"))
-        first = self.repo.create(Bookmark(user_id=self.user.id, meaning_id=self.meaning.id, note="n1", tags="t1"))
-        second = self.repo.create(Bookmark(user_id=self.user.id, meaning_id=other_meaning.id, note="n2", tags="t2"))
-        self.repo.create(Bookmark(user_id=other_user.id, meaning_id=self.meaning.id, note="n3", tags="t3"))
-        self.assertEqual([first, second], self.repo.list_by(self.user.id, None))
+    def test_updates_and_finds_bookmark(self):
+        self.bookmark.note = "Remember this one"
+        self.bookmark.tags = "feeling,positive"
+        self.assertEqual(self.bookmark, self.bookmark_repo.update(self.bookmark))
+        self.assertEqual(self.bookmark, self.bookmark_repo.find(self.bookmark.id))
+        self.assertIsNone(self.bookmark_repo.find(2))
 
     def test_deletes_bookmark(self):
-        bookmark = self.repo.create(Bookmark(user_id=self.user.id, meaning_id=self.meaning.id, note="", tags=""))
-        self.repo.delete(bookmark.id)
-        self.assertIsNone(self.repo.find(bookmark.id))
-
-    def _create_meaning(self, query: str) -> Meaning:
-        return SqlMeaningRepo(self.connection).create_all([Meaning(query=query, definition="unhappy", pos="adj")])[0]
+        self.bookmark_repo.delete(self.bookmark.id)
+        self.assertIsNone(self.bookmark_repo.find(self.bookmark.id))

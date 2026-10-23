@@ -2,7 +2,7 @@ import json
 from sqlalchemy import text
 from sqlalchemy.engine import Connection, RowMapping
 from synogym.data_classes import Detail, Example, Meaning
-from synogym.repo.meaning_repo import MeaningRepo
+from synogym.repo.interface.meaning_repo import MeaningRepo
 
 class SqlMeaningRepo(MeaningRepo):
     def __init__(self, connection: Connection):

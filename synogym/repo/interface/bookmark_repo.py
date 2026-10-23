@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from synogym.data_classes import Bookmark, ExampleWithBookmark, MeaningWithBookmark
 
-
 class BookmarkRepo(ABC):
     @abstractmethod
     def list_by(self, user_id: int, meaning_id: int | None) -> list[Bookmark]:

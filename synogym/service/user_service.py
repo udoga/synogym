@@ -1,5 +1,5 @@
 from synogym.data_classes import User
-from synogym.repo.user_repo import UserRepo
+from synogym.repo.interface.user_repo import UserRepo
 from werkzeug.exceptions import BadRequest, Conflict, Unauthorized
 from werkzeug.security import check_password_hash, generate_password_hash
 

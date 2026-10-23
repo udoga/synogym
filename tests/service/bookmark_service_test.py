@@ -1,11 +1,11 @@
 from unittest import TestCase
 from synogym.data_classes import Bookmark, ExampleWithBookmark
-from synogym.repo.list.list_bookmark_repo import ListBookmarkRepo
+from synogym.repo.memory.memory_bookmark_repo import MemoryBookmarkRepo
 from synogym.service.bookmark_service import BookmarkService
 
 class BookmarkServiceTest(TestCase):
     def setUp(self):
-        self.repo = ListBookmarkRepo()
+        self.repo = MemoryBookmarkRepo()
         self.service = BookmarkService(self.repo)
 
     def test_shuffles_examples_with_bookmark(self):

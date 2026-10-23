@@ -3,7 +3,7 @@ from dataclasses import fields
 from sqlalchemy import text
 from sqlalchemy.engine import Connection, RowMapping
 from synogym.data_classes import Bookmark, MeaningWithBookmark, ExampleWithBookmark
-from synogym.repo.bookmark_repo import BookmarkRepo
+from synogym.repo.interface.bookmark_repo import BookmarkRepo
 
 class SqlBookmarkRepo(BookmarkRepo):
     def __init__(self, connection: Connection):

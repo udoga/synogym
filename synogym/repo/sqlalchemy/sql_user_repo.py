@@ -1,7 +1,7 @@
 from sqlalchemy import text
 from sqlalchemy.engine import Connection, RowMapping
 from synogym.data_classes import User
-from synogym.repo.user_repo import UserRepo
+from synogym.repo.interface.user_repo import UserRepo
 
 class SqlUserRepo(UserRepo):
     def __init__(self, connection: Connection):

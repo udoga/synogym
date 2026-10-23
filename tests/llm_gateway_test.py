@@ -2,7 +2,7 @@ from unittest import TestCase
 from synogym.data_classes import LlmCall, LlmResponse, LlmRequest
 from synogym.generator.generator import Generator
 from synogym.llm_gateway import LlmGateway
-from synogym.repo.list.list_llm_call_repo import ListLlmCallRepo
+from synogym.repo.memory.memory_llm_call_repo import MemoryLlmCallRepo
 
 class MockLlmClient(Generator[str, LlmResponse]):
     def generate(self, request: LlmRequest) -> LlmResponse:
@@ -16,7 +16,7 @@ class LlmGatewayTest(TestCase):
     def test_saves_llm_call_and_returns_model_response(self):
         config = {"llm_name": "gpt-5", "reasoning_effort": "minimal"}
         llm_client = MockLlmClient()
-        repo = ListLlmCallRepo()
+        repo = MemoryLlmCallRepo()
         generator = LlmGateway(config, llm_client, repo)
         self.assertEqual("answer", generator.generate(LlmRequest("prompt", "detail")))
         self.assertEqual([LlmCall(llm_name="gpt-5", reasoning_effort="minimal", operation="detail",

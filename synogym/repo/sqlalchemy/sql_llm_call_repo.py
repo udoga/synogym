@@ -1,8 +1,8 @@
 from dataclasses import asdict
 from sqlalchemy import text
-from sqlalchemy.engine import Connection, RowMapping
+from sqlalchemy.engine import Connection
 from synogym.data_classes import LlmCall
-from synogym.repo.llm_call_repo import LlmCallRepo
+from synogym.repo.interface.llm_call_repo import LlmCallRepo
 
 class SqlLlmCallRepo(LlmCallRepo):
     def __init__(self, connection: Connection):

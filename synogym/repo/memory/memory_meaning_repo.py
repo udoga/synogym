@@ -1,7 +1,7 @@
-from synogym.repo.meaning_repo import MeaningRepo
+from synogym.repo.interface.meaning_repo import MeaningRepo
 from synogym.data_classes import Detail, Meaning
 
-class ListMeaningRepo(MeaningRepo):
+class MemoryMeaningRepo(MeaningRepo):
     def __init__(self):
         self.meanings: list[Meaning] = []
         self.details: list[Detail] = []

@@ -11,11 +11,11 @@ from synogym.controller.bookmark_controller import BookmarkController
 from synogym.controller.meaning_controller import MeaningController
 from synogym.controller.quote_controller import QuoteController
 from synogym.controller.user_controller import UserController
-from synogym.repo.db.sql_bookmark_repo import SqlBookmarkRepo
-from synogym.repo.db.sql_llm_call_repo import SqlLlmCallRepo
-from synogym.repo.db.sql_meaning_repo import SqlMeaningRepo
-from synogym.repo.db.sql_quote_repo import SqlQuoteRepo
-from synogym.repo.db.sql_user_repo import SqlUserRepo
+from synogym.repo.sqlalchemy.sql_bookmark_repo import SqlBookmarkRepo
+from synogym.repo.sqlalchemy.sql_llm_call_repo import SqlLlmCallRepo
+from synogym.repo.sqlalchemy.sql_meaning_repo import SqlMeaningRepo
+from synogym.repo.sqlalchemy.sql_quote_repo import SqlQuoteRepo
+from synogym.repo.sqlalchemy.sql_user_repo import SqlUserRepo
 from synogym.rest_server import RestServer
 from synogym.service.bookmark_service import BookmarkService
 from synogym.service.meaning_service import MeaningService

@@ -11,6 +11,10 @@ class DbConnector:
         self._run_sql_files(connection, database_config.get("sql_paths", []))
         return connection
 
+    def connect_test(self):
+        schema_path = str(Path(__file__).resolve().parent.parent / "schema-sqlite.sql")
+        return self.connect({"type": "sqlite", "uri": ":memory:", "sql_paths": [schema_path]})
+
     def _create_engine(self, database_config: dict) -> Engine:
         database_type = database_config["type"]
         if database_type == "sqlite":

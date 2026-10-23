@@ -1,7 +1,7 @@
-from synogym.data_classes import Bookmark, Meaning, ExampleWithBookmark, MeaningWithBookmark
-from synogym.repo.bookmark_repo import BookmarkRepo
+from synogym.data_classes import Bookmark, ExampleWithBookmark, MeaningWithBookmark
+from synogym.repo.interface.bookmark_repo import BookmarkRepo
 
-class ListBookmarkRepo(BookmarkRepo):
+class MemoryBookmarkRepo(BookmarkRepo):
     def __init__(self):
         self.bookmarks: list[Bookmark] = []
         self.meanings_with_bookmark: list[MeaningWithBookmark] = []

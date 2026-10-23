@@ -1,7 +1,7 @@
 from synogym.data_classes import User
-from synogym.repo.user_repo import UserRepo
+from synogym.repo.interface.user_repo import UserRepo
 
-class ListUserRepo(UserRepo):
+class MemoryUserRepo(UserRepo):
     def __init__(self):
         self.users: list[User] = []
         self.hashed_passwords: dict[str, str] = {}

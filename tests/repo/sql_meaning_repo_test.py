@@ -1,13 +1,11 @@
-from pathlib import Path
 from unittest import TestCase
 from synogym.db_connector import DbConnector
 from synogym.data_classes import Detail, Example, Meaning
-from synogym.repo.db.sql_meaning_repo import SqlMeaningRepo
+from synogym.repo.sqlalchemy.sql_meaning_repo import SqlMeaningRepo
 
 class SqlMeaningRepoTest(TestCase):
     def setUp(self):
-        self.sql_path = str(Path(__file__).resolve().parent.parent.parent / "schema-sqlite.sql")
-        self.connection = DbConnector().connect({"type": "sqlite", "uri": ":memory:", "sql_paths": [self.sql_path]})
+        self.connection = DbConnector().connect_test()
         self.repo = SqlMeaningRepo(self.connection)
 
     def test_meaning_operations(self):

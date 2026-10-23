@@ -1,12 +1,12 @@
 from unittest import TestCase
 from synogym.data_classes import Quote
-from synogym.repo.list.list_quote_repo import ListQuoteRepo
+from synogym.repo.memory.memory_quote_repo import MemoryQuoteRepo
 from synogym.generator.mock_generator import MockGenerator
 from synogym.service.quote_service import QuoteService
 
 class QuoteServiceTest(TestCase):
     def setUp(self):
-        self.repo = ListQuoteRepo()
+        self.repo = MemoryQuoteRepo()
         self.brainy_client = MockGenerator[str, list[Quote]]([])
         self.service = QuoteService(self.repo, self.brainy_client)
 

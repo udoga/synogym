@@ -1,7 +1,7 @@
-from synogym.repo.llm_call_repo import LlmCallRepo
-from synogym.data_classes import Quote, LlmCall
+from synogym.repo.interface.llm_call_repo import LlmCallRepo
+from synogym.data_classes import LlmCall
 
-class ListLlmCallRepo(LlmCallRepo):
+class MemoryLlmCallRepo(LlmCallRepo):
     def __init__(self):
         self.calls: list[LlmCall] = []
 

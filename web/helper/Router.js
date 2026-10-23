@@ -8,7 +8,7 @@ class Router {
 
   async refresh() {
     await this.loadUser();
-    if (this.redirectIfNeeded()) return;
+    this.redirectIfNeeded();
     this.reloadNodes();
   }
 
@@ -29,14 +29,13 @@ class Router {
 
   redirectIfNeeded() {
     const hashUrl = location.hash;
-    if (!this.user && hashUrl !== "#/login") return this.redirect("#/login");
-    if (this.user && ["", "#", "#/", "#/login"].includes(hashUrl)) return this.redirect("#/home");
-    return false;
+    if (!this.user && hashUrl !== "#/login") this.redirect("#/login");
+    if (this.user && ["", "#", "#/", "#/login"].includes(hashUrl)) this.redirect("#/home");
   }
 
   redirect(hashUrl) {
-    location.hash = hashUrl;
-    return true;
+    if (location.hash === hashUrl) return;
+    history.replaceState(null, "", hashUrl);
   }
 
   login(user) {

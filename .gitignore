@@ -4,4 +4,4 @@ __pycache__
 *.sqlite
 *.sqlite-journal
 config.prod.yaml
-commands.txt
+deploy.sh

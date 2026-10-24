@@ -1,10 +1,10 @@
 # Synogym
 
-This project is currently under development as a personal learning project.
+LLM-powered vocabulary learning tool (currently under development).
 
 https://www.synogym.com
 
-### Project Setup
+### Development
 
 Set openai_api_key in [config.yaml](config.yaml).
 

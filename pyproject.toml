@@ -1,7 +1,7 @@
 [project]
 name = "synogym"
 version = "0.1.0"
-description = "English synonym recall practices."
+description = "LLM-powered vocabulary learning tool."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

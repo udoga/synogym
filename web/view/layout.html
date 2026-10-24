@@ -11,8 +11,8 @@
   <section class="search-panel" aria-label="Search">
     <form class="search-form" @submit.prevent="search()">
       <label class="sr-only" for="query-input">Word</label>
-      <input id="query-input" name="query" type="search" placeholder="Search for a word" autocomplete="off" required
-             x-model="query">
+      <input id="query-input" name="query" type="search" placeholder="Search for a word or phrase..."
+             autocomplete="off" required x-model="query">
       <button type="submit">Search</button>
     </form>
   </section>

@@ -69,8 +69,8 @@ class MeaningListComponent {
   }
 
   getBookmarkMessage() {
-    if (this.isNotes()) return "Add a note to your words to see your notes.";
-    return "Search and save words to see them here.";
+    if (this.isNotes()) return "Add a note to a saved word to see your notes.";
+    return "Your words appear here once you search & save.";
   }
 
   showMeanings(result) {

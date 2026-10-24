@@ -60,23 +60,4 @@ class Quote:
 @dataclass
 class LlmRequest:
     text: str
-    operation: str
-
-@dataclass
-class LlmResponse:
-    text: str
-    input_token_count: int
-    output_token_count: int
-    first_token_latency: float
-    generation_latency: float
-
-@dataclass
-class LlmCall:
-    id: int | None = field(default=None, kw_only=True)
-    llm_name: str
-    reasoning_effort: str
-    operation: str
-    input_token_count: int
-    output_token_count: int
-    first_token_latency: float
-    generation_latency: float
+    name: str

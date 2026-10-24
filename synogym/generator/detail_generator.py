@@ -1,7 +1,7 @@
 from dataclasses import asdict
 from synogym.generator import Generator
 from synogym.parser import DetailParser
-from synogym.data_classes import Detail, Meaning, LlmRequest
+from synogym.data_classes import Detail, LlmRequest, Meaning
 
 class DetailGenerator(Generator[Meaning, Detail]):
     PROMPT = """You are a dictionary API for English learners.
@@ -31,7 +31,7 @@ Part of speech: {pos}
 
     def generate(self, meaning: Meaning) -> Detail:
         prompt: str = self.PROMPT.format(**asdict(meaning))
-        response: str = self.generator.generate(LlmRequest(prompt, "detail"))
-        detail: Detail = self.parser.parse(response)
+        text: str = self.generator.generate(LlmRequest(prompt, "detail"))
+        detail: Detail = self.parser.parse(text)
         detail.meaning_id = meaning.id
         return detail

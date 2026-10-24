@@ -1,6 +1,6 @@
 from dataclasses import replace
 from synogym.generator import Generator
-from synogym.data_classes import Meaning, LlmRequest
+from synogym.data_classes import LlmRequest, Meaning
 from synogym.parser import MeaningParser
 
 class MeaningGenerator(Generator[str, list[Meaning]]):
@@ -24,6 +24,6 @@ Query: {query}
 
     def generate(self, query: str) -> list[Meaning]:
         prompt: str = self.PROMPT.format(query=query)
-        response: str = self.generator.generate(LlmRequest(prompt, "meanings"))
-        meanings: list[Meaning] = self.parser.parse(response)
+        text: str = self.generator.generate(LlmRequest(prompt, "meanings"))
+        meanings: list[Meaning] = self.parser.parse(text)
         return [replace(meaning, query=query) for meaning in meanings]

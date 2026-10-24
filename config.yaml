@@ -7,6 +7,12 @@ llm:
   llm_name: gpt-5
   reasoning_effort: minimal
   openai_api_key:
+  langfuse:
+    enabled: false
+    base_url: https://cloud.langfuse.com
+    environment: local
+    public_key:
+    secret_key:
 server:
   port: 8080
   secret_key: dev-secret-key

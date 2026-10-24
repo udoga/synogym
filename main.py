@@ -2,11 +2,10 @@ import yaml
 import os
 from pathlib import Path
 from synogym.db_connector import DbConnector
-from synogym.llm_gateway import LlmGateway
 from synogym.rest_server import RestServer
 from synogym.generator import MeaningGenerator, DetailGenerator
 from synogym.client import BrainyClient, GptClient
-from synogym.repo.sqlalchemy import SqlBookmarkRepo, SqlLlmCallRepo, SqlMeaningRepo, SqlQuoteRepo, SqlUserRepo
+from synogym.repo.sqlalchemy import SqlBookmarkRepo, SqlMeaningRepo, SqlQuoteRepo, SqlUserRepo
 from synogym.service import BookmarkService, MeaningService, QuoteService, UserService
 from synogym.controller import BookmarkController, MeaningController, QuoteController, UserController
 
@@ -19,12 +18,10 @@ def setup() -> RestServer:
     meaning_repo = SqlMeaningRepo(connection)
     quote_repo = SqlQuoteRepo(connection)
     user_repo = SqlUserRepo(connection)
-    llm_call_repo = SqlLlmCallRepo(connection)
 
     gpt_client = GptClient(config["llm"])
-    llm_gateway = LlmGateway(config["llm"], gpt_client, llm_call_repo)
-    meaning_generator = MeaningGenerator(llm_gateway)
-    detail_generator = DetailGenerator(llm_gateway)
+    meaning_generator = MeaningGenerator(gpt_client)
+    detail_generator = DetailGenerator(gpt_client)
     brainy_client = BrainyClient() if config["brainy_quotes_enabled"] else None
 
     bookmark_service = BookmarkService(bookmark_repo)

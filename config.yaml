@@ -4,8 +4,8 @@ database:
   sql_paths:
     - schema-sqlite.sql
 llm:
-  llm_name: gpt-5
-  reasoning_effort: minimal
+  llm_name: gpt-6-luna
+  reasoning_effort: none
   openai_api_key:
   langfuse:
     enabled: false

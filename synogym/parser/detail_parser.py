@@ -9,6 +9,6 @@ class DetailParser(YamlParser):
     def parse_detail(self, data: dict[str, Any]) -> Detail:
         return Detail(level=self.parse_field(data, "level", str),
                       description=self.parse_field(data, "description", str),
-                      synonyms=self.parse_field(data, "synonyms", list),
+                      synonyms=self.parse_comma_separated_list(data, "synonyms"),
                       history=self.parse_field(data, "history", str),
-                      formations=self.parse_field(data, "formations", list))
+                      formations=self.parse_comma_separated_list(data, "formations"))

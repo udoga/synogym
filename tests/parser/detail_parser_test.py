@@ -23,19 +23,17 @@ class DetailParserTest(TestCase):
 detail:
   level: A1
   description: Feeling pleasure or satisfaction.
-  synonyms:
-  - glad
+  synonyms: glad, cheerful
   history: From Middle English hap.
-  formations:
-  - happiness
+  formations: happiness, unhappy
 """)
         self.assertIsInstance(detail, Detail)
         self.assertIsNone(detail.meaning_id)
         self.assertEqual("A1", detail.level)
         self.assertEqual("Feeling pleasure or satisfaction.", detail.description)
-        self.assertEqual(["glad"], detail.synonyms)
+        self.assertEqual(["glad", "cheerful"], detail.synonyms)
         self.assertEqual("From Middle English hap.", detail.history)
-        self.assertEqual(["happiness"], detail.formations)
+        self.assertEqual(["happiness", "unhappy"], detail.formations)
 
     def make_yaml(self, field: str, value: str) -> str:
         d = {"level": "A1", "description": "x", "synonyms": "[]", "history": "x", "formations": "[]",

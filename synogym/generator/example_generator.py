@@ -5,7 +5,7 @@ from synogym.data_classes import Example, LlmRequest, Meaning
 
 class ExampleGenerator(Generator[Meaning, list[Example]]):
     PROMPT = """You are a dictionary API for English learners.
-Given a word or phrase, its definition and its pos; return only a YAML in the structure below.
+Given a word or phrase, its selected definition and pos; return only YAML in the structure below.
 
 examples:
   - sentence: A clear and common usage example.
@@ -14,7 +14,7 @@ examples:
 Rules:
 - 3 versatile examples.
 - 2 replacements each with 1 or 2 words.
-- No markdown, no additional text, no quotation marks.
+- ONLY content, no markdown, no additional text, no quotation marks.
 
 Query: {query}
 Definition: {definition}

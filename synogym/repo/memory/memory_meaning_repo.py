@@ -1,10 +1,11 @@
 from synogym.repo.interface import MeaningRepo
-from synogym.data_classes import Detail, Meaning
+from synogym.data_classes import Detail, Example, Meaning
 
 class MemoryMeaningRepo(MeaningRepo):
     def __init__(self):
         self.meanings: list[Meaning] = []
         self.details: list[Detail] = []
+        self.examples: list[Example] = []
 
     def list_by_query(self, query: str) -> list[Meaning]:
         return [meaning for meaning in self.meanings if meaning.query == query]
@@ -24,3 +25,12 @@ class MemoryMeaningRepo(MeaningRepo):
 
     def find_detail(self, meaning_id: int) -> Detail | None:
         return next((detail for detail in self.details if detail.meaning_id == meaning_id), None)
+
+    def create_examples(self, meaning_id: int, examples: list[Example]) -> list[Example]:
+        for example in examples:
+            example.meaning_id = meaning_id
+            self.examples.append(example)
+        return examples
+
+    def list_examples(self, meaning_id: int) -> list[Example]:
+        return [example for example in self.examples if example.meaning_id == meaning_id]

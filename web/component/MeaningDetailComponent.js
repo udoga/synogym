@@ -5,10 +5,14 @@ class MeaningDetailComponent {
     this.bookmarkApi = bookmarkApi;
     this.quoteApi = quoteApi;
     this.meaning = null;
+    this.examples = [];
+    this.meaningDetail = null;
     this.bookmark = null;
     this.newBookmarkTag = "";
     this.quotes = [];
     this.isQuoteLoading = false;
+    this.isExampleLoading = false;
+    this.isDetailLoading = false;
     this.status = "";
     this.isError = false;
     this.isLoading = false;
@@ -19,19 +23,57 @@ class MeaningDetailComponent {
     if (!meaningId) return this.showError("Meaning not found.");
     this.startLoading();
     try {
-      this.showMeaning(await this.meaningApi.read(meaningId));
+      await this.loadMeaning(meaningId);
     } catch {
       this.showError("Could not reach the server.");
     }
     this.isLoading = false;
+    await this.loadExamples(meaningId);
+    await this.loadDetail(meaningId);
+    await this.loadQuotes(this.meaning?.query);
+  }
+
+  async loadMeaning(meaningId) {
+    this.showMeaning(await this.meaningApi.read(meaningId));
   }
 
   showMeaning(result) {
-    if (!result.response.ok) return this.showError(result.body.error?.message || "Could not load detail.");
+    if (!result.response.ok) return this.showError(result.body.error?.message || "Could not load meaning.");
     this.meaning = result.body.data;
     this.showStatus("Word Details");
     this.loadBookmark();
-    this.loadQuotes(this.meaning.query);
+  }
+
+  async loadExamples(meaningId) {
+    if (!this.meaning) return;
+    this.isExampleLoading = true;
+    try {
+      this.showExamples(await this.meaningApi.listExamples(meaningId));
+    } catch {
+      this.showStatus("Could not reach the server.");
+    }
+    this.isExampleLoading = false;
+  }
+
+  showExamples(result) {
+    if (!result.response.ok) return this.showStatus(result.body.error?.message || "Could not load examples.");
+    this.examples = result.body.data;
+  }
+
+  async loadDetail(meaningId) {
+    if (!this.meaning) return;
+    this.isDetailLoading = true;
+    try {
+      this.showDetail(await this.meaningApi.readDetail(meaningId));
+    } catch {
+      this.showStatus("Could not reach the server.");
+    }
+    this.isDetailLoading = false;
+  }
+
+  showDetail(result) {
+    if (!result.response.ok) return this.showStatus(result.body.error?.message || "Could not load detail.");
+    this.meaningDetail = result.body.data;
   }
 
   async loadQuotes(word) {
@@ -121,7 +163,7 @@ class MeaningDetailComponent {
   }
 
   detail() {
-    return { examples: [], synonyms: [], formations: [], ...this.meaning?.detail };
+    return { synonyms: [], formations: [], ...this.meaningDetail };
   }
 
   hasWords(words) {
@@ -149,6 +191,8 @@ class MeaningDetailComponent {
   showError(message) {
     this.isError = true;
     this.meaning = null;
+    this.examples = [];
+    this.meaningDetail = null;
     this.bookmark = null;
     this.status = message;
   }

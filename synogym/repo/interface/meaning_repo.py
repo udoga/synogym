@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from synogym.data_classes import Detail, Meaning
+from synogym.data_classes import Detail, Example, Meaning
 
 class MeaningRepo(ABC):
     @abstractmethod
@@ -19,5 +19,13 @@ class MeaningRepo(ABC):
         pass
 
     @abstractmethod
-    def find_detail(self, detail_id: int) -> Detail | None:
+    def find_detail(self, meaning_id: int) -> Detail | None:
+        pass
+
+    @abstractmethod
+    def create_examples(self, meaning_id: int, examples: list[Example]) -> list[Example]:
+        pass
+
+    @abstractmethod
+    def list_examples(self, meaning_id: int) -> list[Example]:
         pass

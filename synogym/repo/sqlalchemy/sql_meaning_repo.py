@@ -30,31 +30,31 @@ class SqlMeaningRepo(MeaningRepo):
         sql = """INSERT INTO meaning_details (meaning_id, level, description, synonyms, history, formations)
                  VALUES (:meaning_id, :level, :description, :synonyms, :history, :formations)"""
         self.connection.execute(text(sql), self._get_detail_values(detail))
-        for example in detail.examples:
-            self._create_example(detail.meaning_id, example)
         self.connection.commit()
         return detail
 
-    def find_detail(self, detail_id: int) -> Detail | None:
+    def find_detail(self, meaning_id: int) -> Detail | None:
         sql = "SELECT * FROM meaning_details WHERE meaning_id = :meaning_id"
-        row = self.connection.execute(text(sql), {"meaning_id": detail_id}).mappings().fetchone()
-        if not row:
-            return None
-        detail: Detail = self._get_detail(row)
-        detail.examples = self._list_examples(row["meaning_id"])
-        return detail
+        row = self.connection.execute(text(sql), {"meaning_id": meaning_id}).mappings().fetchone()
+        return self._get_detail(row) if row else None
 
-    def _create_example(self, detail_id: int | None, example: Example) -> Example:
+    def create_examples(self, meaning_id: int, examples: list[Example]) -> list[Example]:
+        for example in examples:
+            self._create_example(meaning_id, example)
+        self.connection.commit()
+        return examples
+
+    def list_examples(self, meaning_id: int) -> list[Example]:
+        sql = "SELECT * FROM examples WHERE meaning_id = :meaning_id ORDER BY id"
+        rows = self.connection.execute(text(sql), {"meaning_id": meaning_id}).mappings().all()
+        return [self._get_example(row) for row in rows]
+
+    def _create_example(self, meaning_id: int | None, example: Example) -> Example:
         sql = """INSERT INTO examples (meaning_id, sentence, replacements)
                  VALUES (:meaning_id, :sentence, :replacements)"""
-        self.connection.execute(text(sql), self._get_example_values(detail_id, example))
-        example.meaning_id = detail_id
+        self.connection.execute(text(sql), self._get_example_values(meaning_id, example))
+        example.meaning_id = meaning_id
         return example
-
-    def _list_examples(self, detail_id: int) -> list[Example]:
-        sql = "SELECT * FROM examples WHERE meaning_id = :meaning_id ORDER BY id"
-        rows = self.connection.execute(text(sql), {"meaning_id": detail_id}).mappings().all()
-        return [self._get_example(row) for row in rows]
 
     def _get_values(self, meaning: Meaning) -> dict[str, str]:
         return {"query": meaning.query, "definition": meaning.definition, "pos": meaning.pos}
@@ -67,8 +67,8 @@ class SqlMeaningRepo(MeaningRepo):
                 "history": detail.history,
                 "formations": json.dumps(detail.formations)}
 
-    def _get_example_values(self, detail_id: int | None, example: Example) -> dict[str, int | str | None]:
-        return {"meaning_id": detail_id,
+    def _get_example_values(self, meaning_id: int | None, example: Example) -> dict[str, int | str | None]:
+        return {"meaning_id": meaning_id,
                 "sentence": example.sentence,
                 "replacements": json.dumps(example.replacements)}
 
@@ -78,8 +78,7 @@ class SqlMeaningRepo(MeaningRepo):
                       description=row["description"],
                       synonyms=json.loads(row["synonyms"]),
                       history=row["history"],
-                      formations=json.loads(row["formations"]),
-                      examples=[])
+                      formations=json.loads(row["formations"]))
 
     def _get_meaning(self, row: RowMapping) -> Meaning:
         return Meaning(id=row["id"], query=row["query"], definition=row["definition"], pos=row["pos"])

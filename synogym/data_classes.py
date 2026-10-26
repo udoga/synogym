@@ -28,11 +28,6 @@ class Detail:
     synonyms: list[str]
     history: str
     formations: list[str]
-    examples: list[Example]
-
-@dataclass
-class MeaningWithDetail(Meaning):
-    detail: Detail
 
 @dataclass
 class Bookmark:

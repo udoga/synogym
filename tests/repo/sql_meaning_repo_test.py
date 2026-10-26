@@ -21,7 +21,13 @@ class SqlMeaningRepoTest(TestCase):
         self.assertEqual(detail, self.repo.find_detail(detail.meaning_id))
         self.assertIsNone(self.repo.find_detail(123))
 
-    def create_detail(self, detail_id: int | None) -> Detail:
-        example = Example(sentence="She is happy.", replacements=["glad", "cheerful"])
-        return Detail(meaning_id=detail_id, level="A1", description="Feeling joy.", synonyms=["glad"],
-                      history="Old English.", formations=["happiness"], examples=[example])
+    def test_example_operations(self):
+        meaning = self.repo.create_all([Meaning(query="happy", definition="joyful", pos="adjective")])[0]
+        examples = [Example(sentence="She is happy.", replacements=["glad", "cheerful"])]
+        self.assertEqual(examples, self.repo.create_examples(meaning.id, examples))
+        self.assertEqual(examples, self.repo.list_examples(meaning.id))
+        self.assertEqual([], self.repo.list_examples(123))
+
+    def create_detail(self, meaning_id: int | None) -> Detail:
+        return Detail(meaning_id=meaning_id, level="A1", description="Feeling joy.", synonyms=["glad"],
+                      history="Old English.", formations=["happiness"])

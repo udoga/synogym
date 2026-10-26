@@ -28,11 +28,6 @@ detail:
   history: From Middle English hap.
   formations:
   - happiness
-  examples:
-  - sentence: She felt happy today.
-    replacements:
-    - glad
-    - pleased
 """)
         self.assertIsInstance(detail, Detail)
         self.assertIsNone(detail.meaning_id)
@@ -41,10 +36,8 @@ detail:
         self.assertEqual(["glad"], detail.synonyms)
         self.assertEqual("From Middle English hap.", detail.history)
         self.assertEqual(["happiness"], detail.formations)
-        self.assertEqual("She felt happy today.", detail.examples[0].sentence)
-        self.assertEqual(["glad", "pleased"], detail.examples[0].replacements)
 
     def make_yaml(self, field: str, value: str) -> str:
-        d = {"level": "A1", "description": "x", "synonyms": "[]", "history": "x", "formations": "[]", "examples": "[]",
+        d = {"level": "A1", "description": "x", "synonyms": "[]", "history": "x", "formations": "[]",
              field: value}
         return "detail:\n" + "".join([key + ": " + value + "\n" for key, value in d.items()])

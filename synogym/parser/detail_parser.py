@@ -1,6 +1,6 @@
 from typing import Any
 from synogym.parser import YamlParser
-from synogym.data_classes import Detail, Example
+from synogym.data_classes import Detail
 
 class DetailParser(YamlParser):
     def parse(self, text: str) -> Detail:
@@ -11,9 +11,4 @@ class DetailParser(YamlParser):
                       description=self.parse_field(data, "description", str),
                       synonyms=self.parse_field(data, "synonyms", list),
                       history=self.parse_field(data, "history", str),
-                      formations=self.parse_field(data, "formations", list),
-                      examples=[self.parse_example(e) for e in self.parse_field(data, "examples", list)])
-
-    def parse_example(self, data: dict[str, Any]) -> Example:
-        return Example(sentence=self.parse_field(data, "sentence", str),
-                       replacements=self.parse_field(data, "replacements", list))
+                      formations=self.parse_field(data, "formations", list))

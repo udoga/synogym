@@ -8,4 +8,4 @@ class ExampleParser(YamlParser):
 
     def parse_example(self, data: dict[str, Any]) -> Example:
         return Example(sentence=self.parse_field(data, "sentence", str),
-                       replacements=self.parse_field(data, "replacements", list))
+                       replacements=self.parse_comma_separated_list(data, "replacements"))

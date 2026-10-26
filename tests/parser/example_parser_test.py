@@ -16,14 +16,12 @@ class ExampleParserTest(TestCase):
 
     def test_checks_example_field_values(self):
         self.assertRaises(TypeError, self.parser.parse, "examples:\n- sentence: []\n  replacements: []")
-        self.assertRaises(TypeError, self.parser.parse, "examples:\n- sentence: x\n  replacements: x")
+        self.assertRaises(ValueError, self.parser.parse, "examples:\n- sentence: x\n  replacements: x")
 
     def test_parse_examples(self):
         examples = self.parser.parse("""
 examples:
 - sentence: She felt happy today.
-  replacements:
-  - glad
-  - pleased
+  replacements: glad, pleased
 """)
         self.assertEqual([Example(sentence="She felt happy today.", replacements=["glad", "pleased"])], examples)

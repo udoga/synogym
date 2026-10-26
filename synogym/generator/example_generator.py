@@ -5,15 +5,16 @@ from synogym.data_classes import Example, LlmRequest, Meaning
 
 class ExampleGenerator(Generator[Meaning, list[Example]]):
     PROMPT = """You are a dictionary API for English learners.
-Given a word or phrase, its definition and its pos; return a YAML in the structure below.
+Given a word or phrase, its definition and its pos; return only a YAML in the structure below.
 
 examples:
-  - sentence: a clear and common usage example
-    replacements: 2 best alternatives for the word in this context, each 1-2 words
+  - sentence: A clear and common usage example.
+    replacements: comma separated best alternatives for the word in this context
 
 Rules:
-- Exactly 3 versatile examples.
-- Only YAML, no markdown, no additional text, no quotation marks.
+- 3 versatile examples.
+- 2 replacements each with 1 or 2 words.
+- No markdown, no additional text, no quotation marks.
 
 Query: {query}
 Definition: {definition}

@@ -12,6 +12,11 @@ class YamlParser:
         self.check_type(data[field], cls, "Invalid " + field)
         return data[field]
 
+    def parse_comma_separated_list(self, data: dict, field: str) -> list[str]:
+        value: str = self.parse_field(data, field, str)
+        if value.startswith("[") or not "," in value: raise ValueError("Invalid " + field)
+        return value.split(", ")
+
     def check_type(self, data: Any, cls, message: str):
         if not isinstance(data, cls):
             raise TypeError(message)

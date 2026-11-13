@@ -92,7 +92,7 @@
               <a class="quote-source" x-show="quote.url" :href="quote.url" target="_blank" rel="noopener noreferrer"
                  aria-label="Open on BrainyQuote">🔗</a>
             </h3>
-            <p x-text="quote.text"></p>
+            <p x-html="render(quote.text)"></p>
           </section>
         </template>
       </article>

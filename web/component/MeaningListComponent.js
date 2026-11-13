@@ -7,6 +7,7 @@ class MeaningListComponent {
     this.meanings = [];
     this.keptMeanings = [];
     this.pageIndex = 0;
+    this.shownDefinitionsByKey = {};
     this.status = "";
     this.emptyMessage = "";
     this.isError = false;
@@ -74,6 +75,7 @@ class MeaningListComponent {
 
   showPage(pageIndex) {
     this.pageIndex = pageIndex;
+    this.shownDefinitionsByKey = {};
     this.meanings = this.keptMeanings.slice(this.pageIndex, this.pageIndex + this.page_size);
     this.emptyMessage = this.meanings.length ? "" : this.getBookmarkMessage();
     this.showStatus(this.label());
@@ -132,6 +134,19 @@ class MeaningListComponent {
 
   meaningText(meaning) {
     return this.isNotes() ? this.note(meaning) : meaning.definition;
+  }
+
+  identify(meaning) {
+    return meaning?.id || `${meaning?.query}-${meaning?.pos}-${meaning?.definition}`;
+  }
+
+  toggleDefinition(meaning) {
+    const key = this.identify(meaning);
+    this.shownDefinitionsByKey = { ...this.shownDefinitionsByKey, [key]: !this.shownDefinitionsByKey[key] };
+  }
+
+  showDefinition(meaning) {
+    return Boolean(this.shownDefinitionsByKey[this.identify(meaning)]);
   }
 
   render(text) {

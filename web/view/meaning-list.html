@@ -19,7 +19,8 @@
     <p class="empty-message" x-show="!isLoading && !isError && !meanings.length && emptyMessage"
        x-text="emptyMessage"></p>
     <template x-for="(meaning, index) in meanings" :key="meaning.id || `${meaning.query}-${meaning.pos}-${meaning.definition}-${index}`">
-      <button class="meaning-card" type="button" @click="openMeaning(meaning)">
+      <article class="meaning-card" role="button" tabindex="0" @click="openMeaning(meaning)"
+               @keydown.enter.prevent="openMeaning(meaning)" @keydown.space.prevent="openMeaning(meaning)">
         <h2>
           <span x-text="meaning.query"></span><span class="pos" x-text="meaning.pos"></span>
           <template x-for="(tag, index) in userTags(meaning)" :key="tag">
@@ -27,7 +28,12 @@
           </template>
         </h2>
         <p x-html="render(meaningText(meaning))"></p>
-      </button>
+        <div class="replacements-area note-definition-area" x-show="isNotes()">
+          <button class="replacements-button" type="button" x-show="!showDefinition(meaning)"
+                  @click.stop="toggleDefinition(meaning)" @keydown.enter.stop @keydown.space.stop>Definition 👀</button>
+          <p class="replacements-text" x-show="showDefinition(meaning)" x-html="render(meaning.definition)"></p>
+        </div>
+      </article>
     </template>
   </section>
   <div class="load-more-row" x-show="isBookmarks() && meanings.length && hasNext()">

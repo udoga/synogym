@@ -16,35 +16,27 @@
             <span class="pos" x-text="meaning.pos"></span>
             <span x-show="detail().level" class="level-tag" :class="getLevelClass(detail().level)"
                   x-text="detail().level"></span>
+            <template x-for="tag in bookmarkTags()" :key="tag">
+              <span class="bookmark-inline-tag">
+                <span x-text="tag"></span>
+                <button type="button" :aria-label="`Remove ${tag}`" @click="removeBookmarkTag(tag)">×</button>
+              </span>
+            </template>
+            <button x-show="!isAddingBookmarkTag" class="bookmark-inline-tag bookmark-add-tag" type="button"
+                    aria-label="Add tag"
+                    @click="startBookmarkTag(); $nextTick(() => $refs.bookmarkTagInput?.select())">+</button>
+            <label class="sr-only" for="bookmark-tag-input">Add a tag...</label>
+            <input x-show="isAddingBookmarkTag" x-ref="bookmarkTagInput" id="bookmark-tag-input"
+                   class="bookmark-tag-input-tag" type="text" x-model="newBookmarkTag"
+                   @keydown.enter.prevent="addBookmarkTag()" @keydown.tab="addBookmarkTag()"
+                   @keydown.escape.prevent="cancelBookmarkTag()" @blur="cancelBookmarkTag()">
           </h2>
           <p x-text="meaning.definition"></p>
+          <label class="sr-only" for="bookmark-note-input">Add a note or example...</label>
+          <textarea id="bookmark-note-input" class="detail-note-input" rows="1" placeholder="Add a note or example..."
+                    lang="en" inputmode="text" autocomplete="off" autocapitalize="sentences" spellcheck="true"
+                    x-model="bookmarkNote" @input.debounce.600ms="updateBookmarkFromNote()"></textarea>
         </section>
-        <template x-if="bookmark">
-          <section class="bookmark-tags-card">
-            <strong>Tags:</strong>
-            <div class="bookmark-tag-list">
-              <template x-for="tag in bookmarkTags()" :key="tag">
-                <span class="bookmark-tag">
-                  <span x-text="tag"></span>
-                  <button type="button" :aria-label="`Remove ${tag}`" @click="removeBookmarkTag(tag)">×</button>
-                </span>
-              </template>
-            </div>
-            <label class="sr-only" for="bookmark-tag-input">Add a tag...</label>
-            <input id="bookmark-tag-input" type="text" placeholder="Add a tag..." x-model="newBookmarkTag"
-                   @keydown.enter.prevent="addBookmarkTag()" @keydown.tab="addBookmarkTag()">
-            <button class="bookmark-tag-add-button" type="button" aria-label="Add tag" @click="addBookmarkTag()">✓</button>
-          </section>
-        </template>
-        <template x-if="bookmark">
-          <section class="bookmark-note-card">
-            <strong>Note</strong>
-            <label class="sr-only" for="bookmark-note-input">Add a note...</label>
-            <textarea id="bookmark-note-input" rows="1" placeholder="Add a note..." lang="en" inputmode="text"
-                      autocomplete="off" autocapitalize="sentences" spellcheck="true" x-model="bookmark.note"
-                      @input.debounce.600ms="updateBookmarkFromNote()"></textarea>
-          </section>
-        </template>
         <section class="detail-loader" x-show="isExampleLoading">
           <p class="status">Loading examples...</p>
         </section>

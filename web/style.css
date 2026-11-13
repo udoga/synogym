@@ -61,7 +61,7 @@ h1 {
   color: var(--primary-dark);
   font-size: clamp(2rem, 5vw, 3rem);
   line-height: 0.95;
-  letter-spacing: -0.07em;
+  letter-spacing: -0.04em;
 }
 
 .auth-panel {
@@ -172,8 +172,8 @@ input,
 textarea,
 .home-card,
 .meaning-card,
-.bookmark-tags-card,
-.bookmark-note-card {
+.bookmark-inline-tag,
+.bookmark-tag-input-tag {
   transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, color 0.18s ease,
     transform 0.18s ease;
 }
@@ -290,18 +290,18 @@ button:disabled {
 .load-more-button {
   width: 100%;
   min-height: 44px;
-  border: 1px solid #1f2937;
+  border: 1px solid #111827;
   border-radius: 14px;
   padding: 0 22px;
   color: #ffffff;
-  background: linear-gradient(135deg, #374151, #1f2937);
-  box-shadow: 0 10px 24px #1f29372b;
+  background: linear-gradient(135deg, #1f2937, #111827);
+  box-shadow: 0 10px 24px #11182730;
   cursor: pointer;
 }
 
 .load-more-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #4b5563, #374151);
-  box-shadow: 0 16px 30px #1f293736;
+  background: linear-gradient(135deg, #374151, #1f2937);
+  box-shadow: 0 16px 30px #1118273a;
   transform: translateY(-1px);
 }
 
@@ -378,11 +378,14 @@ button:disabled {
 
 .example-card em,
 .detail-card em {
-  border-radius: 5px;
-  padding: 0 4px;
   color: #6d28d9;
   font-style: normal;
   font-weight: 700;
+}
+
+.example-card em {
+  border-radius: 5px;
+  padding: 0 4px;
   background: #ede9fe;
 }
 
@@ -446,6 +449,89 @@ button:disabled {
   margin: 0 0 8px;
   color: #0f172a;
   letter-spacing: -0.03em;
+}
+
+.bookmark-inline-tag {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  margin-left: 8px;
+  border: 0;
+  border-radius: 999px;
+  padding: 3px 8px;
+  color: #475569;
+  font-size: 0.78rem;
+  line-height: 1.2;
+  vertical-align: middle;
+  background: #e5e7eb;
+}
+
+.bookmark-inline-tag button {
+  border: 0;
+  padding: 0;
+  color: #64748b;
+  line-height: 1;
+  background: transparent;
+  cursor: pointer;
+}
+
+.bookmark-add-tag {
+  color: #64748b;
+  cursor: pointer;
+}
+
+.bookmark-add-tag:hover,
+.bookmark-inline-tag button:hover {
+  color: #0f172a;
+  background: #d1d5db;
+}
+
+.bookmark-tag-input-tag {
+  display: inline-flex;
+  width: auto;
+  min-width: 70px;
+  max-width: 160px;
+  min-height: 0;
+  margin-left: 8px;
+  border: 0;
+  border-radius: 999px;
+  padding: 3px 8px;
+  color: #334155;
+  font-size: 0.78rem;
+  line-height: 1.2;
+  vertical-align: middle;
+  background: #e5e7eb;
+  field-sizing: content;
+}
+
+.bookmark-tag-input-tag:focus {
+  border: 0;
+  box-shadow: 0 0 0 3px #64748b26;
+  outline: 0;
+}
+
+.detail-note-input {
+  display: block;
+  width: 100%;
+  min-height: 20px;
+  margin-top: 9px;
+  margin-bottom: -4px;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  color: #334155;
+  font-size: 0.95rem;
+  font-style: italic;
+  line-height: 1.5;
+  background: transparent;
+  resize: none;
+  field-sizing: content;
+}
+
+.detail-note-input:focus {
+  border: 0;
+  box-shadow: none;
+  outline: 0;
 }
 
 .detail-card h3 {
@@ -558,126 +644,6 @@ button:disabled {
   color: #eab308;
 }
 
-.bookmark-tags-card,
-.bookmark-note-card {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 7px;
-  min-height: 46px;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  padding: 11px 15px;
-  color: var(--ink);
-  background: #f8fafce6;
-  box-shadow: var(--shadow-soft);
-}
-
-.bookmark-tags-card strong,
-.bookmark-note-card strong {
-  flex: 0 0 auto;
-  color: #334155;
-  font-weight: 800;
-}
-
-.bookmark-tag-list {
-  display: flex;
-  flex: 0 1 auto;
-  flex-wrap: wrap;
-  gap: 6px;
-  min-width: 0;
-}
-
-.bookmark-tag {
-  display: inline-flex;
-  flex: 0 0 auto;
-  gap: 5px;
-  align-items: center;
-  border: 1px solid #bfdbfe;
-  border-radius: 999px;
-  padding: 4px 8px;
-  color: #1d4ed8;
-  font-size: 0.82rem;
-  background: #eff6ff;
-}
-
-.bookmark-tag button {
-  border: 0;
-  padding: 0;
-  color: #64748b;
-  line-height: 1;
-  background: transparent;
-  cursor: pointer;
-}
-
-.bookmark-tags-card input,
-.bookmark-note-card textarea {
-  min-height: 24px;
-  border: 0;
-  border-radius: 0;
-  padding: 0;
-  color: #334155;
-  text-align: left;
-  background: transparent;
-  outline: 0;
-}
-
-.bookmark-tags-card input {
-  flex: 1 1 110px;
-  width: 110px;
-  min-width: 80px;
-}
-
-.bookmark-tags-card input:focus,
-.bookmark-note-card textarea:focus {
-  border: 0;
-  box-shadow: none;
-  outline: 0;
-}
-
-.bookmark-tag-add-button {
-  flex: 0 0 auto;
-  margin-left: auto;
-  border: 0;
-  padding: 2px 4px;
-  color: #64748b;
-  line-height: 1;
-  background: transparent;
-  cursor: pointer;
-}
-
-.bookmark-tag-add-button:hover {
-  color: var(--primary);
-}
-
-.bookmark-note-card textarea {
-  flex: 0 0 110px;
-  width: 110px;
-}
-
-.bookmark-note-card textarea {
-  resize: vertical;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-  field-sizing: content;
-}
-
-.bookmark-tags-card:focus-within,
-.bookmark-note-card:focus-within {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 4px #2563eb1f, var(--shadow-soft);
-}
-
-.bookmark-note-card {
-  display: grid;
-  align-items: start;
-  gap: 5px;
-}
-
-.bookmark-note-card textarea {
-  width: 100%;
-}
-
 .pos {
   display: inline-flex;
   margin-left: 8px;
@@ -685,12 +651,14 @@ button:disabled {
   border-radius: 999px;
   color: #1e40af;
   font-size: 0.78rem;
+  line-height: 1.2;
+  vertical-align: middle;
   background: #dbeafe;
 }
 
 .user-tag {
-  color: #166534;
-  background: #dcfce7;
+  color: #475569;
+  background: #e5e7eb;
 }
 
 .first-user-tag {
@@ -704,6 +672,8 @@ button:disabled {
   border-radius: 999px;
   color: #1e40af;
   font-size: 0.78rem;
+  line-height: 1.2;
+  vertical-align: middle;
   background: #dbeafe;
 }
 

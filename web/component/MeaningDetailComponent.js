@@ -8,7 +8,9 @@ class MeaningDetailComponent {
     this.examples = [];
     this.meaningDetail = null;
     this.bookmark = null;
+    this.bookmarkNote = "";
     this.newBookmarkTag = "";
+    this.isAddingBookmarkTag = false;
     this.quotes = [];
     this.isQuoteLoading = false;
     this.isExampleLoading = false;
@@ -93,8 +95,13 @@ class MeaningDetailComponent {
   async loadBookmark() {
     try {
       const result = await this.bookmarkApi.listByMeaningId(this.meaning.id);
-      if (result.response.ok) this.bookmark = result.body.data[0] || null;
+      if (result.response.ok) this.showBookmark(result.body.data[0] || null);
     } catch {}
+  }
+
+  showBookmark(bookmark) {
+    this.bookmark = bookmark;
+    this.bookmarkNote = bookmark?.note || "";
   }
 
   async saveBookmark() {
@@ -104,15 +111,28 @@ class MeaningDetailComponent {
     if (result.response.ok) this.bookmark = result.body.data;
   }
 
+  async ensureBookmark() {
+    if (this.bookmark?.id) return true;
+    if (!this.meaning?.id) return false;
+    const result = await this.bookmarkApi.create(this.meaning.id);
+    if (!result.response.ok) return false;
+    this.bookmark = result.body.data;
+    return true;
+  }
+
   async deleteBookmark() {
     if (!window.confirm("Remove the bookmark?")) return;
     const bookmark = this.bookmark;
     this.bookmark = null;
+    this.bookmarkNote = "";
     const result = await this.bookmarkApi.deleteBookmark(bookmark.id);
-    if (!result.response.ok) this.bookmark = bookmark;
+    if (!result.response.ok) this.showBookmark(bookmark);
   }
 
-  updateBookmarkFromNote() {
+  async updateBookmarkFromNote() {
+    if (!this.bookmarkNote && !this.bookmark?.id) return;
+    if (!await this.ensureBookmark()) return;
+    this.bookmark.note = this.bookmarkNote;
     return this.updateBookmark({ keepFocusedNote: true });
   }
 
@@ -127,13 +147,23 @@ class MeaningDetailComponent {
       this.bookmark.tags = bookmark.tags || "";
       return;
     }
-    this.bookmark = bookmark;
+    this.showBookmark(bookmark);
   }
 
-  addBookmarkTag() {
+  startBookmarkTag() {
+    this.newBookmarkTag = "Tag Name";
+    this.isAddingBookmarkTag = true;
+  }
+
+  cancelBookmarkTag() {
+    this.newBookmarkTag = "";
+    this.isAddingBookmarkTag = false;
+  }
+
+  async addBookmarkTag() {
     const tag = this.cleanTag(this.newBookmarkTag);
     if (!tag) return;
-    this.newBookmarkTag = "";
+    this.cancelBookmarkTag();
     return this.saveBookmarkTags([...this.bookmarkTags(), tag]);
   }
 
@@ -141,7 +171,9 @@ class MeaningDetailComponent {
     return this.saveBookmarkTags(this.bookmarkTags().filter(bookmarkTag => bookmarkTag !== tag));
   }
 
-  saveBookmarkTags(tags) {
+  async saveBookmarkTags(tags) {
+    if (!await this.ensureBookmark()) return;
+    this.bookmark.note = this.bookmarkNote;
     this.bookmark.tags = [...new Set(tags.map(tag => this.cleanTag(tag)).filter(Boolean))].join(", ");
     return this.updateBookmark();
   }
@@ -203,6 +235,7 @@ class MeaningDetailComponent {
     this.examples = [];
     this.meaningDetail = null;
     this.bookmark = null;
+    this.bookmarkNote = "";
     this.status = message;
   }
 }

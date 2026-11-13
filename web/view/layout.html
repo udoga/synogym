@@ -1,11 +1,8 @@
-<main class="page" x-data="new LayoutComponent(authApi, router)" x-init="load()" x-cloak>
+<main class="page" x-data="new LayoutComponent(authApi, router)" x-cloak>
   <section class="top-bar" aria-labelledby="title">
     <h1 id="title">Synogym</h1>
     <div class="auth-panel">
-      <p>
-        <strong x-text="username()"></strong>
-        <button type="button" @click="logout()">Logout</button>
-      </p>
+      <button type="button" @click="logout()">Logout</button>
     </div>
   </section>
   <section class="search-panel" aria-label="Search">

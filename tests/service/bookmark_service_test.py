@@ -16,6 +16,14 @@ class BookmarkServiceTest(TestCase):
         self.repo.bookmarked_meaning_examples = [first, second]
         self.assertEqual([second, first], self.service.list_bookmarked_meaning_examples(1, seed=0))
 
+    def test_highlights_query_in_bookmarked_meaning_examples(self):
+        b = Bookmark(id=1, user_id=1, meaning_id=1, note="", tags="")
+        m = Meaning(id=1, query="sunny", definition="bright", pos="adj")
+        e = BookmarkedMeaningExample(meaning_id=1, sentence="It's a sunny day.", replacements=[], meaning=m, bookmark=b)
+        self.repo.bookmarked_meaning_examples = [e]
+        examples = self.service.list_bookmarked_meaning_examples(1)
+        self.assertEqual("It's a <em>sunny</em> day.", examples[0].sentence)
+
     def test_creates_bookmark_with_empty_note_and_tags(self):
         bookmark = self.service.create(1, 2)
         self.assertEqual(Bookmark(id=1, user_id=1, meaning_id=2, note="", tags=""), bookmark)

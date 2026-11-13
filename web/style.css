@@ -318,6 +318,11 @@ button:disabled {
   font-size: 1.05rem;
 }
 
+.example-card em {
+  color: #facc15;
+  font-style: normal;
+}
+
 .meaning-card p {
   margin: 0;
   color: #c8c8c8;

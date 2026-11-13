@@ -1,11 +1,13 @@
 import random
 from dataclasses import replace
 from synogym.data_classes import Bookmark, BookmarkedMeaning, BookmarkedMeaningExample
+from synogym.highlighter import Highlighter
 from synogym.repo.interface import BookmarkRepo
 
 class BookmarkService:
-    def __init__(self, repo: BookmarkRepo):
+    def __init__(self, repo: BookmarkRepo, highlighter: Highlighter | None = None):
         self.repo = repo
+        self.highlighter = highlighter or Highlighter()
 
     def list_by(self, user_id: int, meaning_id: int | None) -> list[Bookmark]:
         return self.repo.list_by(user_id, meaning_id)
@@ -14,8 +16,9 @@ class BookmarkService:
         return self.repo.list_bookmarked_meanings(user_id)
 
     def list_bookmarked_meaning_examples(self, user_id: int, seed: int | None = None) -> list[BookmarkedMeaningExample]:
-        examples = self.repo.list_bookmarked_meaning_examples(user_id)
-        return random.Random(seed).sample(examples, min(50, len(examples)))
+        examples: list[BookmarkedMeaningExample] = self.repo.list_bookmarked_meaning_examples(user_id)
+        highlighted: list[BookmarkedMeaningExample] = [self._highlight(e) for e in examples]
+        return random.Random(seed).sample(highlighted, min(50, len(highlighted)))
 
     def create(self, user_id: int, meaning_id: int) -> Bookmark:
         bookmarks: list[Bookmark] = self.repo.list_by(user_id, meaning_id)
@@ -28,6 +31,9 @@ class BookmarkService:
     def delete(self, user_id: int, bookmark_id: int):
         self._read_by(user_id, bookmark_id)
         self.repo.delete(bookmark_id)
+
+    def _highlight(self, example: BookmarkedMeaningExample) -> BookmarkedMeaningExample:
+        return replace(example, sentence=self.highlighter.highlight(example.sentence, example.meaning.query))
 
     def _read_by(self, user_id: int, bookmark_id: int) -> Bookmark:
         bookmark = self.repo.find(bookmark_id)

@@ -65,6 +65,15 @@ class ExampleListComponent {
     return Array.isArray(words) && words.length ? words.join(", ") : "";
   }
 
+  render(sentence) {
+    return String(sentence || "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll("&lt;em&gt;", "<em>")
+      .replaceAll("&lt;/em&gt;", "</em>");
+  }
+
   startLoading(message) {
     this.isLoading = true;
     this.emptyMessage = "";

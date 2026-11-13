@@ -1,6 +1,6 @@
 from unittest import TestCase
 from unittest.mock import patch
-from synogym.data_classes import Bookmark, BookmarkedMeaningExample, Meaning
+from synogym.data_classes import Bookmark, BookmarkedMeaning, BookmarkedMeaningExample, Meaning
 from synogym.repo.memory import MemoryBookmarkRepo
 from synogym.service import BookmarkService
 
@@ -24,6 +24,13 @@ class BookmarkServiceTest(TestCase):
         self.repo.bookmarked_meaning_examples = [e]
         examples = self.service.list_bookmarked_meaning_examples(1)
         self.assertEqual("It's a <em>sunny</em> day.", examples[0].sentence)
+
+    def test_highlights_query_in_bookmarked_meaning_note(self):
+        b = Bookmark(id=1, user_id=1, meaning_id=1, note="It's a sunny day.", tags="")
+        m = BookmarkedMeaning(id=1, query="sunny", definition="bright", pos="adj", bookmark=b)
+        self.repo.bookmarked_meanings = [m]
+        meanings = self.service.list_bookmarked_meanings(1)
+        self.assertEqual("It's a <em>sunny</em> day.", meanings[0].bookmark.note)
 
     def test_creates_bookmark_with_empty_note_and_tags(self):
         bookmark = self.service.create(1, 2)

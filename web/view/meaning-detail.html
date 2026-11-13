@@ -27,9 +27,10 @@
                     @click="startBookmarkTag(); $nextTick(() => $refs.bookmarkTagInput?.select())">+</button>
             <label class="sr-only" for="bookmark-tag-input">Add a tag...</label>
             <input x-show="isAddingBookmarkTag" x-ref="bookmarkTagInput" id="bookmark-tag-input"
-                   class="bookmark-tag-input-tag" type="text" x-model="newBookmarkTag"
-                   @keydown.enter.prevent="addBookmarkTag()" @keydown.tab="addBookmarkTag()"
-                   @keydown.escape.prevent="cancelBookmarkTag()" @blur="cancelBookmarkTag()">
+                   class="bookmark-tag-input-tag" type="text" placeholder="Tag Name" enterkeyhint="done"
+                   autocapitalize="words" x-model="newBookmarkTag"
+                   @keydown.enter.prevent="addBookmarkTag()" @keydown.tab.prevent="addBookmarkTag()"
+                   @keydown.escape.prevent="cancelBookmarkTag()" @blur="addBookmarkTag()">
           </h2>
           <p x-text="meaning.definition"></p>
           <label class="sr-only" for="bookmark-note-input">Add a note or example...</label>

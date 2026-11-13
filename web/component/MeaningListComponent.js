@@ -58,8 +58,18 @@ class MeaningListComponent {
   }
 
   keepBookmarks(bookmarks) {
-    this.keptMeanings = this.getVisibleBookmarks(bookmarks);
+    const meanings = this.getVisibleBookmarks(bookmarks);
+    this.keptMeanings = this.isNotes() ? this.shuffle(meanings) : meanings;
     this.showPage(0);
+  }
+
+  shuffle(meanings) {
+    const items = [...meanings];
+    for (let i = items.length - 1; i > 0; i--) {
+      const index = Math.floor(Math.random() * (i + 1));
+      [items[i], items[index]] = [items[index], items[i]];
+    }
+    return items;
   }
 
   showPage(pageIndex) {
@@ -71,7 +81,14 @@ class MeaningListComponent {
 
   showNext() {
     const pageIndex = this.pageIndex + this.page_size;
-    if (pageIndex < this.keptMeanings.length) this.showPage(pageIndex);
+    if (pageIndex < this.keptMeanings.length) {
+      this.showPage(pageIndex);
+      this.scrollTop();
+    }
+  }
+
+  scrollTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   resize() {
@@ -79,6 +96,7 @@ class MeaningListComponent {
   }
 
   choosePageSize() {
+    if (this.isNotes() && window.matchMedia("(max-width: 540px)").matches) return 1;
     return 4;
   }
 
@@ -114,6 +132,15 @@ class MeaningListComponent {
 
   meaningText(meaning) {
     return this.isNotes() ? this.note(meaning) : meaning.definition;
+  }
+
+  render(text) {
+    return String(text || "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll("&lt;em&gt;", "<em>")
+      .replaceAll("&lt;/em&gt;", "</em>");
   }
 
   userTags(meaning) {

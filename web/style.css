@@ -25,8 +25,14 @@
   box-sizing: border-box;
 }
 
+html {
+  min-height: 100%;
+  background: #edf2f8;
+}
+
 body {
   min-height: 100vh;
+  min-height: 100svh;
   margin: 0;
   background:
     radial-gradient(circle at top left, #c7d9f4 0, transparent 32rem),
@@ -377,13 +383,15 @@ button:disabled {
 }
 
 .example-card em,
-.detail-card em {
+.detail-card em,
+.meaning-card em {
   color: #6d28d9;
   font-style: normal;
   font-weight: 700;
 }
 
-.example-card em {
+.example-card em,
+.meaning-card em {
   border-radius: 5px;
   padding: 0 4px;
   background: #ede9fe;
@@ -550,7 +558,8 @@ button:disabled {
 }
 
 .detail-card:not(.detail-header) p {
-  padding: 16px 18px 18px;
+  padding: 14px 18px 17px;
+  line-height: 1.5;
 }
 
 .detail-card:not(.detail-header) p + p {

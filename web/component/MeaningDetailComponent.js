@@ -151,7 +151,7 @@ class MeaningDetailComponent {
   }
 
   startBookmarkTag() {
-    this.newBookmarkTag = "Tag Name";
+    this.newBookmarkTag = "";
     this.isAddingBookmarkTag = true;
   }
 
@@ -162,8 +162,8 @@ class MeaningDetailComponent {
 
   async addBookmarkTag() {
     const tag = this.cleanTag(this.newBookmarkTag);
-    if (!tag) return;
     this.cancelBookmarkTag();
+    if (!tag) return;
     return this.saveBookmarkTags([...this.bookmarkTags(), tag]);
   }
 

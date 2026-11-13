@@ -25,10 +25,14 @@ class ExampleListComponent {
 
   async showNext() {
     const pageIndex = this.pageIndex + this.page_size;
-    if (pageIndex < this.keptExamples.length) return this.showPage(pageIndex);
+    if (pageIndex < this.keptExamples.length) {
+      this.showPage(pageIndex);
+      return this.scrollTop();
+    }
     this.startLoading("Examples");
     try {
       this.replaceExamples(await this.bookmarkApi.listBookmarkedMeaningExamples());
+      this.scrollTop();
     } catch {
       this.showAppendError("Could not reach the server.");
     }
@@ -60,6 +64,10 @@ class ExampleListComponent {
 
   resize() {
     this.showPage(0);
+  }
+
+  scrollTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   choosePageSize() {

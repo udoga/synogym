@@ -3,19 +3,33 @@
     <button class="top-back-button" type="button" @click="home()">← Home</button>
     <p class="status page-header-status" role="status" aria-live="polite" :class="{ error: isError }"
        x-text="status"></p>
+    <label class="page-size-field">
+      <span>Page Size</span>
+      <select x-model.number="page_size" @change="resize()">
+        <option value="1">1</option>
+        <option value="3">3</option>
+        <option value="5">5</option>
+        <option value="10">10</option>
+      </select>
+    </label>
   </div>
   <section class="results" aria-label="Examples">
     <p class="empty-message" x-show="!isLoading && !isError && !examples.length && emptyMessage"
        x-text="emptyMessage"></p>
     <template x-for="(example, index) in examples" :key="`${example.meaning_id}-${example.sentence}-${index}`">
-      <button class="meaning-card example-card" type="button" @click="openExample(example)">
+      <article class="meaning-card example-card" role="button" tabindex="0" @click="openExample(example)"
+               @keydown.enter.prevent="openExample(example)" @keydown.space.prevent="openExample(example)">
         <h2 x-html="render(example.sentence)"></h2>
-        <p x-text="joinWords(example.replacements)"></p>
-      </button>
+        <div class="replacements-area">
+          <button class="replacements-button" type="button" x-show="!showReplacements(example)"
+                  @click.stop="toggleReplacements(example)">Replacements 👀</button>
+          <p class="replacements-text" x-show="showReplacements(example)" x-text="joinWords(example.replacements)"></p>
+        </div>
+      </article>
     </template>
   </section>
   <div class="load-more-row" x-show="examples.length">
-    <button class="load-more-button" type="button" @click="loadMore()" :disabled="isLoading"
-            x-text="isLoading ? 'Loading...' : 'Load More'"></button>
+    <button class="load-more-button" type="button" @click="showNext()" :disabled="isLoading"
+            x-text="isLoading ? 'Loading...' : 'Next'"></button>
   </div>
 </section>

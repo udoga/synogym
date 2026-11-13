@@ -1,8 +1,12 @@
 class ExampleListComponent {
-  constructor(router, bookmarkApi) {
+  constructor(router, bookmarkApi, page_size = null) {
     this.router = router;
     this.bookmarkApi = bookmarkApi;
+    this.page_size = page_size || this.choosePageSize();
     this.examples = [];
+    this.keptExamples = [];
+    this.pageIndex = 0;
+    this.replacementsByKey = {};
     this.status = "";
     this.emptyMessage = "";
     this.isError = false;
@@ -19,10 +23,12 @@ class ExampleListComponent {
     this.isLoading = false;
   }
 
-  async loadMore() {
+  async showNext() {
+    const pageIndex = this.pageIndex + this.page_size;
+    if (pageIndex < this.keptExamples.length) return this.showPage(pageIndex);
     this.startLoading("Examples");
     try {
-      this.addExamples(await this.bookmarkApi.listBookmarkedMeaningExamples());
+      this.replaceExamples(await this.bookmarkApi.listBookmarkedMeaningExamples());
     } catch {
       this.showAppendError("Could not reach the server.");
     }
@@ -31,16 +37,33 @@ class ExampleListComponent {
 
   showExamples(result) {
     if (!result.response.ok) return this.showError(result.body.error?.message || "Could not load examples.");
-    this.examples = this.deduplicateExamples(result.body.data);
+    this.keepExamples(result.body.data);
+  }
+
+  replaceExamples(result) {
+    if (!result.response.ok) return this.showAppendError(result.body.error?.message || "Could not load examples.");
+    this.keepExamples(result.body.data);
+  }
+
+  keepExamples(examples) {
+    this.keptExamples = this.deduplicateExamples(examples).slice(0, 50);
+    this.showPage(0);
+  }
+
+  showPage(pageIndex) {
+    this.pageIndex = pageIndex;
+    this.replacementsByKey = {};
+    this.examples = this.keptExamples.slice(this.pageIndex, this.pageIndex + this.page_size);
     this.emptyMessage = this.examples.length ? "" : "Examples appear here once you save a word.";
     this.showStatus("Examples");
   }
 
-  addExamples(result) {
-    if (!result.response.ok) return this.showAppendError(result.body.error?.message || "Could not load examples.");
-    this.examples = this.deduplicateExamples([...this.examples, ...result.body.data]);
-    this.emptyMessage = this.examples.length ? "" : "Examples appear here once you save a word.";
-    this.showStatus("Examples");
+  resize() {
+    this.showPage(0);
+  }
+
+  choosePageSize() {
+    return window.matchMedia("(max-width: 540px)").matches ? 1 : 5;
   }
 
   deduplicateExamples(examples) {
@@ -55,6 +78,15 @@ class ExampleListComponent {
 
   openExample(example) {
     if (example?.meaning_id) this.router.route(`#/meaning/${example.meaning_id}`);
+  }
+
+  toggleReplacements(example) {
+    const key = this.identifyExample(example);
+    this.replacementsByKey = { ...this.replacementsByKey, [key]: !this.replacementsByKey[key] };
+  }
+
+  showReplacements(example) {
+    return Boolean(this.replacementsByKey[this.identifyExample(example)]);
   }
 
   home() {

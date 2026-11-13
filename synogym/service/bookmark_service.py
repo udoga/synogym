@@ -5,9 +5,9 @@ from synogym.highlighter import Highlighter
 from synogym.repo.interface import BookmarkRepo
 
 class BookmarkService:
-    def __init__(self, repo: BookmarkRepo, highlighter: Highlighter | None = None):
+    def __init__(self, repo: BookmarkRepo):
         self.repo = repo
-        self.highlighter = highlighter or Highlighter()
+        self.highlighter = Highlighter()
 
     def list_by(self, user_id: int, meaning_id: int | None) -> list[Bookmark]:
         return self.repo.list_by(user_id, meaning_id)

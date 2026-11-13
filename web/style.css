@@ -318,7 +318,8 @@ button:disabled {
   font-size: 1.05rem;
 }
 
-.example-card em {
+.example-card em,
+.detail-card em {
   color: #facc15;
   font-style: normal;
 }

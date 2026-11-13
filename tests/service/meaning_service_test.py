@@ -1,3 +1,4 @@
+from dataclasses import replace
 from unittest import TestCase
 from synogym.data_classes import Detail, Example, Meaning
 from synogym.service import MeaningService
@@ -15,6 +16,7 @@ class MeaningServiceTest(TestCase):
         self.detail = Detail(meaning_id=1, level="A1", description="Feeling joy.", synonyms=[], history="",
                              formations=[])
         self.examples = [Example(sentence="She is happy.", replacements=["glad", "cheerful"])]
+        self.highlighted_examples = [replace(self.examples[0], sentence="She is <em>happy</em>.")]
 
     def test_no_meanings_when_repo_and_generator_has_no_result(self):
         result = self.service.list_by_query("happy")
@@ -43,14 +45,16 @@ class MeaningServiceTest(TestCase):
     def test_saves_examples_from_generator_when_repo_only_has_meaning(self):
         self.repo.create_all([self.meaning])
         self.example_generator.output = self.examples
-        self.assertEqual(self.examples, self.service.list_examples(self.meaning.id))
+        examples = [replace(self.highlighted_examples[0], meaning_id=self.meaning.id)]
+        self.assertEqual(examples, self.service.list_examples(self.meaning.id))
         self.assertEqual(self.examples, self.repo.examples)
         self.assertEqual(self.meaning.id, self.examples[0].meaning_id)
 
     def test_reads_examples_when_they_exist_in_repo(self):
         self.repo.create_all([self.meaning])
         self.repo.create_examples(self.meaning.id, self.examples)
-        self.assertEqual(self.examples, self.service.list_examples(self.meaning.id))
+        examples = [replace(self.highlighted_examples[0], meaning_id=self.meaning.id)]
+        self.assertEqual(examples, self.service.list_examples(self.meaning.id))
 
     def test_saves_detail_from_generator_when_repo_only_has_meaning(self):
         self.repo.create_all([self.meaning])

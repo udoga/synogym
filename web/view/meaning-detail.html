@@ -52,7 +52,7 @@
           <h3>Examples</h3>
           <template x-for="example in examples" :key="example.sentence">
             <p>
-              <span x-text="example.sentence"></span>
+              <span x-html="render(example.sentence)"></span>
               <br><small x-text="joinWords(example.replacements)"></small>
             </p>
           </template>

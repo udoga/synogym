@@ -174,6 +174,15 @@ class MeaningDetailComponent {
     return this.hasWords(words) ? words.join(", ") : "";
   }
 
+  render(sentence) {
+    return String(sentence || "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll("&lt;em&gt;", "<em>")
+      .replaceAll("&lt;/em&gt;", "</em>");
+  }
+
   getLevelClass(level) {
     return level ? `level-${String(level).toLowerCase()}` : "";
   }

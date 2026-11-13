@@ -3,7 +3,7 @@ class BookmarkApi extends JsonApi {
     return this.get("/bookmarks/meanings");
   }
 
-  listBookmarkedExamples() {
+  listBookmarkedMeaningExamples() {
     return this.get("/bookmarks/examples");
   }
 

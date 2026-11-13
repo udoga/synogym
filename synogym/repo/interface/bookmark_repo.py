@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from synogym.data_classes import Bookmark, BookmarkedExample, BookmarkedMeaning
+from synogym.data_classes import Bookmark, BookmarkedMeaning, BookmarkedMeaningExample
 
 class BookmarkRepo(ABC):
     @abstractmethod
@@ -11,7 +11,7 @@ class BookmarkRepo(ABC):
         pass
 
     @abstractmethod
-    def list_bookmarked_examples(self, user_id: int) -> list[BookmarkedExample]:
+    def list_bookmarked_meaning_examples(self, user_id: int) -> list[BookmarkedMeaningExample]:
         pass
 
     @abstractmethod

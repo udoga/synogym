@@ -1,6 +1,6 @@
 import random
 from dataclasses import replace
-from synogym.data_classes import Bookmark, BookmarkedMeaning, BookmarkedExample
+from synogym.data_classes import Bookmark, BookmarkedMeaning, BookmarkedMeaningExample
 from synogym.repo.interface import BookmarkRepo
 
 class BookmarkService:
@@ -13,8 +13,8 @@ class BookmarkService:
     def list_bookmarked_meanings(self, user_id: int) -> list[BookmarkedMeaning]:
         return self.repo.list_bookmarked_meanings(user_id)
 
-    def list_bookmarked_examples(self, user_id: int, seed: int | None = None) -> list[BookmarkedExample]:
-        examples = self.repo.list_bookmarked_examples(user_id)
+    def list_bookmarked_meaning_examples(self, user_id: int, seed: int | None = None) -> list[BookmarkedMeaningExample]:
+        examples = self.repo.list_bookmarked_meaning_examples(user_id)
         return random.Random(seed).sample(examples, min(50, len(examples)))
 
     def create(self, user_id: int, meaning_id: int) -> Bookmark:

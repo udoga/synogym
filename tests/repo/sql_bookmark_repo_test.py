@@ -1,5 +1,5 @@
 from unittest import TestCase
-from synogym.data_classes import Bookmark, Meaning, User
+from synogym.data_classes import Bookmark, BookmarkedMeaningExample, Example, Meaning, User
 from synogym.repo.sqlalchemy import SqlBookmarkRepo, SqlMeaningRepo, SqlUserRepo
 from synogym.db_connector import DbConnector
 
@@ -31,6 +31,15 @@ class SqlBookmarkRepoTest(TestCase):
         self.assertEqual(self.bookmark, self.bookmark_repo.update(self.bookmark))
         self.assertEqual(self.bookmark, self.bookmark_repo.find(self.bookmark.id))
         self.assertIsNone(self.bookmark_repo.find(2))
+
+    def test_lists_bookmarked_meaning_examples(self):
+        self.meaning_repo.create_examples(self.meaning.id, [Example(sentence="I feel happy", replacements=["joyful"])])
+        expected = BookmarkedMeaningExample(meaning_id=self.meaning.id,
+                                            sentence="I feel happy",
+                                            replacements=["joyful"],
+                                            meaning=self.meaning,
+                                            bookmark=self.bookmark)
+        self.assertEqual([expected], self.bookmark_repo.list_bookmarked_meaning_examples(self.user.id))
 
     def test_deletes_bookmark(self):
         self.bookmark_repo.delete(self.bookmark.id)

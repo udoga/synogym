@@ -1,4 +1,5 @@
 from unittest import TestCase
+from unittest.mock import patch
 from synogym.data_classes import Bookmark, BookmarkedMeaningExample, Meaning
 from synogym.repo.memory import MemoryBookmarkRepo
 from synogym.service import BookmarkService

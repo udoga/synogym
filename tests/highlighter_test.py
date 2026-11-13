@@ -48,3 +48,15 @@ class HighlighterTest(TestCase):
     def test_highlights_see_off(self):
         text = self.highlighter.highlight("She saw him off at the airport", "see off")
         self.assertEqual("She <em>saw</em> him <em>off</em> at the airport", text)
+
+    def test_highlights_tut(self):
+        text = self.highlighter.highlight("She tutted when he arrived late to the meeting.", "tut")
+        self.assertEqual("She <em>tutted</em> when he arrived late to the meeting.", text)
+
+    def test_highlights_shuffle(self):
+        text = self.highlighter.highlight("She shuffled to the kitchen, still half asleep.", "shuffle")
+        self.assertEqual("She <em>shuffled</em> to the kitchen, still half asleep.", text)
+
+    def test_highlights_plough_on(self):
+        text = self.highlighter.highlight("The team ploughed on toward their launch date.", "plough on")
+        self.assertEqual("The team <em>ploughed on</em> toward their launch date.", text)

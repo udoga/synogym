@@ -17,8 +17,8 @@ class BookmarkService:
 
     def list_bookmarked_meaning_examples(self, user_id: int, seed: int | None = None) -> list[BookmarkedMeaningExample]:
         examples: list[BookmarkedMeaningExample] = self.repo.list_bookmarked_meaning_examples(user_id)
-        highlighted: list[BookmarkedMeaningExample] = [self._highlight(e) for e in examples]
-        return random.Random(seed).sample(highlighted, min(50, len(highlighted)))
+        examples = random.Random(seed).sample(examples, min(50, len(examples)))
+        return [self._highlight(e) for e in examples]
 
     def create(self, user_id: int, meaning_id: int) -> Bookmark:
         bookmarks: list[Bookmark] = self.repo.list_by(user_id, meaning_id)

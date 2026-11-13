@@ -12,7 +12,7 @@ class ExampleListComponent {
   async load() {
     this.startLoading("Examples");
     try {
-      this.showExamples(await this.bookmarkApi.listExamples());
+      this.showExamples(await this.bookmarkApi.listBookmarkedExamples());
     } catch {
       this.showError("Could not reach the server.");
     }
@@ -22,7 +22,7 @@ class ExampleListComponent {
   async loadMore() {
     this.startLoading("Examples");
     try {
-      this.addExamples(await this.bookmarkApi.listExamples());
+      this.addExamples(await this.bookmarkApi.listBookmarkedExamples());
     } catch {
       this.showAppendError("Could not reach the server.");
     }

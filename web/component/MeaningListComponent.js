@@ -30,7 +30,7 @@ class MeaningListComponent {
   async loadBookmarks() {
     this.startLoading();
     try {
-      this.showBookmarks(await this.bookmarkApi.listMeanings());
+      this.showBookmarks(await this.bookmarkApi.listBookmarkedMeanings());
     } catch {
       this.showError("Could not reach the server.");
     }

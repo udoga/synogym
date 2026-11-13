@@ -1,19 +1,19 @@
-from synogym.data_classes import Bookmark, ExampleWithBookmark, MeaningWithBookmark
+from synogym.data_classes import Bookmark, BookmarkedExample, BookmarkedMeaning
 from synogym.repo.interface import BookmarkRepo
 
 class MemoryBookmarkRepo(BookmarkRepo):
     def __init__(self):
         self.bookmarks: list[Bookmark] = []
-        self.meanings_with_bookmark: list[MeaningWithBookmark] = []
-        self.examples_with_bookmark: list[ExampleWithBookmark] = []
+        self.meanings_with_bookmark: list[BookmarkedMeaning] = []
+        self.examples_with_bookmark: list[BookmarkedExample] = []
 
     def list_by(self, user_id: int, meaning_id: int | None) -> list[Bookmark]:
         return [b for b in self.bookmarks if b.user_id == user_id and (not meaning_id or b.meaning_id == meaning_id)]
 
-    def list_meanings_with_bookmark(self, user_id: int) -> list[MeaningWithBookmark]:
+    def list_bookmarked_meanings(self, user_id: int) -> list[BookmarkedMeaning]:
         return [m for m in self.meanings_with_bookmark if m.bookmark.user_id == user_id]
 
-    def list_examples_with_bookmark(self, user_id: int) -> list[ExampleWithBookmark]:
+    def list_bookmarked_examples(self, user_id: int) -> list[BookmarkedExample]:
         return [e for e in self.examples_with_bookmark if e.bookmark.user_id == user_id]
 
     def create(self, bookmark: Bookmark) -> Bookmark:

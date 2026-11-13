@@ -2,7 +2,7 @@ import json
 from dataclasses import fields
 from sqlalchemy import text
 from sqlalchemy.engine import Connection, RowMapping
-from synogym.data_classes import Bookmark, MeaningWithBookmark, ExampleWithBookmark
+from synogym.data_classes import Bookmark, BookmarkedMeaning, BookmarkedExample
 from synogym.repo.interface.bookmark_repo import BookmarkRepo
 
 class SqlBookmarkRepo(BookmarkRepo):
@@ -16,14 +16,14 @@ class SqlBookmarkRepo(BookmarkRepo):
         rows = self.connection.execute(text(sql + " ORDER BY id"), values).mappings().all()
         return [self._get_bookmark(row) for row in rows]
 
-    def list_meanings_with_bookmark(self, user_id: int) -> list[MeaningWithBookmark]:
+    def list_bookmarked_meanings(self, user_id: int) -> list[BookmarkedMeaning]:
         sql = """SELECT m.id AS meaning_id, m.query, m.definition, m.pos, b.id, b.user_id, b.note, b.tags
                  FROM meanings m JOIN bookmarks b ON b.meaning_id = m.id
                  WHERE b.user_id = :user_id ORDER BY b.id"""
         rows = self.connection.execute(text(sql), {"user_id": user_id})
         return [self._get_meaning_with_bookmark(row) for row in rows.mappings().all()]
 
-    def list_examples_with_bookmark(self, user_id: int) -> list[ExampleWithBookmark]:
+    def list_bookmarked_examples(self, user_id: int) -> list[BookmarkedExample]:
         sql = """SELECT e.meaning_id, e.sentence, e.replacements, b.id, b.user_id, b.note, b.tags
                  FROM examples e JOIN bookmarks b ON b.meaning_id = e.meaning_id
                  WHERE b.user_id = :user_id ORDER BY b.id, e.id"""
@@ -58,15 +58,15 @@ class SqlBookmarkRepo(BookmarkRepo):
     def _get_bookmark(self, row: RowMapping) -> Bookmark:
         return Bookmark(**{field.name: row[field.name] for field in fields(Bookmark)})
 
-    def _get_meaning_with_bookmark(self, row: RowMapping) -> MeaningWithBookmark:
-        return MeaningWithBookmark(id=row["meaning_id"],
-                                   query=row["query"],
-                                   definition=row["definition"],
-                                   pos=row["pos"],
-                                   bookmark=self._get_bookmark(row))
+    def _get_meaning_with_bookmark(self, row: RowMapping) -> BookmarkedMeaning:
+        return BookmarkedMeaning(id=row["meaning_id"],
+                                 query=row["query"],
+                                 definition=row["definition"],
+                                 pos=row["pos"],
+                                 bookmark=self._get_bookmark(row))
 
-    def _get_example_with_bookmark(self, row: RowMapping) -> ExampleWithBookmark:
-        return ExampleWithBookmark(meaning_id=row["meaning_id"],
-                                   sentence=row["sentence"],
-                                   replacements=json.loads(row["replacements"]),
-                                   bookmark=self._get_bookmark(row))
+    def _get_example_with_bookmark(self, row: RowMapping) -> BookmarkedExample:
+        return BookmarkedExample(meaning_id=row["meaning_id"],
+                                 sentence=row["sentence"],
+                                 replacements=json.loads(row["replacements"]),
+                                 bookmark=self._get_bookmark(row))

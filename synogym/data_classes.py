@@ -38,11 +38,11 @@ class Bookmark:
     tags: str
 
 @dataclass
-class MeaningWithBookmark(Meaning):
+class BookmarkedMeaning(Meaning):
     bookmark: Bookmark
 
 @dataclass
-class ExampleWithBookmark(Example):
+class BookmarkedExample(Example):
     bookmark: Bookmark
 
 @dataclass

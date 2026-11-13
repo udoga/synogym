@@ -1,5 +1,5 @@
 from unittest import TestCase
-from synogym.data_classes import Bookmark, ExampleWithBookmark
+from synogym.data_classes import Bookmark, BookmarkedExample
 from synogym.repo.memory import MemoryBookmarkRepo
 from synogym.service import BookmarkService
 
@@ -10,10 +10,10 @@ class BookmarkServiceTest(TestCase):
 
     def test_shuffles_examples_with_bookmark(self):
         bookmark = Bookmark(id=1, user_id=1, meaning_id=1, note="", tags="")
-        first = ExampleWithBookmark(sentence="first", replacements=["one"], bookmark=bookmark)
-        second = ExampleWithBookmark(sentence="second", replacements=["two"], bookmark=bookmark)
+        first = BookmarkedExample(sentence="first", replacements=["one"], bookmark=bookmark)
+        second = BookmarkedExample(sentence="second", replacements=["two"], bookmark=bookmark)
         self.repo.examples_with_bookmark = [first, second]
-        self.assertEqual([second, first], self.service.list_examples_with_bookmark(1, seed=0))
+        self.assertEqual([second, first], self.service.list_bookmarked_examples(1, seed=0))
 
     def test_creates_bookmark_with_empty_note_and_tags(self):
         bookmark = self.service.create(1, 2)

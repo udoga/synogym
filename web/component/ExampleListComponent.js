@@ -63,7 +63,7 @@ class ExampleListComponent {
   }
 
   choosePageSize() {
-    return window.matchMedia("(max-width: 540px)").matches ? 1 : 5;
+    return window.matchMedia("(max-width: 540px)").matches ? 1 : 4;
   }
 
   deduplicateExamples(examples) {

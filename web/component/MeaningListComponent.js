@@ -1,9 +1,12 @@
 class MeaningListComponent {
-  constructor(router, meaningApi, bookmarkApi) {
+  constructor(router, meaningApi, bookmarkApi, page_size = null) {
     this.router = router;
     this.meaningApi = meaningApi;
     this.bookmarkApi = bookmarkApi;
+    this.page_size = page_size || this.choosePageSize();
     this.meanings = [];
+    this.keptMeanings = [];
+    this.pageIndex = 0;
     this.status = "";
     this.emptyMessage = "";
     this.isError = false;
@@ -51,9 +54,36 @@ class MeaningListComponent {
 
   showBookmarks(result) {
     if (!result.response.ok) return this.showError(result.body.error?.message || "Could not load meanings.");
-    this.meanings = this.getVisibleBookmarks(result.body.data);
+    this.keepBookmarks(result.body.data);
+  }
+
+  keepBookmarks(bookmarks) {
+    this.keptMeanings = this.getVisibleBookmarks(bookmarks);
+    this.showPage(0);
+  }
+
+  showPage(pageIndex) {
+    this.pageIndex = pageIndex;
+    this.meanings = this.keptMeanings.slice(this.pageIndex, this.pageIndex + this.page_size);
     this.emptyMessage = this.meanings.length ? "" : this.getBookmarkMessage();
     this.showStatus(this.label());
+  }
+
+  showNext() {
+    const pageIndex = this.pageIndex + this.page_size;
+    if (pageIndex < this.keptMeanings.length) this.showPage(pageIndex);
+  }
+
+  resize() {
+    this.showPage(0);
+  }
+
+  choosePageSize() {
+    return 4;
+  }
+
+  hasNext() {
+    return this.pageIndex + this.page_size < this.keptMeanings.length;
   }
 
   getVisibleBookmarks(bookmarks) {
@@ -75,6 +105,8 @@ class MeaningListComponent {
 
   showMeanings(result) {
     if (!result.response.ok) return this.showError(result.body.error?.message || "Search failed.");
+    this.keptMeanings = [];
+    this.pageIndex = 0;
     this.meanings = result.body.data;
     this.emptyMessage = this.meanings.length ? "" : "No words found.";
     this.showStatus(this.label());
@@ -110,6 +142,7 @@ class MeaningListComponent {
   showError(message) {
     this.isError = true;
     this.meanings = [];
+    this.keptMeanings = [];
     this.emptyMessage = "";
     this.status = message;
   }

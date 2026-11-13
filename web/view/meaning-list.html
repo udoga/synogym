@@ -3,6 +3,14 @@
     <button class="top-back-button" type="button" @click="home()">← Home</button>
     <p class="status page-header-status" role="status" aria-live="polite" :class="{ error: isError }"
        x-text="status"></p>
+    <label class="page-size-field" x-show="isBookmarks()">
+      <span>Page Size</span>
+      <select x-model.number="page_size" @change="resize()">
+        <option value="1">1</option>
+        <option value="4">4</option>
+        <option value="10">10</option>
+      </select>
+    </label>
   </div>
   <section class="results" :aria-label="label()">
     <p class="empty-message" x-show="!isLoading && !isError && !meanings.length && emptyMessage"
@@ -19,4 +27,7 @@
       </button>
     </template>
   </section>
+  <div class="load-more-row" x-show="isBookmarks() && meanings.length && hasNext()">
+    <button class="load-more-button" type="button" @click="showNext()">Next</button>
+  </div>
 </section>

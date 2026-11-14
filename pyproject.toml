@@ -5,7 +5,6 @@ description = "LLM-powered vocabulary learning tool."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "curl-cffi>=0.16.3",
     "flask>=3.1.2",
     "google-auth>=2.43.0",
     "gunicorn>=26.2.0",

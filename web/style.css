@@ -594,6 +594,13 @@ button:disabled {
   text-decoration: none;
 }
 
+.quote-source img {
+  display: block;
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
 .word-button {
   margin: 0 6px 7px 0;
   border: 1px solid var(--line);

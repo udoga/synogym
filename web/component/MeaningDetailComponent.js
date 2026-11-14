@@ -249,6 +249,20 @@ class MeaningDetailComponent {
       .replaceAll("&lt;/em&gt;", "</em>");
   }
 
+  resolveQuoteIcon(url) {
+    const source = String(url || "").toLowerCase();
+    if (source.includes("wiki")) return "/web/image/wikiquote.svg";
+    if (source.includes("brainy")) return "/web/image/brainy.png";
+    return "";
+  }
+
+  labelQuoteSource(url) {
+    const source = String(url || "").toLowerCase();
+    if (source.includes("wiki")) return "Open on Wikiquote";
+    if (source.includes("brainy")) return "Open on BrainyQuote";
+    return "Open quote source";
+  }
+
   renderComparison(text, selection) {
     const word = String(selection || "").trim();
     const html = this.escape(text);

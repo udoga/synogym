@@ -85,7 +85,10 @@
             <h3>
               <span x-text="quote.author"></span>
               <a class="quote-source" x-show="quote.url" :href="quote.url" target="_blank" rel="noopener noreferrer"
-                 aria-label="Open on BrainyQuote">🔗</a>
+                 :aria-label="labelQuoteSource(quote.url)">
+                <img x-show="resolveQuoteIcon(quote.url)" :src="resolveQuoteIcon(quote.url)" alt="">
+                <span x-show="!resolveQuoteIcon(quote.url)">📎</span>
+              </a>
             </h3>
             <p x-html="render(quote.text)"></p>
           </section>

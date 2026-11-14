@@ -1,6 +1,6 @@
 <main class="page" x-data="new LayoutComponent(authApi, router)" x-cloak>
   <section class="top-bar" aria-labelledby="title">
-    <h1 id="title">Synogym</h1>
+    <h1 id="title"><button class="logo-button" type="button" @click="home()">Synogym</button></h1>
     <div class="auth-panel">
       <button type="button" @click="logout()">Logout</button>
     </div>

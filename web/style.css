@@ -70,6 +70,16 @@ h1 {
   letter-spacing: -0.04em;
 }
 
+.logo-button {
+  border: 0;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+}
+
 .auth-panel {
   display: flex;
   align-items: center;

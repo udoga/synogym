@@ -11,6 +11,10 @@ class LayoutComponent {
     this.router.route(`#/meanings?query=${encodeURIComponent(query)}`);
   }
 
+  home() {
+    this.router.route("#/home");
+  }
+
   async logout() {
     await this.authApi.logout();
     this.router.logout();

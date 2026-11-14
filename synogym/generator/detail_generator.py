@@ -10,9 +10,9 @@ Given a word or phrase, its selected definition and pos; return only YAML in the
 detail:
   level: A1 | A2 | B1 | B2 | C1 | C2
   description: around 3 learner-friendly sentences explaining this meaning
-  synonyms: comma separated best synonyms, ideally 10, each 1-2 words
+  synonyms: comma separated best synonyms, ideally 5-10, each 1-2 words
   history: a brief paragraph of why it has this name or where it came from
-  formations: comma separated different words sharing the same root, ideally 10, each 1 word
+  formations: comma separated different words sharing the same root, ideally 5-10, each 1 word
 
 Rules:
 - ONLY content, no markdown, no additional text, no quotation marks.

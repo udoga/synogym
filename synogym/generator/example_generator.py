@@ -12,7 +12,7 @@ examples:
     replacements: comma separated best alternatives for the word in this context
 
 Rules:
-- 3 versatile examples.
+- 3 versatile examples with interesting and medium-size sentences.
 - 2 replacements each with 1 or 2 words.
 - ONLY content, no markdown, no additional text, no quotation marks.
 

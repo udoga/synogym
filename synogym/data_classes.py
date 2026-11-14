@@ -60,3 +60,9 @@ class Quote:
 class LlmRequest:
     text: str
     name: str
+
+@dataclass
+class ComparisonRequest:
+    meaning: Meaning
+    selection: str
+    type: str

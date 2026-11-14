@@ -1,6 +1,6 @@
 <section x-data="new MeaningListComponent(router, meaningApi, bookmarkApi)" x-init="load()">
   <div class="status-row">
-    <button class="top-back-button" type="button" @click="home()">← Home</button>
+    <button class="top-back-button" type="button" @click="back()">← Back</button>
     <p class="status page-header-status" role="status" aria-live="polite" :class="{ error: isError }"
        x-text="status"></p>
     <label class="page-size-field" x-show="isBookmarks()">

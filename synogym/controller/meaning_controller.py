@@ -7,3 +7,4 @@ class MeaningController:
         server.add_route("/meanings/<int:meaning_id>", service.read_meaning)
         server.add_route("/meanings/<int:meaning_id>/examples", service.list_examples)
         server.add_route("/meanings/<int:meaning_id>/detail", service.read_detail)
+        server.add_route("/meanings/<int:meaning_id>/compare/<selection_type>/<selection>", service.compare)

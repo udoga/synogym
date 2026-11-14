@@ -1,6 +1,6 @@
 from dataclasses import replace
 from unittest import TestCase
-from synogym.data_classes import Detail, Example, Meaning
+from synogym.data_classes import ComparisonRequest, Detail, Example, Meaning
 from synogym.service import MeaningService
 from synogym.repo.memory import MemoryMeaningRepo
 from synogym.generator import MockGenerator
@@ -11,7 +11,9 @@ class MeaningServiceTest(TestCase):
         self.meaning_generator = MockGenerator[str, list[Meaning]]([])
         self.detail_generator = MockGenerator[Meaning, Detail]()
         self.example_generator = MockGenerator[Meaning, list[Example]]([])
-        self.service = MeaningService(self.repo, self.meaning_generator, self.detail_generator, self.example_generator)
+        self.comparison_generator = MockGenerator[ComparisonRequest, str]("")
+        self.service = MeaningService(self.repo, self.meaning_generator, self.detail_generator, self.example_generator,
+                                      self.comparison_generator)
         self.meaning = Meaning(query="happy", definition="joyful", pos="adjective")
         self.detail = Detail(meaning_id=1, level="A1", description="Feeling joy.", synonyms=[], history="",
                              formations=[])
@@ -37,6 +39,7 @@ class MeaningServiceTest(TestCase):
         self.assertRaisesRegex(ValueError, "Meaning not found", self.service.read_meaning, 0)
         self.assertRaisesRegex(ValueError, "Meaning not found", self.service.list_examples, 0)
         self.assertRaisesRegex(ValueError, "Meaning not found", self.service.read_detail, 0)
+        self.assertRaisesRegex(ValueError, "Meaning not found", self.service.compare, 0, "glad", "synonym")
 
     def test_reads_meaning_when_it_exists_in_repo(self):
         self.repo.create_all([self.meaning])
@@ -66,3 +69,9 @@ class MeaningServiceTest(TestCase):
         self.repo.create_all([self.meaning])
         self.repo.create_detail(self.detail)
         self.assertEqual(self.detail, self.service.read_detail(1))
+
+    def test_compares_meaning_with_synonym(self):
+        self.repo.create_all([self.meaning])
+        self.comparison_generator.output = "Happy is broader than glad."
+        self.assertEqual("Happy is broader than glad.", self.service.compare(self.meaning.id, "glad", "synonym"))
+        self.assertEqual(ComparisonRequest(self.meaning, "glad", "synonym"), self.comparison_generator.value)

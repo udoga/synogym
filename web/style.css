@@ -566,7 +566,13 @@ button:disabled {
   line-height: 1.5;
 }
 
-.detail-card:not(.detail-header) p + p {
+.detail-card:not(.detail-header) .word-list {
+  padding: 14px 18px 7px;
+}
+
+.detail-card:not(.detail-header) p + p,
+.detail-card:not(.detail-header) .comparison-text,
+.detail-card:not(.detail-header) .comparison-loader p {
   padding-top: 0;
 }
 
@@ -603,6 +609,27 @@ button:disabled {
   color: #1e40af;
   background: #dbeafe;
   transform: translateY(-1px);
+}
+
+.word-button[selected] {
+  border-color: #2563eb;
+  color: #ffffff;
+  background: #2563eb;
+}
+
+.inline-word-link {
+  border: 0;
+  padding: 0;
+  color: #1d4ed8;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  background: transparent;
+  cursor: pointer;
+}
+
+.inline-word-link:hover {
+  color: #1e40af;
 }
 
 .top-back-button,

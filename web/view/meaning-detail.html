@@ -58,19 +58,21 @@
         </section>
         <section class="detail-card" x-show="hasWords(detail().synonyms)">
           <h3>Synonyms</h3>
-          <p>
+          <div class="word-list">
             <template x-for="word in detail().synonyms" :key="word">
-              <button class="word-button" type="button" @click="searchWord(word)" x-text="word"></button>
+              <button class="word-button" type="button" @click="select($event); compareSynonym(word)" x-text="word"></button>
             </template>
-          </p>
+          </div>
+          <p class="comparison-text" x-show="synonymComparison" x-html="synonymComparison"></p>
         </section>
         <section class="detail-card" x-show="hasWords(detail().formations)">
           <h3>Formations</h3>
-          <p>
+          <div class="word-list">
             <template x-for="word in detail().formations" :key="word">
-              <button class="word-button" type="button" @click="searchWord(word)" x-text="word"></button>
+              <button class="word-button" type="button" @click="select($event); compareFormation(word)" x-text="word"></button>
             </template>
-          </p>
+          </div>
+          <p class="comparison-text" x-show="formationComparison" x-html="formationComparison"></p>
         </section>
         <section class="detail-card" x-show="detail().history">
           <h3>History</h3><p x-text="detail().history"></p>

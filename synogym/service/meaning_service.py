@@ -1,5 +1,5 @@
 from dataclasses import replace
-from synogym.data_classes import Detail, Example, Meaning
+from synogym.data_classes import ComparisonRequest, Detail, Example, Meaning
 from synogym.generator import Generator
 from synogym.highlighter import Highlighter
 from synogym.repo.interface import MeaningRepo
@@ -8,11 +8,13 @@ class MeaningService:
     def __init__(self, repo: MeaningRepo,
                  meaning_generator: Generator[str, list[Meaning]],
                  detail_generator: Generator[Meaning, Detail],
-                 example_generator: Generator[Meaning, list[Example]]):
+                 example_generator: Generator[Meaning, list[Example]],
+                 comparison_generator: Generator[ComparisonRequest, str]):
         self.repo = repo
         self.meaning_generator = meaning_generator
         self.detail_generator = detail_generator
         self.example_generator = example_generator
+        self.comparison_generator = comparison_generator
         self.highlighter = Highlighter()
 
     def list_by_query(self, query: str) -> list[Meaning]:
@@ -34,6 +36,10 @@ class MeaningService:
         meaning = self.read_meaning(meaning_id)
         detail = self.repo.find_detail(meaning_id)
         return detail or self.repo.create_detail(self.detail_generator.generate(meaning))
+
+    def compare(self, meaning_id: int, selection: str, selection_type: str = "synonym") -> str:
+        meaning = self.read_meaning(meaning_id)
+        return self.comparison_generator.generate(ComparisonRequest(meaning, selection, selection_type))
 
     def _highlight(self, example: Example, query: str) -> Example:
         sentence: str = self.highlighter.highlight(example.sentence, query)

@@ -12,6 +12,8 @@ class MeaningDetailComponent {
     this.newBookmarkTag = "";
     this.isAddingBookmarkTag = false;
     this.quotes = [];
+    this.synonymComparison = "";
+    this.formationComparison = "";
     this.isQuoteLoading = false;
     this.isExampleLoading = false;
     this.isDetailLoading = false;
@@ -186,6 +188,41 @@ class MeaningDetailComponent {
     return String(tag || "").trim();
   }
 
+  async compareSynonym(synonym) {
+    if (!this.meaning?.id) return;
+    this.synonymComparison = "Comparing...";
+    try {
+      this.showSynonymComparison(await this.meaningApi.compare(this.meaning.id, "synonym", synonym), synonym);
+    } catch {
+      this.showStatus("Could not reach the server.");
+    }
+  }
+
+  showSynonymComparison(result, synonym) {
+    if (!result.response.ok) return this.showStatus(result.body.error?.message || "Could not load comparison.");
+    this.synonymComparison = this.renderComparison(result.body.data, synonym);
+  }
+
+  async compareFormation(formation) {
+    if (!this.meaning?.id) return;
+    this.formationComparison = "Comparing...";
+    try {
+      this.showFormationComparison(await this.meaningApi.compare(this.meaning.id, "formation", formation), formation);
+    } catch {
+      this.showStatus("Could not reach the server.");
+    }
+  }
+
+  showFormationComparison(result, formation) {
+    if (!result.response.ok) return this.showStatus(result.body.error?.message || "Could not load comparison.");
+    this.formationComparison = this.renderComparison(result.body.data, formation);
+  }
+
+  select(event) {
+    event.target.parentElement.querySelectorAll(".word-button").forEach(button => button.removeAttribute("selected"));
+    event.target.setAttribute("selected", "");
+  }
+
   searchWord(word) {
     this.router.route(`#/meanings?query=${encodeURIComponent(word)}`);
   }
@@ -207,12 +244,28 @@ class MeaningDetailComponent {
   }
 
   render(sentence) {
-    return String(sentence || "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
+    return this.escape(sentence)
       .replaceAll("&lt;em&gt;", "<em>")
       .replaceAll("&lt;/em&gt;", "</em>");
+  }
+
+  renderComparison(text, selection) {
+    const word = String(selection || "").trim();
+    const html = this.escape(text);
+    if (!word) return html;
+    const expression = new RegExp(this.escapeExpression(this.escape(word)), "i");
+    return html.replace(expression, `<a class="inline-word-link" href="#/meanings?query=${encodeURIComponent(word)}">$&</a>`);
+  }
+
+  escape(value) {
+    return String(value || "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+  }
+
+  escapeExpression(value) {
+    return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
 
   getLevelClass(level) {
@@ -234,6 +287,8 @@ class MeaningDetailComponent {
     this.meaning = null;
     this.examples = [];
     this.meaningDetail = null;
+    this.synonymComparison = "";
+    this.formationComparison = "";
     this.bookmark = null;
     this.bookmarkNote = "";
     this.status = message;

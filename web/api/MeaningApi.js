@@ -14,4 +14,8 @@ class MeaningApi extends JsonApi {
   readDetail(id) {
     return this.get(`/meanings/${encodeURIComponent(id)}/detail`);
   }
+
+  compare(id, type, selection) {
+    return this.get(`/meanings/${encodeURIComponent(id)}/compare/${encodeURIComponent(type)}/${encodeURIComponent(selection)}`);
+  }
 }

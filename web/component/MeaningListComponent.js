@@ -166,8 +166,8 @@ class MeaningListComponent {
     if (meaning?.id) this.router.route(`#/meaning/${meaning.id}`);
   }
 
-  home() {
-    this.router.route("#/home");
+  back() {
+    history.back();
   }
 
   startLoading() {

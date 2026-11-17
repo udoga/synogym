@@ -2,12 +2,13 @@ import yaml
 import os
 from pathlib import Path
 from synogym.db_connector import DbConnector
+from synogym.gpt_client import GptClient
 from synogym.rest_server import RestServer
 from synogym.generator import DetailGenerator, ExampleGenerator, MeaningGenerator, ComparisonGenerator
-from synogym.client import GptClient
 from synogym.repo.sqlalchemy import SqlBookmarkRepo, SqlMeaningRepo, SqlQuoteRepo, SqlUserRepo
 from synogym.service import BookmarkService, MeaningService, QuoteService, UserService
 from synogym.controller import BookmarkController, MeaningController, QuoteController, UserController
+from synogym.usage_checker import UsageChecker
 
 def setup() -> RestServer:
     config_path = Path(os.environ.get("SYNOGYM_CONFIG_PATH", "config.yaml"))
@@ -26,7 +27,7 @@ def setup() -> RestServer:
     example_generator = ExampleGenerator(gpt_client)
     bookmark_service = BookmarkService(bookmark_repo)
     meaning_service = MeaningService(meaning_repo, meaning_generator, detail_generator, example_generator, comparison_generator)
-    quote_service = QuoteService(quote_repo)
+    quote_service = QuoteService(quote_repo,  UsageChecker())
     user_service = UserService(user_repo)
 
     rest_server = RestServer(config["server"])

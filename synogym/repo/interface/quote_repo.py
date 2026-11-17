@@ -3,7 +3,7 @@ from synogym.data_classes import Quote
 
 class QuoteRepo(ABC):
     @abstractmethod
-    def list_by_query(self, query: str) -> list[Quote]:
+    def list_by_inflections(self, inflections: list[str]) -> list[Quote]:
         pass
 
     @abstractmethod

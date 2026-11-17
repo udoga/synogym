@@ -1,5 +1,5 @@
 import re
-from sqlalchemy import text
+from sqlalchemy import text, Sequence
 from sqlalchemy.engine import Connection, RowMapping
 from synogym.data_classes import Quote
 from synogym.repo.interface import QuoteRepo
@@ -8,11 +8,14 @@ class SqlQuoteRepo(QuoteRepo):
     def __init__(self, connection: Connection):
         self.connection = connection
 
-    def list_by_query(self, query: str) -> list[Quote]:
-        sql = "SELECT * FROM quotes WHERE LOWER(text) LIKE :query ORDER BY id"
-        rows = self.connection.execute(text(sql), {"query": f"%{query.lower()}%"}).mappings().all()
-        quotes = [self._get_quote(row) for row in rows]
-        return [quote for quote in quotes if self._has_query_word(quote, query)]
+    def list_by_inflections(self, inflections: list[str]) -> list[Quote]:
+        if not inflections: return []
+        conditions: list[str] = [f"LOWER(text) LIKE :inflection_{i}" for i in range(len(inflections))]
+        parameters: dict[str, str] = {f"inflection_{i}": f"%{s.lower()}%" for i, s in enumerate(inflections)}
+        sql = f"SELECT * FROM quotes WHERE {' OR '.join(conditions)} ORDER BY id"
+        rows: Sequence[RowMapping] = self.connection.execute(text(sql), parameters).mappings().all()
+        quotes: list[Quote] = [self._get_quote(row) for row in rows]
+        return [quote for quote in quotes if self._has_one_of(quote, inflections)]
 
     def create_all(self, quotes: list[Quote]) -> list[Quote]:
         for quote in quotes:
@@ -33,7 +36,10 @@ class SqlQuoteRepo(QuoteRepo):
     def _get_quote(self, row: RowMapping) -> Quote:
         return Quote(id=row["id"], text=row["text"], author=row["author"], url=row["url"])
 
-    def _has_query_word(self, quote: Quote, query: str) -> bool:
-        query_word = re.escape(query)
-        pattern = rf"(?<![A-Za-z0-9]){query_word}(?![A-Za-z0-9])"
+    def _has_one_of(self, quote: Quote, inflections: list[str]) -> bool:
+        return any(self._has_word(quote, inflection) for inflection in inflections)
+
+    def _has_word(self, quote: Quote, word: str) -> bool:
+        word: str = re.escape(word)
+        pattern: str = rf"(?<![A-Za-z0-9]){word}(?![A-Za-z0-9])"
         return re.search(pattern, quote.text, re.IGNORECASE) is not None

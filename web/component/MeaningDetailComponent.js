@@ -34,7 +34,7 @@ class MeaningDetailComponent {
     this.isLoading = false;
     await this.loadExamples(meaningId);
     await this.loadDetail(meaningId);
-    await this.loadQuotes(this.meaning?.query);
+    await this.loadQuotes(this.meaning?.query, this.meaning?.pos);
   }
 
   async loadMeaning(meaningId) {
@@ -80,12 +80,12 @@ class MeaningDetailComponent {
     this.meaningDetail = result.body.data;
   }
 
-  async loadQuotes(word) {
-    if (!word) return;
+  async loadQuotes(word, pos) {
+    if (!word || !pos) return;
     this.quotes = [];
     this.isQuoteLoading = true;
     try {
-      this.showQuotes(await this.quoteApi.list(word));
+      this.showQuotes(await this.quoteApi.list(word, pos));
     } catch {}
     this.isQuoteLoading = false;
   }

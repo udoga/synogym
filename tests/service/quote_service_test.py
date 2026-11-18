@@ -52,8 +52,8 @@ class QuoteServiceTest(TestCase):
         self.sample.assert_called_with(highlighted, self.service.quote_limit)
 
     def test_returns_quotes_under_200_characters(self):
-        short_quote = Quote(text=f"Be yourself {'a' * 186}", author="Oscar Wilde", url="short")
-        long_quote = Quote(text=f"Be yourself {'a' * 188}", author="Oscar Wilde", url="long")
+        short_quote = Quote(text=f"Be yourself {'a' * 286}", author="Oscar Wilde", url="short")
+        long_quote = Quote(text=f"Be yourself {'a' * 288}", author="Oscar Wilde", url="long")
         self.repo.create_all([short_quote, long_quote])
         self.assertEqual(self.highlight_quotes([short_quote]), self.service.list_by_query("yourself", "noun"))
 

@@ -11,10 +11,10 @@ class QuoteService:
         self.usage_checker = usage_checker
         self.highlighter = Highlighter()
         self.quote_limit = 10
-        self.max_length = 200
+        self.max_length = 300
 
     def list_by_query(self, query: str, pos: str) -> list[Quote]:
-        inflections: list[str] = self.usage_checker.create_inflections(query, pos)
+        inflections: list[str] = self.usage_checker.get_inflections(query, pos)
         quotes: list[Quote] = self.repo.list_by_inflections(inflections)
         filtered_quotes: list[Quote] = [q for q in quotes if self._passes_filter(q, inflections, pos)]
         highlighted_quotes = [self._highlight(q, query) for q in filtered_quotes]

@@ -14,3 +14,10 @@ uv run python -m nltk.downloader wordnet averaged_perceptron_tagger_eng
 uv run pytest
 uv run python main.py
 ```
+
+Load wikiquotes dataset (optional):
+
+```
+kaggle datasets download -d linuds/wikiquotes-english/3 -p data --unzip
+sqlite3 synogym.sqlite < data/wikiquotes-english.sql
+```
